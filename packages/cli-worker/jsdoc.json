@@ -4,9 +4,9 @@
 	},
 	"plugins"   : ["plugins/markdown"],
 	"templates" : {
-		"systemName"            : "levo-worker-lib",
+		"systemName"            : "cli-worker",
 		"footer"                : "",
-		"copyright"             : "Copyright (c) 2018 LEVO Technology Pty Ltd",
+		"copyright"             : "Copyright (c) 2013 KIT Mobile Internet Pty Ltd",
 		"includeDate"           : false,
 		"navType"               : "vertical",
 		"theme"                 : "cerulean",
