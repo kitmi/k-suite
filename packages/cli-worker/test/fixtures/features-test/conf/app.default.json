@@ -1,0 +1,12 @@
+{
+    "loadAnotherCfg": {},
+    "featureInit": {
+        "item": "option item of init"
+    },
+    "featureService": {
+        "item": "option item of service"
+    },
+    "featurePlugin": {
+        "item": "option item of plugin"
+    }
+}

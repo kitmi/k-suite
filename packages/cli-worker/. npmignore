@@ -1,0 +1,11 @@
+# .npmignore 
+
+src
+test
+examples
+docs
+babel.config.js
+.babelrc
+.gitignore
+.travis.yml
+jsdoc.json

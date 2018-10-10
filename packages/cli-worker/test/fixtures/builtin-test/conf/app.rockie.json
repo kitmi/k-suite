@@ -1,0 +1,7 @@
+{    
+    "settings": {
+        "parser": {
+            "lib": "pdfjs-dist"
+        }
+    }
+}

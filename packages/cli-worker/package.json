@@ -1,0 +1,43 @@
+{
+  "name": "cli-worker",
+  "version": "1.0.0",
+  "description": "CLI Worker Process Template",
+  "main": "index.js",
+  "scripts": {
+    "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs/api-doc' -r --verbose ./src",
+    "test:only": "mocha test/*.mocha.js --timeout 5000",
+    "test": "npm run build:test && npm run test:only",
+    "bulid:clean": "rm -rf lib",
+    "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files",
+    "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files",
+    "build:test": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files",
+    "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
+  },
+  "author": "Rockie Guo",
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "babel-plugin-contract": "^1.3.0",
+    "casperjs": "^1.1.4",
+    "ink-docstrap": "^1.3.2",
+    "jsdoc": "^3.5.5",
+    "mocha": "^5.2.0",
+    "mongodb": "^3.1.6",
+    "nyc": "^13.0.1",
+    "should": "^13.2.3",
+    "supertest": "^3.3.0",
+    "winston-daily-rotate-file": "^3.3.3",
+    "winston-mongodb": "github:kitmi/winston-mongodb"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "rk-config": "^2.0.0",
+    "rk-utils": "^2.1.6",
+    "winston": "^3.1.0",
+    "winstonflight": "^1.0.4"
+  }
+}
