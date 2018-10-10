@@ -1,6 +1,5 @@
 const path = require('path');
-const Literal = require('../../../../lib/enum/Literal');
-const Feature = require('../../../../lib/enum/feature');
+const Feature = require('../../../../lib/enum/Feature');
 
 const JsConfigProvider = require('rk-config/lib/JsConfigProvider');
 

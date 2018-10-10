@@ -1,4 +1,4 @@
-const Feature = require('../../../../lib/enum/feature');
+const Feature = require('../../../../lib/enum/Feature');
 
 module.exports = {
     type: Feature.INIT,
