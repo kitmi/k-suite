@@ -10,3 +10,5 @@ babel.config.js
 .travis.yml
 jsdoc.json
 coverage
+.gitattributes
+.nyc_output
