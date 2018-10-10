@@ -24,10 +24,11 @@ module.exports = {
      * Load the feature
      * @param {CliApp} app - The cli app module object
      * @param {object} options - Options for the feature     
+     * @param {string} [options.altUserForTest] - Alternative username for test purpose, if given, this feature will not get git user but use this given value instead
      * @returns {Promise.<*>}
      */
     load_: async (app, options) => {
-        let devName = Util.runCmdSync('git config --global user.name').trim();
+        let devName = options.altUserForTest || Util.runCmdSync('git config --global user.name').trim();
         if (devName === '') {
             throw new Error('Unable to read "user.name" of git config.');
         }            

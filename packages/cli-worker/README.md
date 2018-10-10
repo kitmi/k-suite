@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/kitmi/cli-worker.svg?branch=master)](https://travis-ci.org/kitmi/cli-worker)
+[![Coverage Status](https://coveralls.io/repos/github/kitmi/cli-worker/badge.svg?branch=master)](https://coveralls.io/github/kitmi/cli-worker?branch=master)
+
 # cli-worker
 
 CLI Worker Process Library

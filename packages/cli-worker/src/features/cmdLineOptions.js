@@ -37,8 +37,57 @@ function optionDecorator(name) {
     return name.length == 1 ? ('-' + name) : ('--' + name);
 }
 
-module.exports = {
+function getUsage(app, usageOptions) {
+    let usage = '';
 
+    if (usageOptions.banner) {
+        if (typeof usageOptions.banner === 'function') {
+            usage += usageOptions.banner(app);
+        } else if (typeof usageOptions.banner === 'string') {
+            usage += usageOptions.banner;
+        } else {
+            throw new Error('Invalid banner value of cmdLineOptions feature.');
+        }
+
+        usage += '\n';
+    }            
+
+    let fmtArgs = '';
+    if (!Util._.isEmpty(usageOptions.arguments)) {
+        fmtArgs = ' ' + usageOptions.arguments.map(arg => arg.required ? `<${arg.name}>` : `[${arg.name}]`).join(' ');
+    }
+
+    usage += `Usage: ${usageOptions.program || path.basename(process.argv[1])}${fmtArgs} [options]\n`;
+    
+    if (!Util._.isEmpty(usageOptions.options)) {
+        usage += `\nOptions:\n`;
+        Util._.forOwn(usageOptions.options, (opts, name) => {
+            let line = '  ' + optionDecorator(name);
+            if (opts.alias) {
+                line += Util._.reduce(opts.alias, (sum, a) => (sum + ', ' + optionDecorator(a)), '');
+            }
+
+            line += '\n';
+            line += '    ' + opts.desc + '\n';
+
+            if ('default' in opts) {
+                line += '    default: ' + opts.default.toString() + '\n';
+            }
+
+            if (opts.required) {
+                line += '    required\n';
+            }
+
+            line += '\n';
+
+            usage += line;
+        });
+    }        
+
+    return usage;
+}
+
+module.exports = {
     /**
      * This feature is loaded at configuration stage
      * @member {string}
@@ -48,63 +97,19 @@ module.exports = {
     /**
      * Load the feature
      * @param {CliApp} app - The cli app module object
-     * @param {object} featureOptions - Options for the feature     
-     * @property {string} [featureOptions.banner] - Banner message or banner generator function
-     * @property {array} [featureOptions.arguments] - Command line arguments, identified by the position of appearance
-     * @property {object} [featureOptions.options] - Command line options
+     * @param {object} usageOptions - Options for the feature     
+     * @property {string} [usageOptions.banner] - Banner message or banner generator function
+     * @property {string} [usageOptions.program] - Executable name
+     * @property {array} [usageOptions.arguments] - Command line arguments, identified by the position of appearance
+     * @property {object} [usageOptions.options] - Command line options
      * @returns {Promise.<*>}
      */
-    load_: async (app, featureOptions) => {
+    load_: async (app, usageOptions) => {
         let argv = process.argv.slice(2);
-        app.argv = minimist(argv, translateMinimistOptions(featureOptions.options));
+        app.argv = minimist(argv, translateMinimistOptions(usageOptions.options));
+
         app.showUsage = () => {
-            let usage = '';
-
-            if (featureOptions.banner) {
-                if (typeof featureOptions.banner === 'function') {
-                    usage += featureOptions.banner(app);
-                } else if (typeof featureOptions.banner === 'string') {
-                    usage += featureOptions.banner;
-                } else {
-                    throw new Error('Invalid banner value of cmdLineOptions feature.');
-                }
-
-                usage += '\n';
-            }            
-
-            let fmtArgs = '';
-            if (!Util._.isEmpty(featureOptions.arguments)) {
-                fmtArgs = ' ' + featureOptions.arguments.map(arg => arg.required ? `<${arg.name}>` : `[${arg.name}]`).join(' ');
-            }
-
-            usage += `Usage: ${path.basename(process.argv[1])}${fmtArgs} [options]\n`;
-            
-            if (!Util._.isEmpty(featureOptions.options)) {
-                usage += `\nOptions:\n`;
-                Util._.forOwn(featureOptions.options, (opts, name) => {
-                    let line = '  ' + optionDecorator(name);
-                    if (opts.alias) {
-                        line += Util._.reduce(opts.alias, (sum, a) => (sum + ', ' + optionDecorator(a)), '');
-                    }
-
-                    line += '\n';
-                    line += '    ' + opts.desc + '\n';
-
-                    if ('default' in opts) {
-                        line += '    default: ' + opts.default.toString() + '\n';
-                    }
-
-                    if (opts.required) {
-                        line += '    required\n';
-                    }
-
-                    line += '\n';
-
-                    usage += line;
-                });
-            }        
-
-            console.log(usage);
+            console.log(getUsage(app, usageOptions));
         }
     }
 };

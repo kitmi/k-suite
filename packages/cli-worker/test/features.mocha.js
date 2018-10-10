@@ -82,4 +82,9 @@ describe.only('features', function () {
         let result = service.invoke_();
         result.should.equal('option item of service2');
     });
+
+    it('version reference', function () {
+        should.exist(cliApp.version);
+        cliApp.version.should.equal('2.0.0');
+    });
 });

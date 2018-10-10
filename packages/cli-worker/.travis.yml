@@ -1,5 +1,13 @@
 language: node_js
 node_js:
   - "node"
-
-script: npm run test
+  - "lts/*"
+cache:
+  directories:
+    - "node_modules"
+services:
+  - mongodb    
+before_script:
+  - sleep 5
+  - mongo bi-logs --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
+script: npm run travis

@@ -8,8 +8,8 @@ const fs = Util.fs;
 const path = require('path');
 const EventEmitter = require('events');
 
-const Feature = require('./enum/feature.js');
-const Literal = require('./enum/literal.js');
+const Feature = require('./enum/Feature.js');
+const Literal = require('./enum/Literal.js');
 
 const winston = require('winston');
 const winstonFlight = require('winstonflight');
@@ -134,7 +134,8 @@ class CliApp extends EventEmitter {
 
         let configVariables = {
             'app': this,            
-            'log': winston
+            'log': winston,
+            'env': process.env
         };
 
         /**

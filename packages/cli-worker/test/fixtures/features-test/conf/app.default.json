@@ -1,5 +1,4 @@
-{
-    "settings": {},
+{    
     "loadAnotherCfg": {},
     "featureInit": {
         "item": "option item of init"
