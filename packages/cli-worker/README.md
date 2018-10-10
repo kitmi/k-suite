@@ -6,6 +6,8 @@
 
 CLI Worker Process Library
 
+see [API Document](https://kitmi.github.io/cli-worker)
+
 ## example
 
 ### usage
