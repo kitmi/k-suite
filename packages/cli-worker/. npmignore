@@ -3,9 +3,10 @@
 src
 test
 examples
-docs
+doc
 babel.config.js
 .babelrc
 .gitignore
 .travis.yml
 jsdoc.json
+coverage

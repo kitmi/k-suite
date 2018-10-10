@@ -29,3 +29,4 @@ test/fixtures/builtin-test/*.log
 # built files #
 ######################
 lib
+doc
