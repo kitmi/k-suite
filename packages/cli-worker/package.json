@@ -8,7 +8,7 @@
     "cover": "nyc --reporter=html --reporter=text mocha -t 5000 test/*.mocha.js",
     "test:only": "mocha test/*.mocha.js --timeout 5000",
     "test": "npm run build:test && npm run test:only",
-    "travis": "npm run build:development && USER_MONGODB_URL='mongodb://travis:test@localhost:27017/bi-logs' nyc --reporter=lcovonly mocha test/*.mocha.js --timeout 10000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "travis": "npm run build && USER_MONGODB_URL='mongodb://travis:test@localhost:27017/bi-logs' nyc --reporter=lcovonly mocha test/*.mocha.js --timeout 10000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "bulid:clean": "rm -rf lib",
     "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files",
     "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files",
