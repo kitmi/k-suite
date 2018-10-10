@@ -15,7 +15,15 @@
     "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files",
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
-  "author": "Rockie Guo",
+  "author": "Rockie Guo <rockie@kitmi.com.au>",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/kitmi/cli-worker.git"
+  },
+  "keywords": [
+    "cli",
+    "worker"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
@@ -25,7 +33,6 @@
     "@babel/register": "^7.0.0",
     "babel-plugin-contract": "^1.3.0",
     "capture-console": "^1.0.1",
-    "casperjs": "^1.1.4",
     "coveralls": "^3.0.2",
     "ink-docstrap": "^1.3.2",
     "jsdoc": "^3.5.5",
