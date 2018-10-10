@@ -3,7 +3,7 @@
 src
 test
 examples
-doc
+docs
 babel.config.js
 .babelrc
 .gitignore

@@ -4,7 +4,7 @@
   "description": "CLI Worker Process Template",
   "main": "index.js",
   "scripts": {
-    "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './doc' -r --verbose ./src",
+    "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
     "cover": "nyc --reporter=html --reporter=text mocha -t 5000 test/*.mocha.js",
     "test:only": "mocha test/*.mocha.js --timeout 5000",
     "test": "npm run build:test && npm run test:only",
