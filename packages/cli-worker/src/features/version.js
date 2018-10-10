@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Set app version
  * @module Feature_Version
- * @summary Set app version
  */
 
 const Util = require('rk-utils');

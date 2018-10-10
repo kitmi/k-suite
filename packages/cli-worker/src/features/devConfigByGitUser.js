@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Enable developer specific config identified by git user name
  * @module Feature_DevConfigByGitUser
- * @summary Enable developer specific config identified by git user name
  */
 
 const path = require('path');

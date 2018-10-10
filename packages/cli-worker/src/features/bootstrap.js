@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Enable bootstrap scripts
  * @module Feature_Bootstrap
- * @summary Enable bootstrap scripts
  */
 
 const path = require('path');

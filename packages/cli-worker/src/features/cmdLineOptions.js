@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Parse command line arguments using minimist and store the parsed object into app.argv, and add app.showUsage() helper function
  * @module Feature_CmdLineOptions
- * @summary Parse command line arguments using minimist and store the parsed object into app.argv, and add app.showUsage() helper function
  */
 
 const path = require('path');

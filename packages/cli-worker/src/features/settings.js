@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Enable customized settings
  * @module Feature_Settings
- * @summary Enable customized settings
  */
 
 const Feature = require('../enum/Feature');

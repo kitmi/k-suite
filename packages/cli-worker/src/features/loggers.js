@@ -1,8 +1,8 @@
 "use strict";
 
 /**
+ * Enable multi-categories logging by winston logger
  * @module Feature_Loggers
- * @summary Enable multi-categories logging by winston logger
  */
 
 const winston = require('winston');

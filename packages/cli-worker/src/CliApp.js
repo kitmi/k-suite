@@ -183,7 +183,7 @@ class CliApp extends EventEmitter {
 
         /**
          * App stopping
-         * @event CliApp#ready
+         * @event CliApp#stopping
          */
         this.emit('stopping');
         this.started = false;
