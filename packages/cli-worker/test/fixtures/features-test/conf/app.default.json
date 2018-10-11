@@ -1,6 +1,14 @@
 {    
     "loadAnotherCfg": {},
+    "featureRegistry": {
+        "featureInit2": "#!jsv: app.toAbsolutePath('otherFeatureLoc', 'featureInit2.js')",
+        "init3": [ "#!jsv: app.toAbsolutePath('otherFeatureLoc', 'featureInit3_4.js')", "init3" ],
+        "init4": [ "#!jsv: app.toAbsolutePath('otherFeatureLoc', 'featureInit3_4.js')", "init4" ]
+    },
     "featureInit": {
+        "item": "option item of init"
+    },
+    "featureInit2": {
         "item": "option item of init"
     },
     "featureService": {

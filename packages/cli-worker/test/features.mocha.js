@@ -87,4 +87,17 @@ describe.only('features', function () {
         should.exist(cliApp.version);
         cliApp.version.should.equal('2.0.0');
     });
+
+    it('featureInit2', function () {
+        should.exist(cliApp.init2);
+        cliApp.init2.should.containEql({ item: "option item of init" });
+    });
+
+    it('init3_4', function () {
+        should.exist(cliApp.init3);
+        cliApp.init3.should.equal('this is init3');
+
+        should.exist(cliApp.init4);
+        cliApp.init4.should.equal('this is init4');
+    });
 });

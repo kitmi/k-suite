@@ -130,13 +130,7 @@ class CliApp extends EventEmitter {
         this._injectErrorHandlers(); 
         
         this.features = {};
-        this.services = {};        
-
-        let configVariables = {
-            'app': this,            
-            'log': winston,
-            'env': process.env
-        };
+        this.services = {};                
 
         /**
          * Configuration loader instance
@@ -144,12 +138,8 @@ class CliApp extends EventEmitter {
          * @public
          */
         this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, Literal.APP_CFG_NAME, this.env);
-        /**
-         * App configuration
-         * @type {object}
-         * @public
-         */
-        this.config = await this.configLoader.load_(configVariables);   
+        
+        await this.loadConfig_();
 
         /**
          * Config loaded event.
@@ -209,6 +199,26 @@ class CliApp extends EventEmitter {
     }
 
     /**
+     * @returns {CliApp}
+     */
+    async loadConfig_() {
+        let configVariables = {
+            'app': this,            
+            'log': winston,
+            'env': process.env
+        };
+
+        /**
+         * App configuration
+         * @type {object}
+         * @public
+         */
+        this.config = await this.configLoader.load_(configVariables);   
+
+        return this;
+    }
+
+    /**
      * Translate a relative path of this app module to an absolute path
      * @memberof CliApp
      * @param {array} args - Array of path parts
@@ -257,6 +267,31 @@ class CliApp extends EventEmitter {
         return this;
     }
 
+    /**
+     * Load a feature object by name
+     * @param {string} feature 
+     * @returns {object}
+     */
+    loadFeature(feature) {
+        let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
+
+        if (!fs.existsSync(extensionJs)) {
+            //built-in features
+            extensionJs = path.resolve(__dirname, 'features', feature + '.js');
+
+            if (!fs.existsSync(extensionJs)) {
+                throw new Error(`Unknown feature "${feature}".`);
+            }
+        } 
+
+        let featureObject = require(extensionJs);
+        if (!Feature.validate(featureObject)) {
+            throw new Error(`Invalid feature object loaded from "${extensionJs}".`);
+        }
+
+        return featureObject;
+    }
+
     _injectLogger(detach) {
         if (detach) {
             this.log('verbose', 'Logger is detaching ...');
@@ -292,36 +327,25 @@ class CliApp extends EventEmitter {
      * @private     
      * @returns {bool}
      */
-    async _loadFeatures_() {
-        let featureGroups = {
-            [Feature.CONF]: [],
-            [Feature.INIT]: [],            
-            [Feature.SERVICE]: [],            
-            [Feature.PLUGIN]: []
-        };
+    async _loadFeatures_() {       
+        // run config stage separately first
+        let configStageFeatures = [];        
 
         // load features
         _.forOwn(this.config, (featureOptions, name) => {
-            let feature = this._loadFeature(name);
-
-            if (!feature) {
-                throw new Error(`Invalid feature "${name}".`);
-            }
-
-            if (!feature.type) {
-                throw new Error(`Missing feature type. Feature: ${name}`);
-            }
-
-            if (!(feature.type in featureGroups)) {
-                throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
-            }
-
-            featureGroups[feature.type].push([ name, feature.load_, featureOptions ]);
-        });
-
-        // run config stage separately first
-        let configStageFeatures = featureGroups[Feature.CONF];
-        if (configStageFeatures.length > 0) {       
+            let feature;
+            try {
+                feature = this.loadFeature(name);                                
+            } catch (err) {                
+            }   
+            
+            if (feature && feature.type === Feature.CONF) {                
+                configStageFeatures.push([ name, feature.load_, featureOptions ]);
+                delete this.config[name];
+            }    
+        });        
+        
+        if (configStageFeatures.length > 0) {      
             //configuration features will be overrided by newly loaded config
             configStageFeatures.forEach(([ name ]) => { delete this.config[name]; });
             
@@ -331,7 +355,22 @@ class CliApp extends EventEmitter {
             return this._loadFeatures_();
         }
 
-        delete featureGroups[Feature.CONF];
+        let featureGroups = {            
+            [Feature.INIT]: [],            
+            [Feature.SERVICE]: [],            
+            [Feature.PLUGIN]: []
+        };
+
+        // load features
+        _.forOwn(this.config, (featureOptions, name) => {
+            let feature = this.loadFeature(name);
+
+            if (!(feature.type in featureGroups)) {
+                throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
+            }
+
+            featureGroups[feature.type].push([ name, feature.load_, featureOptions ]);
+        });
 
         return Util.eachAsync_(featureGroups, (group, level) => this._loadFeatureGroup_(group, level));
     }
@@ -348,22 +387,7 @@ class CliApp extends EventEmitter {
         });
         this.log('verbose', `Finished loading "${groupLevel}" feature group. [OK]`);
         this.emit('after:' + groupLevel);
-    }
-
-    _loadFeature(feature) {
-        let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
-
-        if (!fs.existsSync(extensionJs)) {
-            //built-in features
-            extensionJs = path.resolve(__dirname, 'features', feature + '.js');
-
-            if (!fs.existsSync(extensionJs)) {
-                throw new Error(`Unknown feature "${feature}".`);
-            }
-        } 
-
-        return require(extensionJs);
-    }
+    }    
 }
 
 module.exports = CliApp;

@@ -8,6 +8,7 @@ module.exports = {
 
     load_: async function (app, options) {
         app.configLoader.provider = new JsConfigProvider(path.join(app.configPath, 'app-override.js'));
-        app.config = await app.configLoader.load_();
+        
+        return app.loadConfig_();
     }
 };

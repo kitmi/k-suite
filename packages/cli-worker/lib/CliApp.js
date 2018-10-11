@@ -76,13 +76,8 @@ class CliApp extends EventEmitter {
 
     this.features = {};
     this.services = {};
-    let configVariables = {
-      'app': this,
-      'log': winston,
-      'env': process.env
-    };
     this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, Literal.APP_CFG_NAME, this.env);
-    this.config = await this.configLoader.load_(configVariables);
+    await this.loadConfig_();
     this.emit('configLoaded');
     await this._loadFeatures_();
     this.emit('ready');
@@ -114,6 +109,16 @@ class CliApp extends EventEmitter {
     });
   }
 
+  async loadConfig_() {
+    let configVariables = {
+      'app': this,
+      'log': winston,
+      'env': process.env
+    };
+    this.config = await this.configLoader.load_(configVariables);
+    return this;
+  }
+
   toAbsolutePath(...args) {
     if (args.length === 0) {
       return this.workingPath;
@@ -138,6 +143,26 @@ class CliApp extends EventEmitter {
   log(...rest) {
     this.logger.log(...rest);
     return this;
+  }
+
+  loadFeature(feature) {
+    let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
+
+    if (!fs.existsSync(extensionJs)) {
+      extensionJs = path.resolve(__dirname, 'features', feature + '.js');
+
+      if (!fs.existsSync(extensionJs)) {
+        throw new Error(`Unknown feature "${feature}".`);
+      }
+    }
+
+    let featureObject = require(extensionJs);
+
+    if (!Feature.validate(featureObject)) {
+      throw new Error(`Invalid feature object loaded from "${extensionJs}".`);
+    }
+
+    return featureObject;
   }
 
   _injectLogger(detach) {
@@ -171,32 +196,20 @@ class CliApp extends EventEmitter {
   }
 
   async _loadFeatures_() {
-    let featureGroups = {
-      [Feature.CONF]: [],
-      [Feature.INIT]: [],
-      [Feature.SERVICE]: [],
-      [Feature.PLUGIN]: []
-    };
+    let configStageFeatures = [];
 
     _.forOwn(this.config, (featureOptions, name) => {
-      let feature = this._loadFeature(name);
+      let feature;
 
-      if (!feature) {
-        throw new Error(`Invalid feature "${name}".`);
+      try {
+        feature = this.loadFeature(name);
+      } catch (err) {}
+
+      if (feature && feature.type === Feature.CONF) {
+        configStageFeatures.push([name, feature.load_, featureOptions]);
+        delete this.config[name];
       }
-
-      if (!feature.type) {
-        throw new Error(`Missing feature type. Feature: ${name}`);
-      }
-
-      if (!(feature.type in featureGroups)) {
-        throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
-      }
-
-      featureGroups[feature.type].push([name, feature.load_, featureOptions]);
     });
-
-    let configStageFeatures = featureGroups[Feature.CONF];
 
     if (configStageFeatures.length > 0) {
       configStageFeatures.forEach(([name]) => {
@@ -206,7 +219,22 @@ class CliApp extends EventEmitter {
       return this._loadFeatures_();
     }
 
-    delete featureGroups[Feature.CONF];
+    let featureGroups = {
+      [Feature.INIT]: [],
+      [Feature.SERVICE]: [],
+      [Feature.PLUGIN]: []
+    };
+
+    _.forOwn(this.config, (featureOptions, name) => {
+      let feature = this.loadFeature(name);
+
+      if (!(feature.type in featureGroups)) {
+        throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
+      }
+
+      featureGroups[feature.type].push([name, feature.load_, featureOptions]);
+    });
+
     return Util.eachAsync_(featureGroups, (group, level) => this._loadFeatureGroup_(group, level));
   }
 
@@ -222,20 +250,6 @@ class CliApp extends EventEmitter {
     });
     this.log('verbose', `Finished loading "${groupLevel}" feature group. [OK]`);
     this.emit('after:' + groupLevel);
-  }
-
-  _loadFeature(feature) {
-    let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
-
-    if (!fs.existsSync(extensionJs)) {
-      extensionJs = path.resolve(__dirname, 'features', feature + '.js');
-
-      if (!fs.existsSync(extensionJs)) {
-        throw new Error(`Unknown feature "${feature}".`);
-      }
-    }
-
-    return require(extensionJs);
   }
 
 }

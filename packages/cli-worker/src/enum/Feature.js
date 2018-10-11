@@ -22,5 +22,9 @@ module.exports = {
     /**
      * Attaching middlewares
      */
-    PLUGIN: 'Plugins'
+    PLUGIN: 'Plugins',
+
+    validate: function (featureObject) {
+        return featureObject && featureObject.hasOwnProperty('type') && (typeof featureObject.load_ === 'function');
+    }
 };
