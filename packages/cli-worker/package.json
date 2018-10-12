@@ -1,6 +1,6 @@
 {
   "name": "cli-worker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI Worker Process Template",
   "main": "index.js",
   "scripts": {
@@ -16,9 +16,13 @@
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
   "author": "Rockie Guo <rockie@kitmi.com.au>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "http://github.com/kitmi/cli-worker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kitmi/cli-worker/issues"
   },
   "keywords": [
     "cli",
