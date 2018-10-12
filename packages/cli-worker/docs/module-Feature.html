@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>cli-worker Module: Feature_Bootstrap</title>
+	<title>cli-worker Module: Feature</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -79,7 +79,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: Feature_Bootstrap</h1>
+	<h1 class="page-title">Module: Feature</h1>
 <section>
 
 <header>
@@ -91,7 +91,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Enable bootstrap scripts</p></div>
+            <div class="description"><p>Feature loading stage definitions</p></div>
         
 
         
@@ -127,7 +127,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Feature.js
 	</dd>
 	
 
@@ -137,6 +137,12 @@
 
 	
 </dl>
+
+
+        
+            <h3>Example</h3>
+            
+    <pre class="sunlight-highlight-javascript">const Feature = require(&#x27;cli-worker/lib/enum/Feature&#x27;);</pre>
 
 
         
@@ -159,15 +165,15 @@
         <dl>
             
 <hr>
-<dt class="name" id=".type">
-    <h4 id=".type"><span class="type-signature">&lt;static> </span>type<span class="type-signature"> :string</span></h4>
+<dt class="name" id=".CONF">
+    <h4 id=".CONF"><span class="type-signature">&lt;static> </span>CONF<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>This feature is loaded at init stage</p>
+        <p>Configuration</p>
     </div>
     
 
@@ -211,13 +217,269 @@
 	
 
 	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Configure</li>
+		</ul>
+	</dd>
+	
 
 
 
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Feature.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".INIT">
+    <h4 id=".INIT"><span class="type-signature">&lt;static> </span>INIT<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Initialization, e.g. bootstrap, settings</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Initial</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Feature.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".PLUGIN">
+    <h4 id=".PLUGIN"><span class="type-signature">&lt;static> </span>PLUGIN<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Attaching middlewares</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Plugins</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Feature.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".SERVICE">
+    <h4 id=".SERVICE"><span class="type-signature">&lt;static> </span>SERVICE<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Services, e.g. loggers, i18n</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Services</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Feature.js
 	</dd>
 	
 
@@ -242,7 +504,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, options)</h4>
+    <h4 class="name" id=".validate"><span class="type-signature">&lt;static> </span>validate(featureObject)</h4>
     
     
 </dt>
@@ -250,7 +512,7 @@
 
     
     <div class="description">
-        <p>Load the feature</p>
+        <p>Validate a feature object.</p>
     </div>
     
 
@@ -285,31 +547,7 @@
 
         <tr>
             
-                <td class="name"><code>app</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="CliApp.html">CliApp</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The cli app module object</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>featureObject</code></td>
             
 
             <td class="type">
@@ -326,7 +564,7 @@
 
             
 
-            <td class="description last"><p>Options for the feature</p></td>
+            <td class="description last"><p>Feature object</p></td>
         </tr>
 
     
@@ -353,11 +591,7 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -369,7 +603,7 @@
 
         <tr>
             
-                <td class="name"><code>options.path</code></td>
+                <td class="name"><code>featureObject.type</code></td>
             
 
             <td class="type">
@@ -383,24 +617,34 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
+            
+
+            <td class="description last"><p>Feature loading stage</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>featureObject.load_</code></td>
+            
+
+            <td class="type">
+            
                 
-                </td>
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
             
 
             
-                <td class="default">
-                
-                    'boostrap'
-                
-                </td>
-            
 
-            <td class="description last"><p>The path of the bootstrap scripts</p></td>
+            <td class="description last"><p>Feature loading method</p></td>
         </tr>
 
     
@@ -439,7 +683,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Feature.js
 	</dd>
 	
 
@@ -473,7 +717,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;*></span>
+<span class="param-type">bool</span>
 
 
 

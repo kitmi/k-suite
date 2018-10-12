@@ -1,6 +1,14 @@
 "use strict";
 
 /**
+ * Common constants
+ * @module Literal
+ * 
+ * @example
+ *   const Literal = require('cli-worker/lib/enum/Literal');
+ */
+
+/**
  * Common constant definitions.
  * @readonly
  * @enum {string}

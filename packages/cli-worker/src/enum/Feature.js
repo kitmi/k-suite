@@ -1,6 +1,14 @@
 "use strict";
 
 /**
+ * Feature loading stage definitions
+ * @module Feature
+ * 
+ * @example
+ *   const Feature = require('cli-worker/lib/enum/Feature');
+ */
+
+/**
  * Feature level definitions.
  * @readonly
  * @enum {string}
@@ -24,6 +32,13 @@ module.exports = {
      */
     PLUGIN: 'Plugins',
 
+    /**
+     * Validate a feature object.
+     * @param {object} featureObject - Feature object
+     * @property {string} featureObject.type - Feature loading stage
+     * @property {function} featureObject.load_ - Feature loading method
+     * @returns {bool}
+     */
     validate: function (featureObject) {
         return featureObject && featureObject.hasOwnProperty('type') && (typeof featureObject.load_ === 'function');
     }

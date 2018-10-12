@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>cli-worker Module: Feature_Bootstrap</title>
+	<title>cli-worker Module: Literal</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -79,7 +79,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: Feature_Bootstrap</h1>
+	<h1 class="page-title">Module: Literal</h1>
 <section>
 
 <header>
@@ -91,7 +91,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Enable bootstrap scripts</p></div>
+            <div class="description"><p>Common constants</p></div>
         
 
         
@@ -127,7 +127,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Literal.js
 	</dd>
 	
 
@@ -137,6 +137,12 @@
 
 	
 </dl>
+
+
+        
+            <h3>Example</h3>
+            
+    <pre class="sunlight-highlight-javascript">const Literal = require(&#x27;cli-worker/lib/enum/Literal&#x27;);</pre>
 
 
         
@@ -159,15 +165,15 @@
         <dl>
             
 <hr>
-<dt class="name" id=".type">
-    <h4 id=".type"><span class="type-signature">&lt;static> </span>type<span class="type-signature"> :string</span></h4>
+<dt class="name" id=".APP_CFG_NAME">
+    <h4 id=".APP_CFG_NAME"><span class="type-signature">&lt;static> </span>APP_CFG_NAME<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>This feature is loaded at init stage</p>
+        <p>App config file name</p>
     </div>
     
 
@@ -211,13 +217,20 @@
 	
 
 	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>app</li>
+		</ul>
+	</dd>
+	
 
 
 
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Literal.js
 	</dd>
 	
 
@@ -232,184 +245,38 @@
     
 </dd>
 
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
+        
             
 <hr>
-<dt>
-    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, options)</h4>
-    
+<dt class="name" id=".DEFAULT_BOOTSTRAP_PATH">
+    <h4 id=".DEFAULT_BOOTSTRAP_PATH"><span class="type-signature">&lt;static> </span>DEFAULT_BOOTSTRAP_PATH<span class="type-signature"> :string</span></h4>
+
     
 </dt>
 <dd>
-
     
     <div class="description">
-        <p>Load the feature</p>
+        <p>Default bootrap path</p>
     </div>
     
 
     
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>app</code></td>
-            
-
-            <td class="type">
-            
+        <h5>Type:</h5>
+        <ul>
+            <li>
                 
-<span class="param-type"><a href="CliApp.html">CliApp</a></span>
+<span class="param-type">string</span>
 
 
 
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The cli app module object</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Options for the feature</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
+            </li>
+        </ul>
     
 
     
 <dl class="details">
     
 
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options.path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'boostrap'
-                
-                </td>
-            
-
-            <td class="description last"><p>The path of the bootstrap scripts</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
-    
-
 	
 
 	
@@ -432,6 +299,13 @@
 
 	
 
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>bootstrap</li>
+		</ul>
+	</dd>
 	
 
 
@@ -439,7 +313,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		enum/Literal.js
 	</dd>
 	
 
@@ -452,41 +326,260 @@
 
 
     
+</dd>
 
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
         
-<span class="param-type">Promise.&lt;*></span>
+            
+<hr>
+<dt class="name" id=".DEFAULT_CONFIG_PATH">
+    <h4 id=".DEFAULT_CONFIG_PATH"><span class="type-signature">&lt;static> </span>DEFAULT_CONFIG_PATH<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Config files path</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
 
 
 
-    </dd>
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>conf</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Literal.js
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
+</dd>
+
         
+            
+<hr>
+<dt class="name" id=".FEATURES_PATH">
+    <h4 id=".FEATURES_PATH"><span class="type-signature">&lt;static> </span>FEATURES_PATH<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Feature files path</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>features</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Literal.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".MIDDLEWARES_PATH">
+    <h4 id=".MIDDLEWARES_PATH"><span class="type-signature">&lt;static> </span>MIDDLEWARES_PATH<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Middleware files path</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>middlewares</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		enum/Literal.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
 
     
 </dd>
 
         </dl>
+    
+
     
 
     
