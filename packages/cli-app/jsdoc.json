@@ -6,7 +6,7 @@
 	"templates" : {
 		"systemName"            : "cli-worker",
 		"footer"                : "",
-		"copyright"             : "Copyright (c) 2013 KIT Mobile Internet Pty Ltd",
+		"copyright"             : "Copyright (c) 2013-2018 KIT Mobile Internet Pty Ltd",
 		"includeDate"           : false,
 		"navType"               : "vertical",
 		"theme"                 : "cerulean",

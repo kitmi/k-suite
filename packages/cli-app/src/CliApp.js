@@ -16,21 +16,12 @@ const winstonFlight = require('winstonflight');
 
 const ConfigLoader = require('rk-config');
 
+/**
+ * CLI worker process template.
+ * @class
+ * @extends EventEmitter     
+ */
 class CliApp extends EventEmitter {
-    /**
-     * Loaded features, name => feature object
-     * @type {object}
-     * @public
-     */
-    features = undefined;
-
-    /**
-     * Loaded services
-     * @type {object}
-     * @public
-     */
-    services = undefined;       
-
     _onUncaughtException = err => {
         this.log('error', err);
     };        
@@ -41,34 +32,33 @@ class CliApp extends EventEmitter {
 
     _onExit = (code) => {
         if (this.started) {
-            this.stop_().then(() => {                
-            });
+            this.stop_();
         }           
     };
 
-    /**
-     * Back-end cli worker process template.
-     * @constructs CliApp
-     * @extends EventEmitter     
+    /**     
      * @param {string} name - The name of the cli application.     
      * @param {object} [options] - Application options     
      * @property {object} [options.logger] - Logger options
      * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics        
+     * @property {string} [options.env] - Environment, default to process.env.NODE_ENV
+     * @property {string} [options.workingPath] - App's working path, default to process.cwd()
+     * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath
+     * @property {string} [options.configName] - App's config basename, default to "app"
+     * @property {bool} [options.handleProcessError] - Whether to handle process scope errors
      */
     constructor(name, options) {
         super();
 
         /**
          * Name of the app
-         * @type {object}
-         * @public
+         * @member {object}         
          **/
         this.name = name || 'unnamed_worker';                
 
         /**
          * App options
-         * @type {object}
-         * @public
+         * @member {object}         
          */
         this.options = Object.assign({
             logger: {
@@ -88,34 +78,37 @@ class CliApp extends EventEmitter {
                         }
                     }
                 ]
-            }
+            },
+            handleProcessError: true
         }, options);
 
         /**
          * Environment flag
-         * @type {string}
-         * @public
+         * @member {string}        
          */
         this.env = this.options.env || process.env.NODE_ENV || "development";
 
         /**
          * Working directory of this cli app
-         * @type {string}
-         * @public
+         * @member {string}         
          */
         this.workingPath = this.options.workingPath ? path.resolve(this.options.workingPath) : process.cwd();     
         
         /**
          * Config path
-         * @type {string}
-         * @public
+         * @member {string}         
          */
-        this.configPath = this.toAbsolutePath(this.options.configPath || Literal.DEFAULT_CONFIG_PATH);          
+        this.configPath = this.toAbsolutePath(this.options.configPath || Literal.DEFAULT_CONFIG_PATH);      
+        
+        /**
+         * Config basename
+         * @member {string}         
+         */
+        this.configName = this.options.configName || Literal.APP_CFG_NAME;
     }
 
     /**
-     * Start the cli app
-     * @memberof CliApp
+     * Start the cli app     
      * @fires CliApp#configLoaded
      * @fires CliApp#ready
      * @returns {Promise.<CliApp>}
@@ -127,17 +120,30 @@ class CliApp extends EventEmitter {
         }      
 
         this._injectLogger();
-        this._injectErrorHandlers(); 
+        if (this.options.handleProcessError) {
+            this._injectErrorHandlers(); 
+        }
         
+        this._featureRegistry = {
+            //firstly look up "features" under current working path, and then try the builtin features path
+            '*': [ this.toAbsolutePath(Literal.FEATURES_PATH), path.resolve(__dirname, Literal.FEATURES_PATH) ]
+        };
+        /**
+         * Loaded features, name => feature object
+         * @member {object}         
+         */
         this.features = {};
+        /**
+         * Loaded services
+         * @member {object}         
+         */
         this.services = {};                
 
         /**
          * Configuration loader instance
-         * @type {object}
-         * @public
+         * @member {object}         
          */
-        this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, Literal.APP_CFG_NAME, this.env);
+        this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
         
         await this.loadConfig_();
 
@@ -163,8 +169,7 @@ class CliApp extends EventEmitter {
     }
 
     /**
-     * Stop the app module
-     * @memberof CliApp
+     * Stop the app module     
      * @fires CliApp#stopping
      * @returns {Promise.<CliApp>}
      */
@@ -178,8 +183,9 @@ class CliApp extends EventEmitter {
         this.emit('stopping');
         this.started = false;
 
-        this.services = undefined;
-        this.features = undefined;
+        delete this.services;
+        delete this.features;
+        delete this._featureRegistry;
 
         delete this.config;
         delete this.configLoader;        
@@ -187,7 +193,9 @@ class CliApp extends EventEmitter {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const detach = true;
-                this._injectErrorHandlers(detach);       
+                if (this.options.handleProcessError) {
+                    this._injectErrorHandlers(detach);       
+                }
                 this._injectLogger(detach);         
 
                 process.chdir(this._pwd);
@@ -210,8 +218,7 @@ class CliApp extends EventEmitter {
 
         /**
          * App configuration
-         * @type {object}
-         * @public
+         * @member {object}         
          */
         this.config = await this.configLoader.load_(configVariables);   
 
@@ -219,8 +226,7 @@ class CliApp extends EventEmitter {
     }
 
     /**
-     * Translate a relative path of this app module to an absolute path
-     * @memberof CliApp
+     * Translate a relative path of this app module to an absolute path     
      * @param {array} args - Array of path parts
      * @returns {string}
      */
@@ -233,8 +239,7 @@ class CliApp extends EventEmitter {
     }
 
     /**
-     * Register a service
-     * @memberof CliApp
+     * Register a service     
      * @param {string} name
      * @param {object} serviceObject
      * @param {boolean} override
@@ -249,8 +254,7 @@ class CliApp extends EventEmitter {
     }
 
     /**
-     * Get a service from module hierarchy
-     * @memberof CliApp
+     * Get a service from module hierarchy     
      * @param name
      * @returns {object}
      */
@@ -259,37 +263,28 @@ class CliApp extends EventEmitter {
     }
 
     /**
-     * Default log method, may be override by loggers feature
-     * @memberof CliApp     
+     * Add more or overide current feature registry
+     * @param {object} registry 
      */
-    log(...rest) {
-        this.logger.log(...rest);
-        return this;
+    addFeatureRegistry(registry) {
+        // * is used as the fallback location to find a feature
+        if (registry.hasOwnProperty('*')) {
+            Util.putIntoBucket(this._featureRegistry, '*', registry['*']);
+        }
+
+        Object.assign(this._featureRegistry, _.omit(registry, ['*']));
     }
 
     /**
-     * Load a feature object by name
-     * @param {string} feature 
-     * @returns {object}
+     * Default log method, may be override by loggers feature
+     * @param {string} - Log level
+     * @param {string} - Log message
+     * @param {...object} - Extra meta data
+     * @returns {CliApp}
      */
-    loadFeature(feature) {
-        let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
-
-        if (!fs.existsSync(extensionJs)) {
-            //built-in features
-            extensionJs = path.resolve(__dirname, 'features', feature + '.js');
-
-            if (!fs.existsSync(extensionJs)) {
-                throw new Error(`Unknown feature "${feature}".`);
-            }
-        } 
-
-        let featureObject = require(extensionJs);
-        if (!Feature.validate(featureObject)) {
-            throw new Error(`Invalid feature object loaded from "${extensionJs}".`);
-        }
-
-        return featureObject;
+    log(level, message, ...rest) {
+        this.logger.log(level, message, ...rest);
+        return this;
     }
 
     _injectLogger(detach) {
@@ -335,7 +330,7 @@ class CliApp extends EventEmitter {
         _.forOwn(this.config, (featureOptions, name) => {
             let feature;
             try {
-                feature = this.loadFeature(name);                                
+                feature = this._loadFeature(name);                                
             } catch (err) {                
             }   
             
@@ -363,7 +358,7 @@ class CliApp extends EventEmitter {
 
         // load features
         _.forOwn(this.config, (featureOptions, name) => {
-            let feature = this.loadFeature(name);
+            let feature = this._loadFeature(name);
 
             if (!(feature.type in featureGroups)) {
                 throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
@@ -388,6 +383,55 @@ class CliApp extends EventEmitter {
         this.log('verbose', `Finished loading "${groupLevel}" feature group. [OK]`);
         this.emit('after:' + groupLevel);
     }    
+
+    /**
+     * Load a feature object by name.
+     * @private
+     * @param {string} feature 
+     * @returns {object}     
+     */
+    _loadFeature(feature) {
+        let featureObject, featurePath;
+
+        if (this._featureRegistry.hasOwnProperty(feature)) {          
+            let loadOption = this._featureRegistry[feature];            
+            
+            if (Array.isArray(loadOption)) {
+                if (loadOption.length === 0) {
+                    throw new Error(`Invalid registry value for feature "${feature}".`);
+                }
+
+                featurePath = loadOption[0];
+                featureObject = require(featurePath);
+
+                if (loadOption.length > 1) {
+                    featureObject = Util.getValueByPath(featureObject, loadOption[1]);
+                }
+            } else {
+                featurePath = loadOption;
+                featureObject = require(featurePath);
+            }                             
+        } else {
+            let searchingPath = this._featureRegistry['*'];
+    
+            let found = _.find(searchingPath, p => {
+                featurePath = path.join(p, feature + '.js');
+                return fs.existsSync(featurePath);
+            });        
+
+            if (!found) {
+                throw new Error(`Don't know where to load feature "${feature}".`);
+            }
+
+            featureObject = require(featurePath);
+        }
+        
+        if (!Feature.validate(featureObject)) {
+            throw new Error(`Invalid feature object loaded from "${featurePath}".`);
+        }
+
+        return featureObject;
+    }
 }
 
 module.exports = CliApp;

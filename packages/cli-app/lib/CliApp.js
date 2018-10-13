@@ -23,8 +23,6 @@ const ConfigLoader = require('rk-config');
 class CliApp extends EventEmitter {
   constructor(name, options) {
     super();
-    this.features = undefined;
-    this.services = undefined;
 
     this._onUncaughtException = err => {
       this.log('error', err);
@@ -36,7 +34,7 @@ class CliApp extends EventEmitter {
 
     this._onExit = code => {
       if (this.started) {
-        this.stop_().then(() => {});
+        this.stop_();
       }
     };
 
@@ -56,11 +54,13 @@ class CliApp extends EventEmitter {
             "filename": `${name || 'app'}.log`
           }
         }]
-      }
+      },
+      handleProcessError: true
     }, options);
     this.env = this.options.env || process.env.NODE_ENV || "development";
     this.workingPath = this.options.workingPath ? path.resolve(this.options.workingPath) : process.cwd();
     this.configPath = this.toAbsolutePath(this.options.configPath || Literal.DEFAULT_CONFIG_PATH);
+    this.configName = this.options.configName || Literal.APP_CFG_NAME;
   }
 
   async start_() {
@@ -72,11 +72,16 @@ class CliApp extends EventEmitter {
 
     this._injectLogger();
 
-    this._injectErrorHandlers();
+    if (this.options.handleProcessError) {
+      this._injectErrorHandlers();
+    }
 
+    this._featureRegistry = {
+      '*': [this.toAbsolutePath(Literal.FEATURES_PATH), path.resolve(__dirname, Literal.FEATURES_PATH)]
+    };
     this.features = {};
     this.services = {};
-    this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, Literal.APP_CFG_NAME, this.env);
+    this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
     await this.loadConfig_();
     this.emit('configLoaded');
     await this._loadFeatures_();
@@ -90,15 +95,18 @@ class CliApp extends EventEmitter {
     process.removeListener('exit', this._onExit);
     this.emit('stopping');
     this.started = false;
-    this.services = undefined;
-    this.features = undefined;
+    delete this.services;
+    delete this.features;
+    delete this._featureRegistry;
     delete this.config;
     delete this.configLoader;
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const detach = true;
 
-        this._injectErrorHandlers(detach);
+        if (this.options.handleProcessError) {
+          this._injectErrorHandlers(detach);
+        }
 
         this._injectLogger(detach);
 
@@ -140,29 +148,17 @@ class CliApp extends EventEmitter {
     return this.services[name];
   }
 
-  log(...rest) {
-    this.logger.log(...rest);
-    return this;
+  addFeatureRegistry(registry) {
+    if (registry.hasOwnProperty('*')) {
+      Util.putIntoBucket(this._featureRegistry, '*', registry['*']);
+    }
+
+    Object.assign(this._featureRegistry, _.omit(registry, ['*']));
   }
 
-  loadFeature(feature) {
-    let extensionJs = this.toAbsolutePath(Literal.FEATURES_PATH, feature + '.js');
-
-    if (!fs.existsSync(extensionJs)) {
-      extensionJs = path.resolve(__dirname, 'features', feature + '.js');
-
-      if (!fs.existsSync(extensionJs)) {
-        throw new Error(`Unknown feature "${feature}".`);
-      }
-    }
-
-    let featureObject = require(extensionJs);
-
-    if (!Feature.validate(featureObject)) {
-      throw new Error(`Invalid feature object loaded from "${extensionJs}".`);
-    }
-
-    return featureObject;
+  log(level, message, ...rest) {
+    this.logger.log(level, message, ...rest);
+    return this;
   }
 
   _injectLogger(detach) {
@@ -202,7 +198,7 @@ class CliApp extends EventEmitter {
       let feature;
 
       try {
-        feature = this.loadFeature(name);
+        feature = this._loadFeature(name);
       } catch (err) {}
 
       if (feature && feature.type === Feature.CONF) {
@@ -226,7 +222,7 @@ class CliApp extends EventEmitter {
     };
 
     _.forOwn(this.config, (featureOptions, name) => {
-      let feature = this.loadFeature(name);
+      let feature = this._loadFeature(name);
 
       if (!(feature.type in featureGroups)) {
         throw new Error(`Invalid feature type. Feature: ${name}, type: ${feature.type}`);
@@ -250,6 +246,49 @@ class CliApp extends EventEmitter {
     });
     this.log('verbose', `Finished loading "${groupLevel}" feature group. [OK]`);
     this.emit('after:' + groupLevel);
+  }
+
+  _loadFeature(feature) {
+    let featureObject, featurePath;
+
+    if (this._featureRegistry.hasOwnProperty(feature)) {
+      let loadOption = this._featureRegistry[feature];
+
+      if (Array.isArray(loadOption)) {
+        if (loadOption.length === 0) {
+          throw new Error(`Invalid registry value for feature "${feature}".`);
+        }
+
+        featurePath = loadOption[0];
+        featureObject = require(featurePath);
+
+        if (loadOption.length > 1) {
+          featureObject = Util.getValueByPath(featureObject, loadOption[1]);
+        }
+      } else {
+        featurePath = loadOption;
+        featureObject = require(featurePath);
+      }
+    } else {
+      let searchingPath = this._featureRegistry['*'];
+
+      let found = _.find(searchingPath, p => {
+        featurePath = path.join(p, feature + '.js');
+        return fs.existsSync(featurePath);
+      });
+
+      if (!found) {
+        throw new Error(`Don't know where to load feature "${feature}".`);
+      }
+
+      featureObject = require(featurePath);
+    }
+
+    if (!Feature.validate(featureObject)) {
+      throw new Error(`Invalid feature object loaded from "${featurePath}".`);
+    }
+
+    return featureObject;
   }
 
 }

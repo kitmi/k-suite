@@ -1,5 +1,5 @@
 {
-  "name": "cli-worker",
+  "name": "@k-suite/cli-app",
   "version": "1.0.2",
   "description": "CLI Worker Process Template",
   "main": "index.js",
@@ -17,13 +17,7 @@
   },
   "author": "Rockie Guo <rockie@kitmi.com.au>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/kitmi/cli-worker.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kitmi/cli-worker/issues"
-  },
+  "repository": "https://github.com/kitmi/k-suite/tree/master/packages/cli-app",  
   "keywords": [
     "cli",
     "worker"

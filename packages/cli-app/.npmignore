@@ -12,3 +12,4 @@ jsdoc.json
 coverage
 .gitattributes
 .nyc_output
+*.md

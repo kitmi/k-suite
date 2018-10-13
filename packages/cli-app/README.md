@@ -1,18 +1,12 @@
-[![npm version](https://badge.fury.io/js/cli-worker.svg)](https://badge.fury.io/js/cli-worker)
-[![Build Status](https://travis-ci.org/kitmi/cli-worker.svg?branch=master)](https://travis-ci.org/kitmi/cli-worker)
-[![Coverage Status](https://coveralls.io/repos/github/kitmi/cli-worker/badge.svg?branch=master)](https://coveralls.io/github/kitmi/cli-worker?branch=master)
-
-# cli-worker
+# cli-app
 
 CLI Worker Process Library
-
-see [API Document](https://kitmi.github.io/cli-worker)
 
 ## example
 
 ### usage
 
-    const CliApp = require('cli-worker');
+    const CliApp = require('@k-suite/cli-app');
 
     let cliApp = new CliApp('test');
 
