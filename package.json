@@ -7,7 +7,9 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",    
-    "test": "lerna exec --concurrency 1 -- npm run test"
+    "test": "lerna exec --concurrency 1 -- npm run test",
+    "build": "lerna exec --concurrency 1 -- npm run build",
+    "build:prod": "lerna exec --concurrency 1 -- npm run build:prod"
   },
   "repository": {
     "type": "git",

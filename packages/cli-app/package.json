@@ -3,6 +3,9 @@
   "version": "0.0.1-alpha.0",
   "description": "CLI Worker Process Template",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
     "cover": "nyc --reporter=html --reporter=text mocha -t 5000 test/*.mocha.js",
@@ -55,5 +58,6 @@
     "rk-utils": "^2.1.6",
     "winston": "^3.1.0",
     "winstonflight": "^1.0.4"
-  }
+  },
+  "gitHead": "16c02dfcd4576cc40f3575d6e7fd5e58f17c192a"
 }
