@@ -1,0 +1,23 @@
+{
+  "name": "k-suite",
+  "version": "1.0.0",
+  "description": "K-Suite is a set of tools for fast cli, web & mobile app development.",
+  "devDependencies": {
+    "lerna": "^3.4.0"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "publish": "lerna publish",
+    "test": "lerna exec --concurrency 1 -- npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitmi/k-suite.git"
+  },
+  "author": "Rockie Guo <rockie@kitmi.com.au>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kitmi/k-suite/issues"
+  },
+  "homepage": "https://github.com/kitmi/k-suite#readme"
+}
