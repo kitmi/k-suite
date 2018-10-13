@@ -1,13 +1,12 @@
 {
   "name": "k-suite",
-  "version": "1.0.0",
+  "private": true,  
   "description": "K-Suite is a set of tools for fast cli, web & mobile app development.",
   "devDependencies": {
     "lerna": "^3.4.0"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap",
-    "publish": "lerna publish",
+    "postinstall": "lerna bootstrap",    
     "test": "lerna exec --concurrency 1 -- npm run test"
   },
   "repository": {
