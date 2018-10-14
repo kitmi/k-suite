@@ -21,6 +21,9 @@
   "author": "Rockie Guo <rockie@kitmi.com.au>",
   "license": "MIT",
   "repository": "https://github.com/kitmi/k-suite/tree/master/packages/cli-app",
+  "bugs": {
+    "url": "https://github.com/kitmi/k-suite/issues"
+  },
   "keywords": [
     "cli",
     "worker"

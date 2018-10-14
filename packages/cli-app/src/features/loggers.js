@@ -84,7 +84,7 @@ module.exports = {
         app.registerService('loggers', loggers);
 
         app.on('stopping', () => {
-            loggers.close();
+            loggers.close();            
         }); 
     }
 };

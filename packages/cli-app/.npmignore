@@ -1,15 +1,16 @@
 # .npmignore 
 
+.babelrc
+.gitignore
+.gitattributes
+.travis.yml
+jsdoc.json
+babel.config.js
+*.log
+*.md
 src
 test
 examples
 docs
-babel.config.js
-.babelrc
-.gitignore
-.travis.yml
-jsdoc.json
 coverage
-.gitattributes
 .nyc_output
-README.md

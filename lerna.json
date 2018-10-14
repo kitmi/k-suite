@@ -2,13 +2,15 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.1-alpha.1",
+  "version": "independent",
   "command": {
     "publish": {
+      "allowBranch": "master",
       "ignoreChanges": [
         "*.md",
         "*.json",
         "*.txt",
+        "*.log",
         "test/**",
         "package.json"
       ]

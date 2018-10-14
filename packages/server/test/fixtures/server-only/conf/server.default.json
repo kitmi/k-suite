@@ -1,0 +1,27 @@
+{
+    "loggers": {        
+        "accessLog": {
+            "transports": [
+                {
+                    "type": "fast-file-rotate",
+                    "options": {
+                        "level": "verbose",                        
+                        "fileName": "access-%DATE%.log",
+                        "dateFormat": "YYYY-MM-DD"
+                    }
+                }
+            ]
+        }
+    },
+    "timezone": "",
+    "koa": {       
+        "keys": [ "a", "b" ] 
+    },
+    "middlewares": {
+        "favicon": "public/favicon.ico",
+        "accessLog": { "logger": "accessLog" },
+        "compress": {},
+        "etag": {},        
+        "serveStatic": {}
+    }
+}

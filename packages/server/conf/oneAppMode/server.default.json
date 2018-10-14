@@ -1,0 +1,30 @@
+{
+    "loggers": {
+        "general": {
+            "transports": [{
+                "type": "console",
+                "options": {
+                    "level": "verbose",
+                    "colorize": true
+                }
+            }]
+        }
+    },
+    "koa": {
+        "httpPort": 3000
+    },
+    "middlewares": {
+        "accessLog": { "logger": "general" },
+        "compress": {},
+        "etag": {},
+        "bodyParser": {},
+        "methodOverride": {}
+    },
+    "routing": {
+        "/": {
+            "mod": {
+                "name": "#!es6:${name}"
+            }
+        }
+    }
+}

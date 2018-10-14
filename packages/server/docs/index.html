@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>@k-suite/server Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cerulean.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">@k-suite/server</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-Errors.html">Errors</a></li><li><a href="module-Feature_AppRouting.html">Feature_AppRouting</a></li><li><a href="module-Feature_I18n.html">Feature_I18n</a></li><li><a href="module-Feature_Koa.html">Feature_Koa</a></li><li><a href="module-Feature_Middlewares.html">Feature_Middlewares</a></li><li><a href="module-Feature_Oolong.html">Feature_Oolong</a></li><li><a href="module-Feature_Passport.html">Feature_Passport</a></li><li><a href="module-Feature_Routing.html">Feature_Routing</a></li><li><a href="module-Feature_RpcServer.html">Feature_RpcServer</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Literal.html">Literal</a></li><li><a href="module-Middleware_AccessLog.html">Middleware_AccessLog</a></li><li><a href="module-Middleware_Action.html">Middleware_Action</a></li><li><a href="module-Middleware_BodyParser.html">Middleware_BodyParser</a></li><li><a href="module-Middleware_Compress.html">Middleware_Compress</a></li><li><a href="module-Middleware_Csrf.html">Middleware_Csrf</a></li><li><a href="module-Middleware_Favicon.html">Middleware_Favicon</a></li><li><a href="module-Middleware_MethodOverride.html">Middleware_MethodOverride</a></li><li><a href="module-Middleware_ServeStatic.html">Middleware_ServeStatic</a></li><li><a href="module-Middleware_Views.html">Middleware_Views</a></li><li><a href="module-Oolong.html">Oolong</a></li><li><a href="module-OolongEntityFeature_AtLeastOneNotNull.html">OolongEntityFeature_AtLeastOneNotNull</a></li><li><a href="module-OolongEntityFeature_AutoId.html">OolongEntityFeature_AutoId</a></li><li><a href="module-OolongEntityFeature_CreateTimestamp.html">OolongEntityFeature_CreateTimestamp</a></li><li><a href="module-OolongEntityFeature_I18n.html">OolongEntityFeature_I18n</a></li><li><a href="module-OolongEntityFeature_LogicalDeletion.html">OolongEntityFeature_LogicalDeletion</a></li><li><a href="module-OolongEntityFeature_StateTracking.html">OolongEntityFeature_StateTracking</a></li><li><a href="module-OolongEntityFeature_UpdateTimestamp.html">OolongEntityFeature_UpdateTimestamp</a></li><li><a href="module-Router_Rule.html">Router_Rule</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="AppWithMiddleware.html">AppWithMiddleware</a></li><li><a href="Db.html">Db</a></li><li><a href="DbService.html">DbService</a></li><li><a href="Errors_ModelOperationError.html">Errors:ModelOperationError</a></li><li><a href="Errors_ModelUsageError.html">Errors:ModelUsageError</a></li><li><a href="Errors_ModelValidationError.html">Errors:ModelValidationError</a></li><li><a href="I18n.html">I18n</a></li><li><a href="Model.html">Model</a></li><li><a href="module-Errors-BadRequest.html">Errors~BadRequest</a></li><li><a href="module-Errors-InvalidConfiguration.html">Errors~InvalidConfiguration</a></li><li><a href="module-Errors-ServerError.html">Errors~ServerError</a></li><li><a href="module-Feature_I18n-I18nStorage.html">Feature_I18n~I18nStorage</a></li><li><a href="MowaController.html">MowaController</a></li><li><a href="OolongDaoModeler.html">OolongDaoModeler</a></li><li><a href="OolongDbDeployer.html">OolongDbDeployer</a></li><li><a href="OolongDbModeler.html">OolongDbModeler</a></li><li><a href="OolongDocument.html">OolongDocument</a></li><li><a href="OolongEntity.html">OolongEntity</a></li><li><a href="OolongField.html">OolongField</a></li><li><a href="OolongLinker.html">OolongLinker</a></li><li><a href="OolongMysqlDeployer.html">OolongMysqlDeployer</a></li><li><a href="OolongMysqlModeler.html">OolongMysqlModeler</a></li><li><a href="OolongSchema.html">OolongSchema</a></li><li><a href="OolongView.html">OolongView</a></li><li><a href="TopoSort.html">TopoSort</a></li><li><a href="View.html">View</a></li><li><a href="WebApp.html">WebApp</a></li><li><a href="WebServer.html">WebServer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-Errors-withExtraInfo.html">Errors~withExtraInfo</a></li><li><a href="module-Errors-withHttpStatus.html">Errors~withHttpStatus</a></li><li><a href="module-Errors-withName.html">Errors~withName</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="WebServer.html#event:httpReady">WebServer#event:httpReady</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#_fieldRequirementCheck">_fieldRequirementCheck</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>Mowa</h1><p><a href="https://badge.fury.io/js/mowa"><img src="https://badge.fury.io/js/mowa.svg" alt="npm version"></a></p>
+<p>  A full-stack (aimed to be full-stack) <strong>mo</strong>dular <strong>w</strong>eb <strong>a</strong>pplication framework based on koa2. (ES7 required)</p>
+<h2>1. Mowa Concepts</h2><h3>Server</h3><p>A mowa server is a standalone node server acting as a hosting container for Mowa applications. It mounts applications to configured routes either under the same hostname or different hostnames. A server will dispatch a http request to hosted applications according to the server routing settings. It may have server-wide middlewares touching every requests before dispatching them to the right application.</p>
+<h3>Application</h3><p>A mowa application is a web module hosted by a mowa server. It mounts controllers or middlewares to configured routes. Currenlty, an application is not running in a totally separate sandbox in the hosting environment.</p>
+<h3>Controller</h3><p>A mowa controller is a plain object exported by a JavaScript module containing several actions to handle web requests and response to the reqeusting client.</p>
+<h3>Action</h3><p>A mowa action is a koa2-styled action which is a async function and handles one client request at a time. Besides all the koa context, the code in a mowa action can also access the appModule object which represents the instance of the application.</p>
+<pre class="prettyprint source"><code>async (ctx, next) => {
+    ...
+}</code></pre><h3>Feature</h3><p>A feature is a configuratin-driven functional module of the server or an application. Built-in features include bootstrap, loggers, middlewares, koa, routing, i18n, and etc. Every feature is a top-level config item in the server configuraiton file or application configuration file.</p>
+<h3>Starting Phrase</h3><p>The starting of a server or an application include 5 consecutive phrases:</p>
+<p>1). Initial Phrase</p>
+<p>2). Service Registration Phrase</p>
+<p>3). Engine Configuration Phrase</p>
+<p>4). Middleware Registration Phrase</p>
+<p>5). Routing Configuration Phrase (The starting process of an application starts within the server's routing configuration phrase)</p>
+<p>A feature mentioned above is designed to be activated in a certain phrase which is specified in the feature definition file.</p>
+<h3>Middleware</h3><p>A mowa middleware actually should be called a middleware factory. It is a function creating a koa-styled middleware. The middleware factory can be configured in the section of &quot;middlewares&quot; feature of the configuration file or as an option in the setting of a certain router.</p>
+<h3>Router</h3><p>TBD.</p>
+<h3>Oolong</h3><p>Oolong is an embeded domain specific language (DSL) in mowa. The oolong dsl engine will build database scripts, database access models and data-related UI according to oolong entity definition files. It also shipped with a CLI tool to do automatic deployment of the database structure.</p>
+<h2>2. Project Structure</h2><ul>
+<li><strong>/etc</strong> - server or application configuration files</li>
+<li><strong>/client</strong> - client-side source code</li>
+<li><strong>/server</strong> - server-side source code<ul>
+<li><strong>/server/bootstrap</strong> - default path of bootstrap scripts (if boot feature is enabled in server or application config)</li>
+<li><strong>/server/models</strong> - backend model files</li>
+<li><strong>/server/controllers</strong> - backend controller files</li>
+<li><strong>/server/views</strong> - backend view files</li>
+</ul>
+</li>
+<li><strong>/app_modules</strong> - child applications</li>
+<li><strong>/server/db</strong> - database initial scripts including test data</li>
+<li><strong>/server/models</strong> - database access models (usually automatically generated by oolong DSL)</li>
+<li><strong>/oolong</strong> - oolong entity definition files</li>
+<li><strong>/public</strong> - default path of static files (if serveStatic middleware is enabled)</li>
+<li><strong>/middlewares</strong> - middlewares extension</li>
+<li><strong>/features</strong> - features extension</li>
+</ul>
+<h2>3. Get Started</h2><h3>Configurations</h3><h4>1) Server Configuration</h4><ul>
+<li>Environment specific configuration<ul>
+<li>/etc/server.default.json</li>
+<li>/etc/server.development.json - Development specific configuration, overrides server.default.json</li>
+<li>/etc/server.production.json - Production specific configuration, overrides server.default.json</li>
+</ul>
+</li>
+</ul>
+<h4>2) App Module Configuration</h4><ul>
+<li>Environment specific configuration<ul>
+<li>/app_modules/<code>&lt;module name&gt;</code>/etc/app.default.json</li>
+<li>/app_modules/<code>&lt;module name&gt;</code>/etc/app.development.json - Development specific configuration, overrides app.default.json</li>
+<li>/app_modules/<code>&lt;module name&gt;</code>/etc/app.production.json - Production specific configuration, overrides app.default.json</li>
+</ul>
+</li>
+</ul>
+<h4>3) Feature Configuration</h4><ul>
+<li>Each top-level key-value pair in the configuration file is the config of a feature, e.g. loggers, koa, mysql<ul>
+<li>Key is the feature name</li>
+<li>Value is the feature's own config</li>
+</ul>
+</li>
+</ul>
+<h2>4. Built-in Features</h2><h3>Bootstrap</h3><p>Specify a path containing scripts to be executed during initial phrase. </p>
+<p>Options:</p>
+<pre class="prettyprint source"><code>[path] - Bootstrap scripts path, default: ./server/bootstrap</code></pre><h2>5. Convention</h2><h3>Design by contract</h3><p>Refer to: https://<a href="http://www.npmjs.com/package/babel-plugin-contract">www.npmjs.com/package/babel-plugin-contract</a></p>
+<h3>Action</h3><ul>
+<li>this context<ul>
+<li>appModule - the webModule instance</li>
+<li>state - the default view state for view renderer<ul>
+<li>_self - Current landing url        </li>
+<li>__ - i18n interface</li>
+<li>_makePath(relativePath, query)</li>
+<li>_makeUrl(relativePath, query)</li>
+<li>_csrf - if csrf middleware attached</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>License</h2><p>  MIT</p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Copyright (c) 2013-2018 KIT Mobile Internet Pty Ltd
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

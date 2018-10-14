@@ -45,7 +45,6 @@ class CliApp extends EventEmitter {
      * @property {string} [options.workingPath] - App's working path, default to process.cwd()
      * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath
      * @property {string} [options.configName] - App's config basename, default to "app"
-     * @property {bool} [options.handleProcessError] - Whether to handle process scope errors
      */
     constructor(name, options) {
         super();
@@ -74,12 +73,11 @@ class CliApp extends EventEmitter {
                         "type": "file",
                         "options": {
                             "level": "info",
-                            "filename": `${name || 'app'}.log`
+                            "filename": `${name && _.kebabCase(name) || 'app'}.log`
                         }
                     }
                 ]
-            },
-            handleProcessError: true
+            }
         }, options);
 
         /**
@@ -114,19 +112,11 @@ class CliApp extends EventEmitter {
      * @returns {Promise.<CliApp>}
      */
     async start_() {        
-        this._pwd = process.cwd();
-        if (this.workingPath !== this._pwd) {                   
-            process.chdir(this.workingPath);
-        }      
-
-        this._injectLogger();
-        if (this.options.handleProcessError) {
-            this._injectErrorHandlers(); 
-        }
+        this._initialize();
         
         this._featureRegistry = {
             //firstly look up "features" under current working path, and then try the builtin features path
-            '*': [ this.toAbsolutePath(Literal.FEATURES_PATH), path.resolve(__dirname, Literal.FEATURES_PATH) ]
+            '*': this._getFeatureFallbackPath()
         };
         /**
          * Loaded features, name => feature object
@@ -147,6 +137,10 @@ class CliApp extends EventEmitter {
         
         await this.loadConfig_();
 
+        if (_.isEmpty(this.config)) {
+            throw Error('Empty configuration. Nothing to do!');
+        }
+
         /**
          * Config loaded event.
          * @event CliApp#configLoaded
@@ -161,9 +155,11 @@ class CliApp extends EventEmitter {
          */
         this.emit('ready');
 
+        /**
+         * Flag showing the app is started or not.
+         * @member {bool}
+         */
         this.started = true;
-
-        process.on('exit', this._onExit);
         
         return this;
     }
@@ -174,8 +170,6 @@ class CliApp extends EventEmitter {
      * @returns {Promise.<CliApp>}
      */
     async stop_() {
-        process.removeListener('exit', this._onExit);
-
         /**
          * App stopping
          * @event CliApp#stopping
@@ -191,15 +185,9 @@ class CliApp extends EventEmitter {
         delete this.configLoader;        
 
         return new Promise((resolve, reject) => {
+            //deferred execution
             setTimeout(() => {
-                const detach = true;
-                if (this.options.handleProcessError) {
-                    this._injectErrorHandlers(detach);       
-                }
-                this._injectLogger(detach);         
-
-                process.chdir(this._pwd);
-                delete this._pwd;
+                this._uninitialize();
 
                 resolve(this);
             }, 0);
@@ -210,11 +198,7 @@ class CliApp extends EventEmitter {
      * @returns {CliApp}
      */
     async loadConfig_() {
-        let configVariables = {
-            'app': this,            
-            'log': winston,
-            'env': process.env
-        };
+        let configVariables = this._getConfigVariables();
 
         /**
          * App configuration
@@ -263,6 +247,15 @@ class CliApp extends EventEmitter {
     }
 
     /**
+     * Check whether a feature is enabled in the app.
+     * @param {string} feature 
+     * @returns {bool}
+     */
+    enabled(feature) {
+        return this.features.hasOwnProperty(feature);
+    }
+
+    /**
      * Add more or overide current feature registry
      * @param {object} registry 
      */
@@ -285,6 +278,41 @@ class CliApp extends EventEmitter {
     log(level, message, ...rest) {
         this.logger.log(level, message, ...rest);
         return this;
+    }
+
+    _getConfigVariables() {
+        return {
+            'app': this,            
+            'log': winston,
+            'env': this.env
+        };
+    }
+
+    _getFeatureFallbackPath() {
+        return [ path.resolve(__dirname, Literal.FEATURES_PATH), this.toAbsolutePath(Literal.FEATURES_PATH) ];
+    }
+
+    _initialize() {
+        this._pwd = process.cwd();
+        if (this.workingPath !== this._pwd) {                   
+            process.chdir(this.workingPath);
+        }      
+
+        this._injectLogger();
+        this._injectErrorHandlers(); 
+
+        process.on('exit', this._onExit);
+    }
+
+    _uninitialize() {
+        process.removeListener('exit', this._onExit);
+
+        const detach = true;
+        this._injectErrorHandlers(detach);       
+        this._injectLogger(detach);         
+
+        process.chdir(this._pwd);
+        delete this._pwd;
     }
 
     _injectLogger(detach) {
@@ -391,9 +419,13 @@ class CliApp extends EventEmitter {
      * @returns {object}     
      */
     _loadFeature(feature) {
-        let featureObject, featurePath;
+        let featureObject = this.features[feature];
+        if (featureObject) return featureObject;
+
+        let featurePath;
 
         if (this._featureRegistry.hasOwnProperty(feature)) {          
+            //load by registry entry
             let loadOption = this._featureRegistry[feature];            
             
             if (Array.isArray(loadOption)) {
@@ -405,6 +437,7 @@ class CliApp extends EventEmitter {
                 featureObject = require(featurePath);
 
                 if (loadOption.length > 1) {
+                    //one module may contains more than one feature
                     featureObject = Util.getValueByPath(featureObject, loadOption[1]);
                 }
             } else {
@@ -412,9 +445,11 @@ class CliApp extends EventEmitter {
                 featureObject = require(featurePath);
             }                             
         } else {
+            //load by fallback paths
             let searchingPath = this._featureRegistry['*'];
     
-            let found = _.find(searchingPath, p => {
+            //reverse fallback stack
+            let found = _.findLast(searchingPath, p => {
                 featurePath = path.join(p, feature + '.js');
                 return fs.existsSync(featurePath);
             });        
@@ -430,6 +465,7 @@ class CliApp extends EventEmitter {
             throw new Error(`Invalid feature object loaded from "${featurePath}".`);
         }
 
+        this.features[feature] = featureObject;
         return featureObject;
     }
 }

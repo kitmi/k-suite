@@ -51,11 +51,10 @@ class CliApp extends EventEmitter {
           "type": "file",
           "options": {
             "level": "info",
-            "filename": `${name || 'app'}.log`
+            "filename": `${name && _.kebabCase(name) || 'app'}.log`
           }
         }]
-      },
-      handleProcessError: true
+      }
     }, options);
     this.env = this.options.env || process.env.NODE_ENV || "development";
     this.workingPath = this.options.workingPath ? path.resolve(this.options.workingPath) : process.cwd();
@@ -64,35 +63,28 @@ class CliApp extends EventEmitter {
   }
 
   async start_() {
-    this._pwd = process.cwd();
-
-    if (this.workingPath !== this._pwd) {
-      process.chdir(this.workingPath);
-    }
-
-    this._injectLogger();
-
-    if (this.options.handleProcessError) {
-      this._injectErrorHandlers();
-    }
+    this._initialize();
 
     this._featureRegistry = {
-      '*': [this.toAbsolutePath(Literal.FEATURES_PATH), path.resolve(__dirname, Literal.FEATURES_PATH)]
+      '*': this._getFeatureFallbackPath()
     };
     this.features = {};
     this.services = {};
     this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
     await this.loadConfig_();
+
+    if (_.isEmpty(this.config)) {
+      throw Error('Empty configuration. Nothing to do!');
+    }
+
     this.emit('configLoaded');
     await this._loadFeatures_();
     this.emit('ready');
     this.started = true;
-    process.on('exit', this._onExit);
     return this;
   }
 
   async stop_() {
-    process.removeListener('exit', this._onExit);
     this.emit('stopping');
     this.started = false;
     delete this.services;
@@ -102,27 +94,16 @@ class CliApp extends EventEmitter {
     delete this.configLoader;
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const detach = true;
+        this._uninitialize();
 
-        if (this.options.handleProcessError) {
-          this._injectErrorHandlers(detach);
-        }
-
-        this._injectLogger(detach);
-
-        process.chdir(this._pwd);
-        delete this._pwd;
         resolve(this);
       }, 0);
     });
   }
 
   async loadConfig_() {
-    let configVariables = {
-      'app': this,
-      'log': winston,
-      'env': process.env
-    };
+    let configVariables = this._getConfigVariables();
+
     this.config = await this.configLoader.load_(configVariables);
     return this;
   }
@@ -148,6 +129,10 @@ class CliApp extends EventEmitter {
     return this.services[name];
   }
 
+  enabled(feature) {
+    return this.features.hasOwnProperty(feature);
+  }
+
   addFeatureRegistry(registry) {
     if (registry.hasOwnProperty('*')) {
       Util.putIntoBucket(this._featureRegistry, '*', registry['*']);
@@ -159,6 +144,44 @@ class CliApp extends EventEmitter {
   log(level, message, ...rest) {
     this.logger.log(level, message, ...rest);
     return this;
+  }
+
+  _getConfigVariables() {
+    return {
+      'app': this,
+      'log': winston,
+      'env': this.env
+    };
+  }
+
+  _getFeatureFallbackPath() {
+    return [path.resolve(__dirname, Literal.FEATURES_PATH), this.toAbsolutePath(Literal.FEATURES_PATH)];
+  }
+
+  _initialize() {
+    this._pwd = process.cwd();
+
+    if (this.workingPath !== this._pwd) {
+      process.chdir(this.workingPath);
+    }
+
+    this._injectLogger();
+
+    this._injectErrorHandlers();
+
+    process.on('exit', this._onExit);
+  }
+
+  _uninitialize() {
+    process.removeListener('exit', this._onExit);
+    const detach = true;
+
+    this._injectErrorHandlers(detach);
+
+    this._injectLogger(detach);
+
+    process.chdir(this._pwd);
+    delete this._pwd;
   }
 
   _injectLogger(detach) {
@@ -249,7 +272,9 @@ class CliApp extends EventEmitter {
   }
 
   _loadFeature(feature) {
-    let featureObject, featurePath;
+    let featureObject = this.features[feature];
+    if (featureObject) return featureObject;
+    let featurePath;
 
     if (this._featureRegistry.hasOwnProperty(feature)) {
       let loadOption = this._featureRegistry[feature];
@@ -272,7 +297,7 @@ class CliApp extends EventEmitter {
     } else {
       let searchingPath = this._featureRegistry['*'];
 
-      let found = _.find(searchingPath, p => {
+      let found = _.findLast(searchingPath, p => {
         featurePath = path.join(p, feature + '.js');
         return fs.existsSync(featurePath);
       });
@@ -288,6 +313,7 @@ class CliApp extends EventEmitter {
       throw new Error(`Invalid feature object loaded from "${featurePath}".`);
     }
 
+    this.features[feature] = featureObject;
     return featureObject;
   }
 

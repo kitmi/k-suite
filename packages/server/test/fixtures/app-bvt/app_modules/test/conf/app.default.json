@@ -1,0 +1,22 @@
+{
+    "middlewares": {
+        "serveStatic": {}
+    },
+    "routing": {
+        "/": {
+            "rule": {
+                "middlewares": {
+                    "views": {
+                        "extension": "swig",
+                        "options": {
+                            "cache": false
+                        }
+                    }
+                },
+                "rules": {
+                    "get:/": "test.index"
+                }
+            }
+        }
+    }
+}

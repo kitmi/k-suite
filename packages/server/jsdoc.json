@@ -1,0 +1,24 @@
+{
+	"tags"      : {
+		"allowUnknownTags" : true
+	},
+	"plugins"   : ["plugins/markdown"],
+	"templates" : {
+		"systemName"            : "@k-suite/server",
+		"footer"                : "",
+		"copyright"             : "Copyright (c) 2013-2018 KIT Mobile Internet Pty Ltd",
+		"includeDate"           : false,
+		"navType"               : "vertical",
+		"theme"                 : "cerulean",
+		"linenums"              : true,
+		"collapseSymbols"       : false,
+		"inverseNav"            : true,
+		"outputSourceFiles"     : false,
+		"outputSourcePath"      : true,
+		"cleverLinks"		    : true
+	},
+	"markdown"  : {
+		"parser"   : "gfm",
+		"hardwrap" : true
+	}
+}
