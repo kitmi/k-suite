@@ -1,6 +1,10 @@
 {
   "name": "@k-suite/server",
   "version": "1.0.0",
+  "main": "index",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "A modular web application framework based on koa.",
   "scripts": {
     "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
@@ -88,9 +92,9 @@
     "uniqid": "^5.0.3",
     "uuid": "^3.3.2",
     "validator": "^9.4.1"
-  },
-  "main": "index",
+  },  
   "engines": {
     "node": "8.11.4"
-  }
+  },
+  "gitHead": "61b94313a400bea7a6f286686a78ac30492fa38d"
 }
