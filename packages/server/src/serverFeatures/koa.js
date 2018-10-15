@@ -75,15 +75,12 @@ module.exports = {
         });        
         
         server.engine = koa;
-        server.httpServer = require('http').createServer(koa.callback());
-
-        console.log('1111111');
+        server.httpServer = require('http').createServer(koa.callback());        
 
         let port = options.httpPort || 2331;
 
         server.on('ready', () => {
-            console.log('22222222222');
-
+            
             server.httpServer.listen(port, function (err) {
                 if (err) throw err;
 
