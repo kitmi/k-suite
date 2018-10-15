@@ -10,16 +10,21 @@ const _ = Util._;
 const fs = Util.fs;
 const path = require('path');
 const HttpCode = require('http-status-codes');
+const { InvalidConfiguration } = require('../Errors');
 
 let favicon = (options, app) => {
-    let faviconPath;
-
     if (_.isString(options)) {
-        faviconPath = options;
-        options = {};
-    } else {
-        faviconPath = options && options.path || path.join(app.publicPath, 'favicon.ico');
-    }
+        options = { path: options };
+    } 
+    
+    let faviconPath = options && options.path && app.toAbsolutePath(options.path) || path.join(app.publicPath, 'favicon.ico');
+    if (!fs.existsSync(faviconPath)) {
+        throw new InvalidConfiguration(
+            `Favicon path "${faviconPath}" not exists.`,
+            app,
+            'middlewares.favicon'
+        );
+    }   
 
     let icon;
     const maxAge = options.maxAge == null
@@ -28,11 +33,9 @@ let favicon = (options, app) => {
     const cacheControl = `public, max-age=${maxAge / 1000 | 0}`;
 
     return async (ctx, next) => {
-        if ('/favicon.ico' !== ctx.path) {
+        if ('/favicon.ico' !== ctx.path || ('GET' !== ctx.method && 'HEAD' !== ctx.method)) {
             return next();
         }
-
-        assert: 'GET' === ctx.method || 'HEAD' === ctx.method, 'BREAK! __metaMatchMethods not work.';
 
         if (!icon) {
             let stats = await fs.stat(faviconPath);
@@ -49,7 +52,5 @@ let favicon = (options, app) => {
         ctx.body = icon;
     };
 };
-
-favicon.__metaMatchMethods = ['get', 'head'];
 
 module.exports = favicon;

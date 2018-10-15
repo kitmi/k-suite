@@ -135,17 +135,17 @@ class CliApp extends EventEmitter {
          */
         this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
         
-        await this.loadConfig_();
-
-        if (_.isEmpty(this.config)) {
-            throw Error('Empty configuration. Nothing to do!');
-        }
+        await this.loadConfig_();        
 
         /**
          * Config loaded event.
          * @event CliApp#configLoaded
          */
         this.emit('configLoaded');
+
+        if (_.isEmpty(this.config)) {
+            throw Error('Empty configuration. Nothing to do!');
+        }
 
         await this._loadFeatures_(); 
 
@@ -335,7 +335,7 @@ class CliApp extends EventEmitter {
 
     _injectErrorHandlers(detach) {
         if (detach) {
-            this.log('verbose', 'Error handlers are detaching ...');
+            this.log('verbose', 'Process-wide error handlers are detaching ...');
             process.removeListener('warning', this._onWarning);
             process.removeListener('uncaughtException', this._onUncaughtException);
             return;
@@ -343,6 +343,7 @@ class CliApp extends EventEmitter {
 
         process.on('uncaughtException', this._onUncaughtException); 
         process.on('warning', this._onWarning);
+        this.log('verbose', 'Process-wide error handlers injected.');            
     }
 
     /**

@@ -15,7 +15,7 @@ module.exports = {
      * This feature is loaded at plugin stage
      * @member {string}
      */
-    type: Feature.PLUGIN,
+    type: Feature.INIT,
 
     /**
      * Load the feature
@@ -24,6 +24,9 @@ module.exports = {
      * @returns {Promise.<*>}
      */
     load_: function (app, middlewares) {
-        app.useMiddlewares(app.router, middlewares);
+        //delay to load middlewares after all services are ready
+        app.on('after:' + Feature.SERVICE, () => {
+            app.useMiddlewares(app.router, middlewares);
+        })        
     }
 };

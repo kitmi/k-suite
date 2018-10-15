@@ -37,18 +37,7 @@ module.exports = (controllerAction, app) => {
     let controllerBasePath = path.join(app.backendPath, Literal.CONTROLLERS_PATH);
 
     let controllerPath = path.resolve(controllerBasePath, controller + '.js');
-    let ctrl;
-    
-    try {
-        ctrl = require(controllerPath);    
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            throw new InvalidConfiguration(
-                `Controller "${controllerPath}" not found.`,
-                app
-            );
-        }
-    }
+    let ctrl = require(controllerPath);    
 
     let actioner = ctrl[action];   
 

@@ -4,25 +4,35 @@ const path = require('path');
 const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;
-const Controller = require('../patterns/controller');
-
+const Literal = require('../enum/Literal');
 const Router = require('koa-router');
+const Controller = require('../patterns/Controller');
+const { InvalidConfiguration } = require('../Errors');
 
-/*
- '<base path>': {    
-    module: {
-        middlewares: 
-        controller: 
-    }
- }
-
- '<base path>': {    
-    module: "controller"
- }
+/**
+ * Module router for mounting a specific controller.
+ * @module Router_Module
  */
 
-module.exports = function (appModule, baseRoute, moduleItem) {
-    let controllerPath = path.join(appModule.backendPath, Mowa.Literal.CONTROLLERS_PATH);   
+/**
+ * Create a module-based router. 
+ * @param {AppWithMiddleware} app
+ * @param {string} baseRoute 
+ * @param {*} moduleItem 
+ * @example
+ *   '<base path>': {    
+ *       module: {
+ *           middlewares: 
+ *           controller: 
+ *       }
+ *   }
+ *
+ *   '<base path>': {    
+ *       module: "controller"
+ *   }
+  */
+module.exports = function (app, baseRoute, moduleItem) {
+    let controllerPath = path.join(app.backendPath, Literal.CONTROLLERS_PATH);   
 
     if (typeof moduleItem === 'string') {
         // [ 'controllerName' ]
@@ -31,34 +41,22 @@ module.exports = function (appModule, baseRoute, moduleItem) {
         };
     }    
 
-    let currentPrefix = Util.urlJoin(baseRoute, moduleItem.route || '');
-    let router = currentPrefix === '/' ? new Router() : new Router({prefix: currentPrefix}), moduleBaseRoute;
+    let currentPrefix = Util.urlJoin(baseRoute, moduleItem.route || '/');
+    let router = currentPrefix === '/' ? new Router() : new Router({prefix: currentPrefix});
     
 
     if (moduleItem.middlewares) {            
         //module-wide middlewares       
-        appModule.useMiddlewares(router, moduleItem.middlewares);
+        app.useMiddlewares(router, moduleItem.middlewares);
     } 
 
     let controllerFile = path.join(controllerPath, moduleItem.controller + '.js');
     let controller;
 
-    try {
-        controller = require(controllerFile);
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            throw new Mowa.Error.InvalidConfiguration(
-                `Controller "${controllerFile}" not found.`,
-                appModule,
-                `routing[${baseRoute}].module`
-            );
-        }
-
-        throw error;
-    }
+    controller = require(controllerFile);
 
     if (controller.prototype instanceof Controller) {
-        controller = new controller(appModule);
+        controller = new controller(app);
     }
             
     for (let actionName in controller) {        
@@ -69,18 +67,18 @@ module.exports = function (appModule, baseRoute, moduleItem) {
         let subRoute = Util.ensureLeftSlash(action.__metaRoute || actionName);
 
         _.each(httpMethod, method => {
-            if (!Mowa.Literal.ALLOWED_HTTP_METHODS.has(method)) {
-                throw new Mowa.Error.InvalidConfiguration(
+            if (!Literal.ALLOWED_HTTP_METHODS.has(method)) {
+                throw new InvalidConfiguration(
                     'Unsupported http method: ' + method,
-                    appModule,
+                    app,
                     `routing.${baseRoute}.modules ${moduleItem.controller}.${actionName}`);
             }           
 
-            appModule.addRoute(router, method, subRoute, action.__metaMiddlewares ? action.__metaMiddlewares.concat([appModule.wrapAction(action)]) : appModule.wrapAction(action));
+            app.addRoute(router, method, subRoute, action.__metaMiddlewares ? 
+                action.__metaMiddlewares.concat([app.wrapAction(action)]) : 
+                app.wrapAction(action));
         });
     };
 
-    appModule.addRouter(router);
-
-    return Promise.resolve();
+    app.addRouter(router);
 };

@@ -6,6 +6,7 @@ const Util = require('rk-utils');
 const _ = Util._;
 const Errors = require('./Errors');
 const Literal = require('./enum/Literal');
+const HttpCode = require('http-status-codes');
 const Koa = require('koa');
 
 class AppWithMiddleware extends CliApp {    
@@ -40,13 +41,14 @@ class AppWithMiddleware extends CliApp {
          * Frontend static files path.
          * @member {string}
          **/
-        this.publicPath = this.toAbsolutePath(this.options.publicPath || Literal.PUBLIC_PATH);       
-        
+        this.publicPath = this.toAbsolutePath(this.options.publicPath || Literal.PUBLIC_PATH);
+
         /**
          * Each app has its own router.
          * @member {Koa}
          **/
         this.router = new Koa();
+        this.router.use((ctx, next) => { ctx.appModule = this; return next(); });
 
         this.on('configLoaded', () => {
             //load middlewares if exists in server or app path
@@ -212,6 +214,16 @@ class AppWithMiddleware extends CliApp {
     }    
 
     /**
+     * Attach a router to this app module, skipped while the server running in deaf mode     
+     * @param {Router} nestedRouter
+     */
+    addRouter(nestedRouter) {
+        this.router.use(nestedRouter.routes());
+        this.router.use(nestedRouter.allowedMethods());
+        return this;
+    }
+
+    /**
      * Translate a relative path and query parameters if any to a url path     
      * @param {string} relativePath - Relative path
      * @param {...*} [pathOrQuery] - Queries
@@ -262,13 +274,8 @@ class AppWithMiddleware extends CliApp {
         };        
     }       
 
-    _useMiddleware(router, middleware) {
-        if (router.register && middleware.__metaMatchMethods && middleware.__metaMatchMethods.length) {
-            router.register('(.*)', middleware.__metaMatchMethods, middleware, {end: false});
-            console.log('__metaMatchMethods', middleware.__metaMatchMethods);
-        } else {
-            router.use(middleware);
-        }
+    _useMiddleware(router, middleware) {        
+        router.use(middleware);
     }
 };
 

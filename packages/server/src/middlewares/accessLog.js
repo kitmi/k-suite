@@ -40,7 +40,7 @@ module.exports = (opt, app) => {
             userAgent: ctx.header['user-agent'] || '-',
             isoTimestamp: startAt.toISO(),        
             duration: app.now().diff(startAt).milliseconds
-        }
+        };
 
         let level = 'info';
 
@@ -49,6 +49,7 @@ module.exports = (opt, app) => {
         } else if (ctx.status >= 400) {
             level = 'warn';
         }
+        
         logger.log(level, HttpStatus.getStatusText(ctx.status), info);
     };
 };

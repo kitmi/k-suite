@@ -1,12 +1,32 @@
 "use strict";
 
+require('./babel-for-test');
+
 const path = require('path');
 const WebServer = require('../lib/WebServer');
 
-const WORKING_DIR = path.resolve(__dirname, 'fixtures/app-bvt');
+const WORKING_DIR = path.resolve(__dirname, 'temp');
 
 let webServer = new WebServer('test server', { 
-    workingPath: WORKING_DIR
+    workingPath: WORKING_DIR,
+    verbose: true,
+    logWithAppName: true
+});
+
+webServer.once('configLoaded', () => {
+    webServer.config = {
+        "koa": {
+        },
+        "middlewares": {
+            "bodyParser": {},
+            "methodOverride": {}
+        },
+        "routing": {
+            "/api": {
+                "rest": {}
+            }
+        }
+    };
 });
 
 webServer.start_().then(() => {
@@ -14,4 +34,4 @@ webServer.start_().then(() => {
 }).catch(error => {
     console.error(error);
     process.exit(1);
-});;
+});

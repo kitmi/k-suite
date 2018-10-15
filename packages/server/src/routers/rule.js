@@ -4,7 +4,7 @@ const path = require('path');
 const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;
-
+const Router = require('koa-router');
 const { InvalidConfiguration } = require('../Errors');
 const Literal = require('../enum/Literal');
 
@@ -13,9 +13,8 @@ const Literal = require('../enum/Literal');
  * @module Router_Rule 
  */
 
-const Router = require('koa-router');
-
 /** 
+ * Create a rule-based router.
  * @param {WebApp} app 
  * @param {string} baseRoute 
  * @param {object} options 
@@ -50,7 +49,7 @@ const Router = require('koa-router');
  *     }
  * }
  */
-function load_(app, baseRoute, options) {    
+function load_(app, baseRoute, options) {
     let router = baseRoute === '/' ? new Router() : new Router({prefix: baseRoute});
 
     if (options.middlewares) {

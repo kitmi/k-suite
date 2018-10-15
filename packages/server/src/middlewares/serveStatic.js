@@ -7,10 +7,6 @@
 
 const koaStatic = require('koa-static');
 
-let serveStatic = (options, app) => {    
-    return koaStatic(app.publicPath, options);
-};
-
-serveStatic.__metaMatchMethods = ['get'];
+let serveStatic = (options, app) => koaStatic(app.publicPath, options);
 
 module.exports = serveStatic;

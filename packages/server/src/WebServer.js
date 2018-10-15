@@ -7,10 +7,7 @@ const Promise = Util.Promise;
 
 const AppWithMiddleware = require('./AppWithMiddleware');
 const Literal = require('./enum/Literal');
-
 const mount = require('koa-mount');
-
-const { ServerError } = require('./Errors');
 
 /**
  * Web server class
@@ -90,14 +87,11 @@ class WebServer extends AppWithMiddleware {
         }
 
         assert: !this.appModules.hasOwnProperty(mountedRoute);
-                
-        let koa = this.engine;
-        if (!koa) {
-            throw new ServerError(`"koa" feature is not enabled.`);
-        }
 
-        koa.use(mount(mountedRoute, app.router));
+        this.router.use(mount(mountedRoute, app.router));
         this.appModules[mountedRoute] = app;
+
+        this.log('verbose', `All routes from app [${app.name}] are mounted under "${mountedRoute}".`);
     }
 
     _getFeatureFallbackPath() {

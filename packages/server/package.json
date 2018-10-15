@@ -5,16 +5,16 @@
   "scripts": {
     "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
     "jison": "jison ./src/oolong/lang/grammar/oolong.jison -o ./src/oolong/lang/oolong.js",
-    "test:only": "mocha test/*.mocha.js --timeout 5000",
+    "test:only": "mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
     "test": "npm run build:test && npm run test:only",
-    "test:smoke": "node test/smoke-test.js",
-    "cover": "nyc --reporter=html --reporter=text mocha test/*.mocha.js --timeout 5000",
+    "test:spec": "npm run build:test && mocha --recursive src/**/*.spec.js --timeout 5000",
+    "cover": "nyc --reporter=html --reporter=text mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
     "travis": "npm run build:travis && nyc --reporter=lcovonly mocha test/*.mocha.js --timeout 10000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "bulid:clean": "rm -rf lib",
-    "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files",
-    "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files",
-    "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files",
-    "build:travis": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && node test/prepare-for-test travis",
+    "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files --ignore \"src/**/*.spec.js\"",
+    "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files --ignore \"src/**/*.spec.js\"",
+    "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files --ignore \"src/**/*.spec.js\"",
+    "build:travis": "npm run bulid:clean && npm run build:prod",
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
   "keywords": [
@@ -33,7 +33,8 @@
   "nyc": {
     "exclude": [
       "babel.config.js",
-      "test"
+      "test",
+      "src"
     ]
   },
   "devDependencies": {
@@ -70,7 +71,7 @@
     "koa-methodoverride": "^2.0.0",
     "koa-mount": "^3.0.0",
     "koa-passport": "^4.0.1",
-    "koa-router": "^7.3.0",
+    "koa-router": "^7.4.0",
     "koa-session-memory": "^1.0.2",
     "koa-session-mowa": "^5.9.1",
     "koa-static": "^4.0.2",

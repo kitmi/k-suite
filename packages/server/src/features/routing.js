@@ -28,19 +28,7 @@ module.exports = {
     load_: (app, routes) => Util.eachAsync_(routes, async (routersConfig, route) => {
         if (_.isPlainObject(routersConfig)) {
             return Util.eachAsync_(routersConfig, async (options, type) => {
-                let loader_; 
-                
-                try {
-                    loader_ = require('../routers/' + type);
-                } catch (error) {
-                    if (error.code === 'MODULE_NOT_FOUND') {
-                        throw new InvalidConfiguration(
-                            'Unsupported router type: ' + type,
-                            app,
-                            `routing.${route}`
-                        );
-                    }
-                }
+                let loader_ = require('../routers/' + type);
                 
                 app.log('verbose', `A "${type}" router is created at "${route}" in app [${app.name}].`);
 

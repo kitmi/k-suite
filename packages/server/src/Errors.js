@@ -70,7 +70,7 @@ class InvalidConfiguration extends withExtraInfo(withName(withHttpStatus(Error, 
      * @param {string} [item] - The related config item   
      */ 
     constructor(message, appModule, item) {        
-        super(message, { app: appModule.displayName, configNode: item });
+        super(message, { app: appModule.name, configNode: item });
     }
 }
 

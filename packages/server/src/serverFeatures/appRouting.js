@@ -39,7 +39,7 @@ module.exports = {
      * @param {object} routes - Routes and configuration.
      * @returns {Promise.<*>}
      */
-    load_: async (server, routes) => Util.eachAsync_(routes, (config, baseRoute) => {
+    load_: async (server, routes) => Util.eachAsync_(routes, async (config, baseRoute) => {
         if (!config.name) {
             throw new InvalidConfiguration(
                 'Missing app name.',
@@ -47,7 +47,12 @@ module.exports = {
                 `appRouting.${baseRoute}.name`);
         }
     
-        let options = Object.assign({ env: server.env, verbose: server.options.verbose }, config.options);   
+        let options = Object.assign({ 
+            env: server.env, 
+            verbose: server.options.verbose, 
+            logWithAppName: server.options.logWithAppName 
+        }, config.options);
+
         let appPath;     
 
         if (config.npmModule) {
@@ -62,12 +67,13 @@ module.exports = {
         let relativePath = path.relative(server.workingPath, appPath);
         server.log('verbose', `Loading app [${app.name}] from "${relativePath}" ...`);
     
-        return app.start_().then(() => {
-            server.log('verbose', `App [${app.name}] is loaded.`);
+        await app.start_();
+        
+        server.log('verbose', `App [${app.name}] is loaded.`);
+
+        //delayed the app routes mounting after all plugins of the server are loaded
+        server.on('after:' + Feature.PLUGIN, () => {
             server.mountApp(baseRoute, app);
-        }).catch(reason => {
-            server.log('error', `Failed to load app [${app.name}]!`);
-            throw reason;
-        });
+        });        
     })
 };

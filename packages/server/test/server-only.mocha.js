@@ -12,7 +12,7 @@ const WebServer = require('../lib/WebServer');
 
 const WORKING_DIR = path.resolve(__dirname, 'fixtures/server-only');
 
-describe('bvt', function () {
+describe('server-only', function () {
     let webServer;
 
     before(async function () {

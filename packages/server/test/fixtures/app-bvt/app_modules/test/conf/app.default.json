@@ -1,6 +1,8 @@
 {
     "middlewares": {
-        "serveStatic": {}
+        "serveStatic": {},
+        "bodyParser": {},
+        "methodOverride": {}
     },
     "routing": {
         "/": {
@@ -14,9 +16,18 @@
                     }
                 },
                 "rules": {
-                    "get:/": "test.index"
+                    "get:/": "home.index"
                 }
-            }
+            }            
+        },
+        "/module": {
+            "module": "test"
+        },
+        "/module2": {
+            "module": "test2"
+        },
+        "/api": {
+            "rest": {}
         }
     }
 }

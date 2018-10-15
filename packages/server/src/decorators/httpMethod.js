@@ -1,6 +1,6 @@
 "use strict";
 
-const Util = require('../util.js');
+const Util = require('rk-utils');
 const _ = Util._;
 
 function httpMethod(method, middlewares) {

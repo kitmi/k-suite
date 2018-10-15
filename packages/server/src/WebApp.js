@@ -3,11 +3,8 @@
 const Util = require('rk-utils');
 const Promise = Util.Promise;
 const _ = Util._;
-
 const path = require('path');
-
 const AppWithMiddleware = require('./AppWithMiddleware');
-
 const Literal = require('./enum/Literal');
 
 /**
@@ -46,7 +43,7 @@ class WebApp extends AppWithMiddleware {
          * Mounting route.
          * @member {string}
          */
-        this.route = Util.ensureLeftSlash(Util.trimRightSlash(route));                       
+        this.route = Util.ensureLeftSlash(Util.trimRightSlash(route));        
     }  
 
     /**
@@ -70,16 +67,6 @@ class WebApp extends AppWithMiddleware {
             message = '[' + this.name + '] ' + message;
         }
         this.server.log(level, message, ...rest);
-        return this;
-    }
-
-    /**
-     * Attach a router to this app module, skipped while the server running in deaf mode
-     * @memberof AppModule
-     * @param nestedRouter
-     */
-    addRouter(nestedRouter) {
-        this.router.use(nestedRouter.routes());
         return this;
     }
 

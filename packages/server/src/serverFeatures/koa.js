@@ -72,15 +72,13 @@ module.exports = {
             } else {
                 server.log('error', err.message, { status: err.status, stack: err.stack });
             }
-        });        
+        });                
         
-        server.engine = koa;
         server.httpServer = require('http').createServer(koa.callback());        
 
         let port = options.httpPort || 2331;
 
         server.on('ready', () => {
-            
             server.httpServer.listen(port, function (err) {
                 if (err) throw err;
 
