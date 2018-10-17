@@ -1,6 +1,6 @@
 {
   "name": "@k-suite/cli-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI Worker Process Template",
   "main": "index.js",
   "publishConfig": {
