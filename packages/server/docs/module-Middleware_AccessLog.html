@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-Errors.html">Errors</a></li><li><a href="module-Feature_AppRouting.html">Feature_AppRouting</a></li><li><a href="module-Feature_Koa.html">Feature_Koa</a></li><li><a href="module-Feature_Middlewares.html">Feature_Middlewares</a></li><li><a href="module-Feature_Routing.html">Feature_Routing</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Literal.html">Literal</a></li><li><a href="module-Middleware_AccessLog.html">Middleware_AccessLog</a></li><li><a href="module-Middleware_Action.html">Middleware_Action</a></li><li><a href="module-Middleware_BodyParser.html">Middleware_BodyParser</a></li><li><a href="module-Middleware_Compress.html">Middleware_Compress</a></li><li><a href="module-Middleware_Csrf.html">Middleware_Csrf</a></li><li><a href="module-Middleware_Favicon.html">Middleware_Favicon</a></li><li><a href="module-Middleware_MethodOverride.html">Middleware_MethodOverride</a></li><li><a href="module-Middleware_ServeStatic.html">Middleware_ServeStatic</a></li><li><a href="module-Middleware_Views.html">Middleware_Views</a></li><li><a href="module-Router_Module.html">Router_Module</a></li><li><a href="module-Router_Rest.html">Router_Rest</a></li><li><a href="module-Router_Rule.html">Router_Rule</a></li>
+					<li><a href="module-Errors.html">Errors</a></li><li><a href="module-Feature_AppRouting.html">Feature_AppRouting</a></li><li><a href="module-Feature_Koa.html">Feature_Koa</a></li><li><a href="module-Feature_Middlewares.html">Feature_Middlewares</a></li><li><a href="module-Feature_ObjectStore.html">Feature_ObjectStore</a></li><li><a href="module-Feature_Routing.html">Feature_Routing</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Literal.html">Literal</a></li><li><a href="module-Middleware_AccessLog.html">Middleware_AccessLog</a></li><li><a href="module-Middleware_Action.html">Middleware_Action</a></li><li><a href="module-Middleware_BodyParser.html">Middleware_BodyParser</a></li><li><a href="module-Middleware_Compress.html">Middleware_Compress</a></li><li><a href="module-Middleware_Csrf.html">Middleware_Csrf</a></li><li><a href="module-Middleware_Favicon.html">Middleware_Favicon</a></li><li><a href="module-Middleware_MethodOverride.html">Middleware_MethodOverride</a></li><li><a href="module-Middleware_ServeStatic.html">Middleware_ServeStatic</a></li><li><a href="module-Middleware_Views.html">Middleware_Views</a></li><li><a href="module-Router_Module.html">Router_Module</a></li><li><a href="module-Router_Rest.html">Router_Rest</a></li><li><a href="module-Router_Rule.html">Router_Rule</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="AppWithMiddleware.html">AppWithMiddleware</a></li><li><a href="Controller.html">Controller</a></li><li><a href="Errors_ModelOperationError.html">Errors:ModelOperationError</a></li><li><a href="Errors_ModelUsageError.html">Errors:ModelUsageError</a></li><li><a href="Errors_ModelValidationError.html">Errors:ModelValidationError</a></li><li><a href="module-Errors-BadRequest.html">Errors~BadRequest</a></li><li><a href="module-Errors-InvalidConfiguration.html">Errors~InvalidConfiguration</a></li><li><a href="module-Errors-ServerError.html">Errors~ServerError</a></li><li><a href="WebApp.html">WebApp</a></li><li><a href="WebServer.html">WebServer</a></li>
+					<li><a href="AppWithMiddleware.html">AppWithMiddleware</a></li><li><a href="Controller.html">Controller</a></li><li><a href="DbService.html">DbService</a></li><li><a href="Errors_ModelOperationError.html">Errors:ModelOperationError</a></li><li><a href="Errors_ModelUsageError.html">Errors:ModelUsageError</a></li><li><a href="Errors_ModelValidationError.html">Errors:ModelValidationError</a></li><li><a href="module-Errors-BadRequest.html">Errors~BadRequest</a></li><li><a href="module-Errors-InvalidConfiguration.html">Errors~InvalidConfiguration</a></li><li><a href="module-Errors-ServerError.html">Errors~ServerError</a></li><li><a href="WebApp.html">WebApp</a></li><li><a href="WebServer.html">WebServer</a></li>
 				</ul>
 			</li>
 			
@@ -98,6 +98,10 @@
 
 <header>
     
+        
+            
+        
+    
 </header>
 
 
@@ -109,6 +113,103 @@
         
 
         
+            
+<hr>
+<dt>
+    <h4 class="name" id="module:Middleware_AccessLog"><span class="type-signature"></span>(require("Middleware_AccessLog"))(name, app)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get a cached middleware from the app's object store.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the middleware stored in the app's object store.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AppWithMiddlewaer</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
 <dl class="details">
     
 
@@ -141,7 +242,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		middlewares/accessLog.js
+		middlewares/fromStore.js
 	</dd>
 	
 
@@ -152,6 +253,265 @@
 	
 </dl>
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">AsyncFunction</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+	<h1 class="page-title">Module: Middleware_AccessLog</h1>
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Add access log for every http request</p></div>
+        
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="module:Middleware_AccessLog"><span class="type-signature"></span>(require("Middleware_AccessLog"))(name, app)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get a cached middleware from the app's object store.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the middleware stored in the app's object store.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AppWithMiddlewaer</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		middlewares/fromStore.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">AsyncFunction</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
 
         
     

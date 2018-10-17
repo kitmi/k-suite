@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/server Class: Controller</title>
+	<title>@k-suite/server Module: Feature_ObjectStore</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -93,17 +93,10 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Controller</h1>
+	<h1 class="page-title">Module: Feature_ObjectStore</h1>
 <section>
 
 <header>
-    
-        <h2>
-        Controller
-        </h2>
-        
-            <div class="class-description"><p>Controller base class.</p></div>
-        
     
 </header>
 
@@ -112,14 +105,167 @@
     <div class="container-overview">
     
         
+            <div class="description"><p>Enable object store feature</p></div>
+        
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		features/objectStore.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id=".type">
+    <h4 id=".type"><span class="type-signature">&lt;static> </span>type<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>This feature is loaded at plug-in stage</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		features/objectStore.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
 <hr>
 <dt>
-    <h4 class="name" id="Controller"><span class="type-signature"></span>new Controller(app)</h4>
+    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, factories)</h4>
     
     
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Load the feature</p>
+    </div>
     
 
     
@@ -159,7 +305,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="AppWithMiddleware.html">AppWithMiddleware</a></span>
+<span class="param-type">CliApp</span>
 
 
 
@@ -170,7 +316,31 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>The app module object</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>factories</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Object factories</p></td>
         </tr>
 
     
@@ -212,7 +382,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		patterns/Controller.js
+		features/objectStore.js
 	</dd>
 	
 
@@ -235,25 +405,31 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;*></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
 
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
+        </dl>
     
 
     

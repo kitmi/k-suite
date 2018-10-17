@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/server Class: Controller</title>
+	<title>@k-suite/server Class: DbService</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -93,16 +93,16 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Controller</h1>
+	<h1 class="page-title">Class: DbService</h1>
 <section>
 
 <header>
     
         <h2>
-        Controller
+        DbService
         </h2>
         
-            <div class="class-description"><p>Controller base class.</p></div>
+            <div class="class-description"><p>A database service object</p></div>
         
     
 </header>
@@ -114,12 +114,271 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Controller"><span class="type-signature"></span>new Controller(app)</h4>
+    <h4 class="name" id="DbService"><span class="type-signature"></span>new DbService(app, type, name [, options])</h4>
     
     
 </dt>
 <dd>
 
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AppWithMiddleware.html">AppWithMiddleware</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The app which creates this service</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Dbms type</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The name of database (the one appears as the key of db config)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options loaded from feature config</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		patterns/DbService.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="closeConnection"><span class="type-signature"></span>closeConnection(conn)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Close a database connection</p>
+    </div>
     
 
     
@@ -153,13 +412,13 @@
 
         <tr>
             
-                <td class="name"><code>app</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="AppWithMiddleware.html">AppWithMiddleware</a></span>
+<span class="param-type">Object</span>
 
 
 
@@ -212,7 +471,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		patterns/Controller.js
+		patterns/DbService.js
 	</dd>
 	
 
@@ -239,8 +498,135 @@
     
 </dd>
 
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getConnection_"><span class="type-signature">&lt;async> </span>getConnection_( [options])</h4>
     
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get a database connection</p>
     </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Extra options for the connection, optional</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		patterns/DbService.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
 
     
 
@@ -253,7 +639,31 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
 
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;object></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        </dl>
     
 
     
