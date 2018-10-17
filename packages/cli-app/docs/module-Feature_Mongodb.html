@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/cli-app Module: Feature_Bootstrap</title>
+	<title>@k-suite/cli-app Module: Feature_MongoDB</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -79,7 +79,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: Feature_Bootstrap</h1>
+	<h1 class="page-title">Module: Feature_MongoDB</h1>
 <section>
 
 <header>
@@ -91,7 +91,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Enable bootstrap scripts</p></div>
+            <div class="description"><p>Enable mongodb access as a service</p></div>
         
 
         
@@ -127,7 +127,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		features/mongodb.js
 	</dd>
 	
 
@@ -148,6 +148,13 @@
     
 
     
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-Feature_MongoDB-MongoDBService.html">MongoDBService</a></dt>
+            <dd></dd>
+        </dl>
+    
 
     
 
@@ -167,7 +174,7 @@
 <dd>
     
     <div class="description">
-        <p>This feature is loaded at init stage</p>
+        <p>This feature is loaded at service stage</p>
     </div>
     
 
@@ -217,7 +224,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		features/mongodb.js
 	</dd>
 	
 
@@ -242,7 +249,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, options)</h4>
+    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, dbs)</h4>
     
     
 </dt>
@@ -302,14 +309,14 @@
 
             
 
-            <td class="description last"><p>The cli app module object</p></td>
+            <td class="description last"><p>The app module object</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>dbs</code></td>
             
 
             <td class="type">
@@ -326,7 +333,7 @@
 
             
 
-            <td class="description last"><p>Options for the feature</p></td>
+            <td class="description last"><p>Mysql db and its setting</p></td>
         </tr>
 
     
@@ -337,77 +344,6 @@
 
     
 <dl class="details">
-    
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options.path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'boostrap'
-                
-                </td>
-            
-
-            <td class="description last"><p>The path of the bootstrap scripts</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
     
 
 	
@@ -439,7 +375,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/bootstrap.js
+		features/mongodb.js
 	</dd>
 	
 

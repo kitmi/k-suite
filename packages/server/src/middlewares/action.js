@@ -18,11 +18,6 @@ const path = require('path');
  * @param {AppWithMiddleware} app 
  */
 module.exports = (controllerAction, app) => {
-    pre: {
-        controllerAction, Util.Message.DBC_ARG_REQUIRED;
-        app, Util.Message.DBC_ARG_REQUIRED;
-    }
-
     if (typeof controllerAction !== 'string') {
         throw new InvalidConfiguration('Invalid action syntax.', app);
     }

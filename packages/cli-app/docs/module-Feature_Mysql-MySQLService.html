@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/cli-app Class: CliApp</title>
+	<title>@k-suite/cli-app Class: MySQLService</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -79,16 +79,18 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: CliApp</h1>
+	<h1 class="page-title">Class: MySQLService</h1>
 <section>
 
 <header>
     
         <h2>
-        CliApp
+            <span class="ancestors"><a href="module-Feature_MySQL.html">Feature_MySQL</a>~</span>
+        
+        MySQLService
         </h2>
         
-            <div class="class-description"><p>CLI worker process template.</p></div>
+            <div class="class-description"><p>MySQL Service.</p></div>
         
     
 </header>
@@ -100,7 +102,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="CliApp"><span class="type-signature"></span>new CliApp(name [, options])</h4>
+    <h4 class="name" id="MySQLService"><span class="type-signature"></span>new MySQLService(app, name, options)</h4>
     
     
 </dt>
@@ -127,8 +129,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -137,6 +137,30 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="CliApp.html">CliApp</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
     
 
         <tr>
@@ -155,18 +179,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>The name of the cli application.</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -187,20 +203,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>Application options</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -242,7 +248,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -279,7 +285,7 @@
 
 
     <ul>
-        <li>EventEmitter</li>
+        <li><a href="DbService.html">DbService</a></li>
     </ul>
 
 
@@ -299,15 +305,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="config">
-    <h4 id="config"><span class="type-signature"></span>config<span class="type-signature"> :object</span></h4>
+<dt class="name" id="appModule">
+    <h4 id="appModule"><span class="type-signature"></span>appModule<span class="type-signature"> :<a href="CliApp.html">CliApp</a></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>App configuration</p>
+        <p>The owner app.</p>
     </div>
     
 
@@ -316,7 +322,7 @@
         <ul>
             <li>
                 
-<span class="param-type">object</span>
+<span class="param-type"><a href="CliApp.html">CliApp</a></span>
 
 
 
@@ -332,6 +338,15 @@
 
 	
 
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#appModule">DbService#appModule</a>
+			</li>
+		</ul>
+	</dd>
 	
 
     
@@ -357,7 +372,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		DbService.js
 	</dd>
 	
 
@@ -375,15 +390,15 @@
         
             
 <hr>
-<dt class="name" id="configLoader">
-    <h4 id="configLoader"><span class="type-signature"></span>configLoader<span class="type-signature"> :object</span></h4>
+<dt class="name" id="connectionComponents">
+    <h4 id="connectionComponents"><span class="type-signature"></span>connectionComponents<span class="type-signature"> :URL</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>Configuration loader instance</p>
+        <p>Extracted connection string components.</p>
     </div>
     
 
@@ -392,7 +407,7 @@
         <ul>
             <li>
                 
-<span class="param-type">object</span>
+<span class="param-type">URL</span>
 
 
 
@@ -408,6 +423,15 @@
 
 	
 
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#connectionComponents">DbService#connectionComponents</a>
+			</li>
+		</ul>
+	</dd>
 	
 
     
@@ -433,7 +457,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		DbService.js
 	</dd>
 	
 
@@ -451,15 +475,15 @@
         
             
 <hr>
-<dt class="name" id="configName">
-    <h4 id="configName"><span class="type-signature"></span>configName<span class="type-signature"> :string</span></h4>
+<dt class="name" id="connectionString">
+    <h4 id="connectionString"><span class="type-signature"></span>connectionString<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>Config basename</p>
+        <p>URL like connection string, e.g. mysql://username:password@host:port/dbname</p>
     </div>
     
 
@@ -485,81 +509,14 @@
 	
 
 	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#connectionString">DbService#connectionString</a>
+			</li>
+		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="configPath">
-    <h4 id="configPath"><span class="type-signature"></span>configPath<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Config path</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
 	
 
     
@@ -585,7 +542,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		DbService.js
 	</dd>
 	
 
@@ -603,91 +560,15 @@
         
             
 <hr>
-<dt class="name" id="env">
-    <h4 id="env"><span class="type-signature"></span>env<span class="type-signature"> :string</span></h4>
+<dt class="name" id="dbmsSpec">
+    <h4 id="dbmsSpec"><span class="type-signature"></span>dbmsSpec<span class="type-signature"> :object</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>Environment flag</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="features">
-    <h4 id="features"><span class="type-signature"></span>features<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Loaded features, name =&gt; feature object</p>
+        <p>Extra db spec, used for reverse engineering or code generation.</p>
     </div>
     
 
@@ -713,6 +594,15 @@
 	
 
 	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#dbmsSpec">DbService#dbmsSpec</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -737,7 +627,177 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		DbService.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="dbName">
+    <h4 id="dbName"><span class="type-signature"></span>dbName<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Database name.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#dbName">DbService#dbName</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		DbService.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="dbType">
+    <h4 id="dbType"><span class="type-signature"></span>dbType<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The database type, e.g. mysql, mongodb</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#dbType">DbService#dbType</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		DbService.js
 	</dd>
 	
 
@@ -756,318 +816,14 @@
             
 <hr>
 <dt class="name" id="name">
-    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :object</span></h4>
+    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>Name of the app</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="options">
-    <h4 id="options"><span class="type-signature"></span>options<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>App options</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="services">
-    <h4 id="services"><span class="type-signature"></span>services<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Loaded services</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="started">
-    <h4 id="started"><span class="type-signature"></span>started<span class="type-signature"> :bool</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Flag showing the app is started or not.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">bool</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="workingPath">
-    <h4 id="workingPath"><span class="type-signature"></span>workingPath<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Working directory of this cli app</p>
+        <p>Database service name, may be not the same with the real database name.</p>
     </div>
     
 
@@ -1093,6 +849,15 @@
 	
 
 	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#name">DbService#name</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -1117,7 +882,92 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		DbService.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="serviceId">
+    <h4 id="serviceId"><span class="type-signature"></span>serviceId<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Service id.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="DbService.html#serviceId">DbService#serviceId</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		DbService.js
 	</dd>
 	
 
@@ -1142,7 +992,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="addFeatureRegistry"><span class="type-signature"></span>addFeatureRegistry(registry)</h4>
+    <h4 class="name" id="closeConnection"><span class="type-signature"></span>closeConnection(conn)</h4>
     
     
 </dt>
@@ -1150,7 +1000,7 @@
 
     
     <div class="description">
-        <p>Add more or overide current feature registry</p>
+        <p>Close a database connection</p>
     </div>
     
 
@@ -1185,13 +1035,13 @@
 
         <tr>
             
-                <td class="name"><code>registry</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">MySQLConnection</span>
 
 
 
@@ -1222,6 +1072,11 @@
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="DbService.html#closeConnection">DbService#closeConnection</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1244,7 +1099,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -1275,7 +1130,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="enabled"><span class="type-signature"></span>enabled(feature)</h4>
+    <h4 class="name" id="commitTransaction_"><span class="type-signature">&lt;async> </span>commitTransaction_(conn)</h4>
     
     
 </dt>
@@ -1283,7 +1138,7 @@
 
     
     <div class="description">
-        <p>Check whether a feature is enabled in the app.</p>
+        <p>Commit a transaction.</p>
     </div>
     
 
@@ -1318,13 +1173,13 @@
 
         <tr>
             
-                <td class="name"><code>feature</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">DbConnection</span>
 
 
 
@@ -1355,6 +1210,11 @@
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="DbService.html#commitTransaction_">DbService#commitTransaction_</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1377,7 +1237,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -1400,26 +1260,6 @@
     
 
     
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">bool</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -1428,7 +1268,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="getService"><span class="type-signature"></span>getService(name)</h4>
+    <h4 class="name" id="getConnection_"><span class="type-signature">&lt;async> </span>getConnection_( [options])</h4>
     
     
 </dt>
@@ -1436,253 +1276,7 @@
 
     
     <div class="description">
-        <p>Get a service from module hierarchy</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="loadConfig_"><span class="type-signature">&lt;async> </span>loadConfig_()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="CliApp.html">CliApp</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="log"><span class="type-signature"></span>log(level, message, rest)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Default log method, may be override by loggers feature</p>
+        <p>Get a database connection</p>
     </div>
     
 
@@ -1719,13 +1313,13 @@
 
         <tr>
             
-                <td class="name"><code>level</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
 
@@ -1734,6 +1328,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -1744,73 +1340,7 @@
 
             
 
-            <td class="description last"><p>Log level</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>message</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Log message</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>rest</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Extra meta data</p></td>
+            <td class="description last"><p>Extra options for the connection, optional</p></td>
         </tr>
 
     
@@ -1829,6 +1359,11 @@
 
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="DbService.html#getConnection_">DbService#getConnection_</a>
+    </li></ul></dd>
     
 
     
@@ -1852,7 +1387,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -1886,7 +1421,7 @@
     </dt>
     <dd>
         
-<span class="param-type"><a href="CliApp.html">CliApp</a></span>
+<span class="param-type">Promise.&lt;MySQLConnection></span>
 
 
 
@@ -1903,7 +1438,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="registerService"><span class="type-signature"></span>registerService(name, serviceObject, override)</h4>
+    <h4 class="name" id="rollbackTransaction_"><span class="type-signature">&lt;async> </span>rollbackTransaction_(conn)</h4>
     
     
 </dt>
@@ -1911,7 +1446,7 @@
 
     
     <div class="description">
-        <p>Register a service</p>
+        <p>Rollback a transaction</p>
     </div>
     
 
@@ -1946,61 +1481,13 @@
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>serviceObject</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>override</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
+<span class="param-type">DbConnection</span>
 
 
 
@@ -2031,6 +1518,11 @@
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="DbService.html#rollbackTransaction_">DbService#rollbackTransaction_</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2053,7 +1545,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -2084,7 +1576,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="start_"><span class="type-signature">&lt;async> </span>start_()</h4>
+    <h4 class="name" id="startTransaction_"><span class="type-signature">&lt;async> </span>startTransaction_(conn)</h4>
     
     
 </dt>
@@ -2092,225 +1584,7 @@
 
     
     <div class="description">
-        <p>Start the cli app</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="CliApp.html#event:configLoaded">CliApp#event:configLoaded</a></li>
-    
-        <li><a href="CliApp.html#event:ready">CliApp#event:ready</a></li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="CliApp.html">CliApp</a>></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="stop_"><span class="type-signature">&lt;async> </span>stop_()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Stop the app module</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="CliApp.html#event:stopping">CliApp#event:stopping</a></li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="CliApp.html">CliApp</a>></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="toAbsolutePath"><span class="type-signature"></span>toAbsolutePath(args)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Translate a relative path of this app module to an absolute path</p>
+        <p>Start a transaction.</p>
     </div>
     
 
@@ -2333,8 +1607,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -2347,13 +1619,13 @@
 
         <tr>
             
-                <td class="name"><code>args</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">DbConnection</span>
 
 
 
@@ -2361,20 +1633,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>Array of path parts</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -2394,116 +1656,10 @@
 	
 
     
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-
-    
-        <h3 class="subsection-title">Events</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="event:configLoaded">configLoaded</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Config loaded event.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="DbService.html#startTransaction_">DbService#startTransaction_</a>
+    </li></ul></dd>
     
 
     
@@ -2527,173 +1683,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="event:ready">ready</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>App ready</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="event:stopping">stopping</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>App stopping</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		CliApp.js
+		features/mysql.js
 	</dd>
 	
 
@@ -2721,6 +1711,10 @@
 </dd>
 
         </dl>
+    
+
+    
+
     
 </article>
 

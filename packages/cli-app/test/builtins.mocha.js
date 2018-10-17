@@ -12,7 +12,7 @@ const CliApp = require('..');
 const WORKING_DIR = 'test/fixtures/builtin-test';
 const APP_NAME = 'test';
 
-describe.only('features', function () {    
+describe.only('builtin features', function () {    
     let cliApp;
 
     before(async function () {

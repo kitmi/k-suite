@@ -60,6 +60,14 @@ module.exports = {
         } else {
             appPath = path.join(server.appModulesPath, config.name);
         }
+
+        let exists = await Util.fs.pathExists(appPath) && (await Util.fs.stat(appPath)).isDirectory();
+        if (!exists) {
+            throw new InvalidConfiguration(
+                `App [${config.name}] not exists.`,
+                app,
+                `appRouting.${baseRoute}.name`);
+        }
     
         let app = new WebApp(server, config.name, baseRoute, appPath, options);
         app.settings = config.settings || {};

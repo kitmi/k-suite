@@ -45,7 +45,7 @@ function httpMethod(method, middlewares) {
     
             if (middlewares) {
                 if (_.isPlainObject(middlewares)) {
-                    targetFunction.__metaMiddlewares = _.map(middlewares, (options, name) => ({ name, options }))
+                    targetFunction.__metaMiddlewares = _.map(middlewares, (options, name) => ({ name, options }));
                 } else {
                     targetFunction.__metaMiddlewares = _.castArray(middlewares);
                 }                

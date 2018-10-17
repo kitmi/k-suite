@@ -2,7 +2,7 @@
 "use strict";
 
 const Util = require('rk-utils');
-const { Controller } = require('../../../../../../../lib/patterns');
+const { Controller } = require('../../../../../../../lib');
 
 class BookController extends Controller {
     books = [ { id: 1, title: 'Book 1' }, { id: 2, title: 'Book 2' } ];

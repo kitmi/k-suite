@@ -9,7 +9,7 @@ const CliApp = require('..');
 
 const WORKING_DIR = 'test/fixtures/features-test';
 
-describe.only('features', function () {    
+describe.only('custom features', function () {    
     let cliApp;
 
     let initLoadedBeforeOthers = false;

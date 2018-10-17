@@ -15,7 +15,10 @@ module.exports = function (api) {
     "comments": false,
     ...(isProduction ? {
       "minified": true
-    }: {}),   
+    }: {}),  
+    "ignore": [
+      "src/**/*.spec.js"
+    ], 
     "plugins": [
       ["contract", {
         "strip": isProduction,

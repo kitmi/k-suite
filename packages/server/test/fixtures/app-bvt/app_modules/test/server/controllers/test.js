@@ -1,6 +1,6 @@
 "use strict";
 
-const httpMethod = require('../../../../../../../lib/decorators/httpMethod');
+const { http} = require('../../../../../../../lib');
 
 async function middleware1(ctx, next) {    
     ctx.state1 = 'Hello';
@@ -8,19 +8,19 @@ async function middleware1(ctx, next) {
 }
 
 module.exports = {
-    action1: httpMethod('get')(
+    action1: http('get')(
         async (ctx) => {
             ctx.body = 'action1';
         }
     ),
 
-    post: httpMethod('post:/action1')(
+    post: http('post:/action1')(
         async (ctx) => {
             ctx.body = 'you post: ' + ctx.request.body.name;
         }
     ),
 
-    action2: httpMethod('get', middleware1)(async ctx => {
+    action2: http('get', middleware1)(async ctx => {
         ctx.body = ctx.state1;
     })
 };

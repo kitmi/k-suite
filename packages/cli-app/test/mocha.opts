@@ -1,3 +1,2 @@
---reporter=spec
 --require should
 --require ./test/babel-for-test.js

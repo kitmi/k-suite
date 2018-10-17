@@ -1,6 +1,6 @@
 "use strict";
 
-const { httpMethod, Controller } = require('../../../../../../../lib/patterns');
+const { http, Controller } = require('../../../../../../../lib');
 
 async function middleware1(ctx, next) {    
     ctx.state1 = 'Hello';
@@ -9,17 +9,17 @@ async function middleware1(ctx, next) {
 
 class Module2Controller extends Controller {
 
-    @httpMethod('get')
+    @http('get')
     async action1(ctx) {
         ctx.body = 'action1';
     }
 
-    @httpMethod('post:/action1')
+    @http('post:/action1')
     async post(ctx) {
         ctx.body = 'you post: ' + ctx.request.body.name;
     }
 
-    @httpMethod('get', middleware1)
+    @http('get', middleware1)
     async action2(ctx) {
         ctx.body = ctx.state1;
     }
