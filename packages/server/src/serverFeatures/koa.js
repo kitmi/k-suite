@@ -1,6 +1,6 @@
 "use strict";
 
-const Feature = require('@k-suite/cli-app/lib/enum/Feature');
+const Feature = require('@k-suite/app/lib/enum/Feature');
 const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;

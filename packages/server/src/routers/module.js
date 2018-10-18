@@ -16,7 +16,7 @@ const { InvalidConfiguration } = require('../Errors');
 
 /**
  * Create a module-based router. 
- * @param {AppWithMiddleware} app
+ * @param {RoutableApp} app
  * @param {string} baseRoute 
  * @param {*} moduleItem 
  * @example

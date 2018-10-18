@@ -5,9 +5,7 @@
  * @module Feature_Middlewares
  */
 
-const Feature = require('@k-suite/cli-app/lib/enum/Feature');
-const Util = require('rk-utils');
-const Promise = Util.Promise;
+const Feature = require('@k-suite/app/lib/enum/Feature');
 
 module.exports = {
 
@@ -19,7 +17,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {AppWithMiddleware} app - The app module object
+     * @param {RoutableApp} app - The app module object
      * @param {*} middlewares - Middlewares and options
      * @returns {Promise.<*>}
      */

@@ -15,7 +15,7 @@ const path = require('path');
 /**
  * Action middleware creator
  * @param {string} controllerAction 
- * @param {AppWithMiddleware} app 
+ * @param {RoutableApp} app 
  */
 module.exports = (controllerAction, app) => {
     if (typeof controllerAction !== 'string') {

@@ -1,6 +1,6 @@
 "use strict";
 
-const Literal = require('@k-suite/cli-app/lib/enum/Literal');
+const Literal = require('@k-suite/app/lib/enum/Literal');
 
 /**
  * Common constants
@@ -101,11 +101,6 @@ module.exports = Object.assign({}, Literal, {
      * Locale dictionary files path
      */
     LOCALE_PATH: 'locale',
-
-    /**
-     * Default timezone
-     */
-    DEFAULT_TIMEZONE: 'Australia/Sydney',
 
     /**
      * Allowed http methods

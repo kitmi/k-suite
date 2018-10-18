@@ -16,7 +16,7 @@ const Literal = require('../enum/Literal');
  * @property {Object} [options.map] - Extensions to engines map
  * @property {Object} [options.options] - View state locals
  * @property {bool} [options.options.cache] - Flag to enable cache 
- * @param {AppWithMiddleware} app - The owner app module
+ * @param {RoutableApp} app - The owner app module
  **/
 module.exports = function (options, app) {
     return views(path.join(app.backendPath, Literal.VIEWS_PATH), options);

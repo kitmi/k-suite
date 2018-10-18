@@ -5,11 +5,9 @@
  * @module Feature_Routing
  */
 
-const Feature = require('@k-suite/cli-app/lib/enum/Feature');
+const Feature = require('@k-suite/app/lib/enum/Feature');
 const Util = require('rk-utils');
 const _ = Util._;
-const Promise = Util.Promise;
-const { InvalidConfiguration } = require('../Errors');
 
 module.exports = {
 
@@ -21,7 +19,7 @@ module.exports = {
 
     /**
      * Load the feature.
-     * @param {CliApp} app - The app module object
+     * @param {RoutableApp} app - The app module object
      * @param {object} routes - Routes and configuration
      * @returns {Promise.<*>}
      */

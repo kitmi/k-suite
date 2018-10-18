@@ -4,15 +4,15 @@ const Util = require('rk-utils');
 const Promise = Util.Promise;
 const _ = Util._;
 const path = require('path');
-const AppWithMiddleware = require('./AppWithMiddleware');
+const RoutableApp = require('./RoutableApp');
 const Literal = require('./enum/Literal');
 
 /**
  * Web application module class
  * @class
- * @extends AppWithMiddleware
+ * @extends RoutableApp
  */
-class WebApp extends AppWithMiddleware {
+class WebApp extends RoutableApp {
     /**     
      * @param {WebServer} server
      * @param {string} name - The name of the app module.
@@ -60,7 +60,7 @@ class WebApp extends AppWithMiddleware {
      * @param {string} level - Log level
      * @param {string} message - Log message
      * @param {...object} rest - Extra meta data
-     * @returns {CliApp}
+     * @returns {RoutableApp}
      */
     log(level, message, ...rest) {
         if (this.options.logWithAppName) {

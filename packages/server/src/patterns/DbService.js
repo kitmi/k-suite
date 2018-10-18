@@ -8,7 +8,7 @@ const { URL } = require('url');
  */
 class DbService {
     /**
-     * @param {AppWithMiddleware} app - The app which creates this service
+     * @param {RoutableApp} app - The app which creates this service
      * @param {string} type - Dbms type
      * @param {string} name - The name of database (the one appears as the key of db config)
      * @param {object} [options] - Options loaded from feature config

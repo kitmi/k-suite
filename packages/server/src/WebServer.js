@@ -5,16 +5,16 @@ const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;
 
-const AppWithMiddleware = require('./AppWithMiddleware');
+const RoutableApp = require('./RoutableApp');
 const Literal = require('./enum/Literal');
 const mount = require('koa-mount');
 
 /**
  * Web server class
  * @class
- * @extends AppWithMiddleware
+ * @extends RoutableApp
  */
-class WebServer extends AppWithMiddleware {
+class WebServer extends RoutableApp {
     /**          
      * @param {string} [name='server'] - The name of the server.     
      * @param {object} [options] - The app module's extra options defined in its parent's configuration.

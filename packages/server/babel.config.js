@@ -1,5 +1,5 @@
 module.exports = function (api) {  
-  let isProdAndTest = api.env(["production"]); // api.env(["production", "test"]);
+  let isProduction = api.env(["production"]); 
 
   return {
     "presets": [
@@ -13,15 +13,15 @@ module.exports = function (api) {
       ]
     ],
     "comments": false,
-    ...(isProdAndTest ? {
+    ...(isProduction ? {
       "minified": true
-    }: {}),
+    }: {}),  
     "ignore": [
-      "src/oolong/lang/oolong.js"
-    ],
+      "src/**/*.spec.js"
+    ], 
     "plugins": [
       ["contract", {
-        "strip": isProdAndTest,
+        "strip": isProduction,
         "names": {
           "assert": "assert",
           "precondition": "pre",

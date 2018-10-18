@@ -6,7 +6,7 @@
  */
 class Controller {
     /**     
-     * @param {AppWithMiddleware} app 
+     * @param {RoutableApp} app 
      */
     constructor(app) {
         this.app = app;

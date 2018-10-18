@@ -18,7 +18,7 @@
  *  } 
  */
 
-const Feature = require('@k-suite/cli-app/lib/enum/Feature');
+const Feature = require('@k-suite/app/lib/enum/Feature');
 const path = require('path');
 const Util = require('rk-utils');
 const Promise = Util.Promise;
