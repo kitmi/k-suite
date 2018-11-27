@@ -18,7 +18,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The cli app module object
+     * @param {App} app - The cli app module object
      * @param {string} version - Version information, use @package.version to use the version info from package.json located under working folder
      * @returns {Promise.<*>}
      */

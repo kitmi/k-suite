@@ -1,0 +1,26 @@
+{
+  "namespace": [
+    "entities/**"
+  ],
+  "schema": {
+    "test": {
+      "entities": [
+        {
+          "entity": "gender"
+        },
+        {
+          "entity": "group"
+        },
+        {
+          "entity": "profile"
+        },
+        {
+          "entity": "user"
+        },
+        {
+          "entity": "usergroup"
+        }
+      ]
+    }
+  }
+}

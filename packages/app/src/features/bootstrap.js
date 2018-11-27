@@ -20,7 +20,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The cli app module object
+     * @param {App} app - The cli app module object
      * @param {object} options - Options for the feature
      * @property {string} [options.path='boostrap'] - The path of the bootstrap scripts
      * @returns {Promise.<*>}

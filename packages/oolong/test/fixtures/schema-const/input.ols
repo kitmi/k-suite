@@ -1,0 +1,10 @@
+import 'entities/**'
+import 'views/**'
+
+const locale = 'zh_CN'
+
+schema sample  
+  entities
+    user
+  views
+    userProfile

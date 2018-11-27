@@ -1,0 +1,24 @@
+{
+  "type": {},
+  "entity": {
+    "gender": {
+      "comment": "",
+      "features": [],
+      "fields": {
+        "code": {
+          "type": "text",
+          "maxLength": 1
+        },
+        "name": {
+          "type": "text",
+          "maxLength": 20,
+          "optional": true
+        }
+      },
+      "key": [
+        "code"
+      ],
+      "indexes": []
+    }
+  }
+}

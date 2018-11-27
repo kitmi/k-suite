@@ -49,7 +49,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The app module object
+     * @param {App} app - The app module object
      * @param {object} factories - Object factories
      * @returns {Promise.<*>}
      */

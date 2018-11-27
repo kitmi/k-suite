@@ -24,7 +24,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The cli app module object
+     * @param {App} app - The cli app module object
      * @param {object} registry - Feature loading source registry     
      * @returns {Promise.<*>}
      */

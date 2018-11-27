@@ -1,0 +1,31 @@
+import 
+  'entities/**'
+  'views/**'
+
+const 
+  locale = { lang: 'zh_CN',
+    timezone: 'Australia/Sydney',
+    array: [ 'abv', 90, 200.5 ],
+    multiline: [
+      'gogogo',
+      'nextline',
+      "double quote",
+      <js> 
+        function () {
+          return 'this is inside a script block';
+        } 
+      </js>,
+      true,
+      on,
+      off,
+      { key: 'another', value: 'object' }
+    ]
+  }
+
+schema sample  
+  entities
+    user
+    profile
+  views
+    userProfile
+    userProfiles

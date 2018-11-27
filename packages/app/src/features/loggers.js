@@ -56,7 +56,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The cli app module object
+     * @param {App} app - The cli app module object
      * @param {object} categories - Configuration for multi-categories
      * @returns {Promise.<*>}
      * @example

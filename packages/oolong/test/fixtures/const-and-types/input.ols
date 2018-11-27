@@ -1,0 +1,5 @@
+const normalLength = 200
+
+type password : text maxLength(normalLength)
+type email : text maxLength(normalLength) ~isEmail    
+type phone : text maxLength(20) ~matches(/^((\+|00)\d+)?\d+(-\d+)?$/) |> normalizeMobile

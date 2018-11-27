@@ -1,0 +1,22 @@
+{
+    "namespace": [
+        "views/**",
+        "entities/**"
+    ],
+    "constant": {
+        "locale": "zh_CN",
+        "timezone": "Australia/Sydney"
+    },
+    "schema": {
+        "sample": {
+            "entities": [
+                "user",
+                "profile"
+            ],
+            "views": [
+                "userProfile",
+                "userProfiles"
+            ]
+        }
+    }
+}

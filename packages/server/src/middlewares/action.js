@@ -36,6 +36,15 @@ module.exports = (controllerAction, app) => {
 
     let actioner = ctrl[action];   
 
+    if (Array.isArray(actioner)) {
+        let actionFunction = actioner.concat().pop();
+        if (typeof actionFunction !== 'function') {
+            throw new InvalidConfiguration(`${controllerAction} does not contain a valid action in returned middleware chain.`, app);
+        }    
+
+        return actioner.concat(app.wrapAction(actionFunction));
+    } 
+
     if (typeof actioner !== 'function') {
         throw new InvalidConfiguration(`${controllerAction} is not a valid action.`, app);
     }    

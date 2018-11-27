@@ -1,0 +1,41 @@
+type
+  password : text maxLength(200)
+  email : text maxLength(200) ~isEmail    
+  phone : text maxLength(20) ~matches(/^((\+|00)\d+)?\d+(-\d+)?$/)
+  userStatus : enum values(['inactive', 'active', 'disabled', 'forbidden', 'deleted'])
+  name : text maxLength(20)
+
+entity user
+  -- 'User Credential';
+
+  with
+    autoId({ startFrom: 100000 })
+    createTimestamp
+    updateTimestamp
+    logicalDeletion({ status: 'deleted' })
+    stateTracking("status")
+    atLeastOneNotNull([ 'email', 'mobile' ])
+
+  has
+    email 
+    mobile : phone ~isMobilePhone(@latest.locale |> stringDasherize) |> normalizeMobile    
+    status : userStatus default('inactive')
+    profile -> personalProfile
+    securityGroups -> [ securityGroup ]
+
+  index
+    email unique
+    mobile unique
+
+entity personalProfile
+  -- 'Personal Profile'
+  with
+    updateTimestamp
+  has
+    owner => user
+    firstName : name optional
+    middleName : name optional
+    surName : name optional
+    gender -> gender optional
+    title -> personTitle optional
+    dateOfBirth : datetime optional

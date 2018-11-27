@@ -2,6 +2,15 @@ module.exports = function (api) {
   let isProduction = api.env(["production"]); 
 
   return {
+    "env": {
+      "development": {
+        "sourceMaps": "inline",
+        "plugins": ["source-map-support"]
+      },
+      "production": {
+        "minified": true        
+      }
+    },
     "presets": [
       [
         "@babel/env",
@@ -13,10 +22,8 @@ module.exports = function (api) {
       ]
     ],
     "comments": false,
-    ...(isProduction ? {
-      "minified": true
-    }: {}),  
     "ignore": [
+      "node_modules",      
       "src/**/*.spec.js"
     ], 
     "plugins": [

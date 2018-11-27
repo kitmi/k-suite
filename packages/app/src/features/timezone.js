@@ -19,7 +19,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The app module object
+     * @param {App} app - The app module object
      * @param {string} timezone - Timezone info
      * @returns {Promise.<*>}
      */

@@ -1,0 +1,8 @@
+entity gender
+  -- "Gender"
+
+  has
+    code : text maxLength(1) -- "Gender Code"
+    name : text maxLength(20) optional -- "Gender Name"
+
+  key code

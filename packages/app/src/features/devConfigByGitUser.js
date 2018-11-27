@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Enable developer specific config identified by git user name
+ * Enable developer specific config identified by git user name.
  * @module Feature_DevConfigByGitUser
  */
 
@@ -9,7 +9,7 @@ const path = require('path');
 const Feature = require('../enum/Feature');
 const Util = require('rk-utils');
 
-const JsConfigProvider = require('rk-config/lib/JsConfigProvider');
+const JsonConfigProvider = require('rk-config/lib/JsonConfigProvider');
 
 module.exports = {
 
@@ -21,7 +21,7 @@ module.exports = {
 
     /**
      * Load the feature
-     * @param {CliApp} app - The cli app module object
+     * @param {App} app - The cli app module object
      * @param {object} options - Options for the feature     
      * @param {string} [options.altUserForTest] - Alternative username for test purpose, if given, this feature will not get git user but use this given value instead
      * @returns {Promise.<*>}
@@ -32,7 +32,7 @@ module.exports = {
             throw new Error('Unable to read "user.name" of git config.');
         }            
 
-        app.configLoader.provider = new JsConfigProvider(path.join(app.configPath, app.configName, devName));
-        app.config = await app.configLoader.load_();
+        app.configLoader.provider = new JsonConfigProvider(path.join(app.configPath, app.configName, devName));
+        return app.loadConfig_();
     }
 };

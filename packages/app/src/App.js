@@ -2,6 +2,7 @@
 
 const Util = require('rk-utils');
 const ConfigLoader = require('rk-config');
+const JsonConfigProvider = require('rk-config/lib/JsonConfigProvider');
 const Promise = Util.Promise;
 const _ = Util._;
 const fs = Util.fs;
@@ -9,6 +10,7 @@ const path = require('path');
 const EventEmitter = require('events');
 const winston = require('winston');
 const winstonFlight = require('winstonflight');
+const Logger = require('winston/lib/winston/logger');
 const Feature = require('./enum/Feature.js');
 const Literal = require('./enum/Literal.js');
 
@@ -41,6 +43,7 @@ class App extends EventEmitter {
      * @property {string} [options.workingPath] - App's working path, default to process.cwd()
      * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath
      * @property {string} [options.configName] - App's config basename, default to "app"
+     * @property {string} [options.disableEnvAwareConfig=false] - Don't use environment-aware config     
      */
     constructor(name, options) {
         super();
@@ -103,8 +106,8 @@ class App extends EventEmitter {
 
     /**
      * Start the cli app     
-     * @fires CliApp#configLoaded
-     * @fires CliApp#ready
+     * @fires App#configLoaded
+     * @fires App#ready
      * @returns {Promise.<App>}
      */
     async start_() {        
@@ -123,19 +126,25 @@ class App extends EventEmitter {
          * Loaded services
          * @member {object}         
          */
-        this.services = {};                
-
-        /**
-         * Configuration loader instance
-         * @member {ConfigLoader}         
-         */
-        this.configLoader = ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
+        this.services = {};       
         
-        await this.loadConfig_();        
+        if (this.options.loadConfigFromOptions) {
+            this.config = this.options.config;
+        } else {
+            /**
+             * Configuration loader instance
+             * @member {ConfigLoader}         
+             */
+            this.configLoader = this.options.disableEnvAwareConfig ? 
+                new ConfigLoader(new JsonConfigProvider(path.join(this.configPath, this.configName + '.json'))) : 
+                ConfigLoader.createEnvAwareJsonLoader(this.configPath, this.configName, this.env);
+            
+            await this.loadConfig_();     
+        }   
 
         /**
          * Config loaded event.
-         * @event CliApp#configLoaded
+         * @event App#configLoaded
          */
         this.emit('configLoaded');
 
@@ -147,7 +156,7 @@ class App extends EventEmitter {
 
         /**
          * App ready
-         * @event CliApp#ready
+         * @event App#ready
          */
         this.emit('ready');
 
@@ -162,13 +171,13 @@ class App extends EventEmitter {
 
     /**
      * Stop the app module     
-     * @fires CliApp#stopping
+     * @fires App#stopping
      * @returns {Promise.<App>}
      */
     async stop_() {
         /**
          * App stopping
-         * @event CliApp#stopping
+         * @event App#stopping
          */
         this.emit('stopping');
         this.started = false;
@@ -314,18 +323,27 @@ class App extends EventEmitter {
     _injectLogger(detach) {
         if (detach) {
             this.log('verbose', 'Logger is detaching ...');
-            this.logger.close();
+            if (this._externalLogger) {
+                delete this._externalLogger;
+            } else {
+                this.logger.close();
+            }
             delete this.logger;
             return;
         }
 
         let loggerOpt = this.options.logger;
 
-        if (loggerOpt.transports) {
-            loggerOpt.transports = winstonFlight(winston, loggerOpt.transports);
-        }
+        if (loggerOpt instanceof Logger) {
+            this.logger = loggerOpt;
+            this._externalLogger = true;
+        } else {
+            if (loggerOpt.transports) {
+                loggerOpt.transports = winstonFlight(winston, loggerOpt.transports);
+            }
 
-        this.logger = winston.createLogger(loggerOpt);   
+            this.logger = winston.createLogger(loggerOpt);   
+        }
         this.log('verbose', 'Logger injected.');            
     }
 
@@ -401,7 +419,10 @@ class App extends EventEmitter {
         await Util.eachAsync_(featureGroup, async ([ name, load_, options ]) => {             
             this.emit('before:load:' + name);
             this.log('verbose', `Loading feature "${name}" ...`);
-            await load_(this, options);                
+
+            await load_(this, options);   
+            this.features[name].loaded = true;             
+            
             this.log('verbose', `Feature "${name}" loaded. [OK]`);
             this.emit('after:load:' + name);
         });

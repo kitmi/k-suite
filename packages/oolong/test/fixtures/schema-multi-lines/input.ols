@@ -1,0 +1,15 @@
+import 
+  'entities/**'
+  'views/**'
+
+const 
+  locale = 'zh_CN'
+  timezone = 'Australia/Sydney'
+
+schema sample  
+  entities
+    user
+    profile
+  views
+    userProfile
+    userProfiles

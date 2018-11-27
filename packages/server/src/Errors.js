@@ -5,28 +5,11 @@
  * @module Errors
  */
 
+const { withName, withExtraInfo } = require('@k-suite/app/lib/utils/Helpers');
 const HttpCode = require('http-status-codes');
 
 /**
- * @mixin
- * @param {*} Base 
- */
-const withName = (Base) => class extends Base {
-    /**     
-     * @param {string} message 
-     */
-    constructor(message) {
-        super(message);
-
-        /**
-         * Error name.
-         * @member {string}
-         */
-        this.name = this.constructor.name;
-    }    
-};
-
-/**
+ * Adds a status property to the class.
  * @mixin
  * @param {*} Base 
  * @param {*} STATUS 
@@ -40,28 +23,12 @@ const withHttpStatus = (Base, STATUS) => class extends Base {
 };
 
 /**
- * @mixin
- * @param {*} Base 
- */
-const withExtraInfo = (Base) => class extends Base {
-    /**     
-     * @param {string} message 
-     * @param {object} extraInfo 
-     */
-    constructor(message, extraInfo) {
-        super(message);
-        /**
-         * Extra error info.
-         * @member {object}
-         */
-        this.extraInfo = extraInfo;
-    }
-};
-
-/**
- * Error caused by invalid configuration
+ * Error caused by invalid configuration.
  * @class
  * @extends Error  
+ * @mixes withHttpStatus
+ * @mixes withName
+ * @mixes withExtraInfo 
  */
 class InvalidConfiguration extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.INTERNAL_SERVER_ERROR))) {
     /**
@@ -75,18 +42,24 @@ class InvalidConfiguration extends withExtraInfo(withName(withHttpStatus(Error, 
 }
 
 /**
- * Http BadRequest, 400
+ * Http BadRequest, 400.
  * @class 
  * @extends Error
+ * @mixes withHttpStatus
+ * @mixes withName
+ * @mixes withExtraInfo 
  */
 class BadRequest extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.BAD_REQUEST))) {
 
 };
 
 /**
- * Error caused by all kinds of runtime errors
+ * Error caused by all kinds of runtime errors.
  * @class
  * @extends Error 
+ * @mixes withHttpStatus
+ * @mixes withName
+ * @mixes withExtraInfo 
  */
 class ServerError extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.INTERNAL_SERVER_ERROR))) {
     /**     
@@ -114,9 +87,7 @@ class ServerError extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.
     }
 }
 
-exports.withName = withName;
 exports.withHttpStatus = withHttpStatus;
-exports.withExtraInfo = withExtraInfo;
 exports.BadRequest = BadRequest;
 exports.InvalidConfiguration = InvalidConfiguration;
 exports.ServerError = ServerError;

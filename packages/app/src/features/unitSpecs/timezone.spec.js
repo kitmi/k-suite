@@ -2,7 +2,7 @@
 
 const path = require('path');
 const Util = require('rk-utils');
-const CliApp = require('../../../lib/App');
+const App = require('../../../lib/App');
 
 const WORKING_DIR = path.resolve(__dirname, '../../../test/temp');
 
@@ -12,7 +12,7 @@ describe('feature:timezone', function () {
     before(async function () {
         Util.fs.emptyDirSync(WORKING_DIR);
 
-        cliApp = new CliApp('test server', { 
+        cliApp = new App('test server', { 
             workingPath: WORKING_DIR
         });
 

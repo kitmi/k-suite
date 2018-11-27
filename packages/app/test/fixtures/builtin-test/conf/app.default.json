@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "cmdLineOptions": {
+    "commandLineOptions": {
         "banner": "#!jsv: (app) => `This is the program banner v${app.version}`",
         "program": "cli-worker",
         "arguments": [
