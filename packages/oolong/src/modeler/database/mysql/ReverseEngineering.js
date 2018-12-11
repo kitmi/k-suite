@@ -48,7 +48,7 @@ class MySQLReverseEngineering {
             };
     
             let entityContent = OolCodeGen.transform(entity);
-            let entityFile = path.join(entitiesOolPath, entityName + '.ols');
+            let entityFile = path.join(entitiesOolPath, entityName + '.ool');
             fs.writeFileSync(entityFile + '.json', JSON.stringify(entity, null, 2));
             fs.writeFileSync(entityFile, entityContent);
             this.logger.log('info', `Extracted entity definition file "${entityFile}".`);
@@ -68,7 +68,7 @@ class MySQLReverseEngineering {
         };
 
         let schemaContent = OolCodeGen.transform(json);
-        let schemaFile = path.join(outputDir, schemaName + '.ols');
+        let schemaFile = path.join(outputDir, schemaName + '.ool');
         fs.writeFileSync(schemaFile + '.json', JSON.stringify(json, null, 2));
         fs.writeFileSync(schemaFile, schemaContent);
         this.logger.log('info', `Extracted schema entry file "${schemaFile}".`);

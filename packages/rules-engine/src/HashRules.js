@@ -31,11 +31,15 @@ class HashRules  {
     async run_(route, facts) {
         let chains = this._buildActionsChain(route);
 
-        return chains(facts);
+        if (chains) {
+            return chains(facts);
+        }
     }
 
     _buildActionsChain(route) {
         let actions = this._mapRules[route];
+
+        if (!actions || actions.length === 0) return undefined;
 
         return composeActions(actions);
     }

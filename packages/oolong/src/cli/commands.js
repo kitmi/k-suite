@@ -9,8 +9,8 @@ exports.commands = {
     'list': 'List all oolong schemas.',
     'create': 'Create database schema.',
     'config': 'Enable oolong feature and add deploy config.',
-    'model': 'Generate entity models.',
-    'deploy': 'Create database structure.',
+    'build': 'Generate database scripts and entity models.',
+    'migrate': 'Create database structure.',
     'dataset': 'List available data set.',
     'import': 'Import data set.',
     'reverse': 'Reverse engineering from a databse.'
@@ -82,23 +82,26 @@ exports.options = (core) => {
             };
             break;
 
-        case 'deploy':
-            cmdOptions['app'] = {
-                desc: 'The name of the app to operate',
+        case 'migrate':
+            cmdOptions['c'] = {
+                desc: "Oolong config file",
+                alias: [ "conf", "config" ],                
                 inquire: true,
-                promptType: 'list',
-                choicesProvider: () => Promise.resolve(MowaHelper.getAvailableAppNames(core))
-            };
+                promptMessage: 'Please input the config file path:',
+                promptDefault: "conf/oolong.json"
+            };  
             cmdOptions['r'] = {
                 desc: 'Reset all data if the database exists',
+                promptMessage: 'Reset existing database?',
+                promptDefault: false,
+                inquire: true,
                 required: true,
                 alias: [ 'reset' ],
-                bool: true,
-                inquire: true
+                isBool: true
             };
             break;
 
-        case 'model':
+        case 'build':
             cmdOptions['c'] = {
                 desc: "Oolong config file",
                 alias: [ "conf", "config" ],                
@@ -160,13 +163,24 @@ exports.options = (core) => {
                 promptMessage: 'Please input the config file path:',
                 promptDefault: "conf/oolong.json",
                 afterInquire: () => { connectionStrings = core.getConnectionStrings(core.option('c')); }
-            };    
+            };   
+            
+            /*
+            cmdOptions['ols'] = {
+                desc: 'Only convert json source to ols, skip database reverse engineering',
+                alias: [ 'ols-only' ],
+                required: true,
+                isBool: true,
+                'default': false
+            };
+            */
 
             cmdOptions['conn'] = {
                 desc: 'The data source connector',
                 alias: [ 'connector' ],
                 promptMessage: 'Please select the data source connector:',
                 inquire: true,
+                required: true,
                 promptType: 'list',
                 choicesProvider: () => Object.keys(connectionStrings),
                 afterInquire: () => { console.log('The conenction string of selected connector:', connectionStrings[core.option('conn')]); }                
@@ -189,14 +203,14 @@ exports.main = (core) => {
     }
 };
 
-exports.model = async (core) => {
+exports.build = async (core) => {
     core.app.log('verbose', 'oolong model');
 
     let oolongConfig = core.oolongConfig;
 
-    let sourceDir = Util.getValueByPath(oolongConfig, 'oolong.sourceDir');
-    if (!sourceDir) {
-        throw new Error('"oolong.sourceDir" not found in oolong config.');
+    let dslSourceDir = Util.getValueByPath(oolongConfig, 'oolong.dslSourceDir');
+    if (!dslSourceDir) {
+        throw new Error('"oolong.dslSourceDir" not found in oolong config.');
     }
 
     let modelOutputDir = Util.getValueByPath(oolongConfig, 'oolong.modelOutputDir');
@@ -204,42 +218,66 @@ exports.model = async (core) => {
         throw new Error('"oolong.modelOutputDir" not found in oolong config.');
     }
 
-    let sourcePath = core.app.toAbsolutePath(sourceDir);    
-    let modelOutputPath = core.app.toAbsolutePath(modelOutputDir);
+    let scriptOutputDir = Util.getValueByPath(oolongConfig, 'oolong.scriptOutputDir');
+    if (!scriptOutputDir) {
+        throw new Error('"oolong.scriptOutputDir" not found in oolong config.');
+    }
 
-    if (!fs.existsSync(sourcePath)) {
-        return Promise.reject(`Source directory "${sourcePath}" not found.`);
+    let dslSourcePath = core.app.toAbsolutePath(dslSourceDir);    
+    let modelOutputPath = core.app.toAbsolutePath(modelOutputDir);
+    let scriptOutputPath = core.app.toAbsolutePath(scriptOutputDir);
+
+    if (!fs.existsSync(dslSourcePath)) {
+        return Promise.reject(`DSL source directory "${dslSourcePath}" not found.`);
+    }
+
+    let useJsonSource = Util.getValueByPath(oolongConfig, 'oolong.useJsonSource', false);       
+
+    return core.api.build_({
+        logger: core.app.logger,
+        dslSourcePath,
+        modelOutputPath,
+        scriptOutputPath,
+        useJsonSource,
+        schemaDeployment: core.schemaDeployment
+    });
+};
+
+exports.migrate = async (core) => {
+    core.app.log('verbose', 'oolong deploy');
+
+    let oolongConfig = core.oolongConfig;
+
+    let dslSourceDir = Util.getValueByPath(oolongConfig, 'oolong.dslSourceDir');
+    if (!dslSourceDir) {
+        throw new Error('"oolong.dslSourceDir" not found in oolong config.');
+    }
+
+    let scriptSourceDir = Util.getValueByPath(oolongConfig, 'oolong.scriptSourceDir');
+    if (!scriptSourceDir) {
+        throw new Error('"oolong.scriptSourceDir" not found in oolong config.');
+    }
+
+    let dslSourcePath = core.app.toAbsolutePath(dslSourceDir);    
+    let scriptSourcePath = core.app.toAbsolutePath(scriptSourceDir);
+
+    if (!fs.existsSync(dslSourcePath)) {
+        return Promise.reject(`DSL source directory "${dslSourcePath}" not found.`);
+    }
+
+    if (!fs.existsSync(scriptSourcePath)) {
+        return Promise.reject(`Database scripts directory "${scriptSourcePath}" not found.`);
     }
 
     let useJsonSource = Util.getValueByPath(oolongConfig, 'oolong.useJsonSource', false);
-    let modelMapping = Util.getValueByPath(oolongConfig, 'oolong.modelMapping');
 
-    if (_.isEmpty(modelMapping)) {
-        throw new Error('"modelMapping" is empty.');
-    }    
-
-    modelMapping = _.mapValues(modelMapping, (mapping, schemaName) => {
-        let { dataSource, ...others } = mapping;
-
-        if (!dataSource) {
-            throw new Error(`Configuration item "modelMapping.${schemaName}.dataSource" not found.`);
-        }
-
-        let connOptions = Util.getValueByPath(oolongConfig, dataSource);
-        if (!connOptions) {
-            throw new Error(`Data source config "${dataSource}" not found.`);
-        }
-
-        return { dataSource, connOptions, ...others };
-    });
-
-    return core.api.buildModels_({
+    return core.api.migrate_({
         logger: core.app.logger,
-        sourcePath,
-        modelOutputPath,
+        dslSourcePath,        
+        scriptSourcePath,
         useJsonSource,
-        modelMapping
-    });
+        schemaDeployment: core.schemaDeployment
+    }, core.option('reset'));
 };
 
 exports.reverse = async (core) => {

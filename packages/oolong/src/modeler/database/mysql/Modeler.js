@@ -9,10 +9,8 @@ const Util = require('rk-utils');
 const { _, fs } = Util;
 
 const OolUtils = require('../../../lang/OolUtils');
-const OolongDbModeler = require('../../Modeler');
 const Entity = require('../../../lang/Entity');
-
-const Rules = require('./mysql/rules-reverse');
+const Types = require('../../../lang/types');
 
 const UNSUPPORTED_DEFAULT_VALUE = new Set(['BLOB', 'TEXT', 'JSON', 'GEOMETRY']);
 
@@ -49,43 +47,37 @@ const MYSQL_KEYWORDS = [
 ];
 */
 
-class MySQLModelerler extends OolongDbModeler {
-    /**
-     * Ooolong database modeler for mysql db
-     * @constructs OolongMysqlModeler
-     * @extends OolongDbModeler
+/**
+ * Ooolong database modeler for mysql db.
+ * @class
+ */
+class MySQLModeler {
+    /**     
      * @param {object} context
-     * @property {Logger} context.logger - Logger object
-     * @property {AppModule} context.currentApp - Current app module
-     * @property {bool} context.verbose - Verbose mode
+     * @property {Logger} context.logger - Logger object     
      * @property {OolongLinker} context.linker - Oolong DSL linker
-     * @param {object} dbmsOptions
-     * @property {object} dbmsOptions.dbOptions
-     * @property {object} dbmsOptions.tableOptions
+     * @property {string} context.scriptOutputPath - Generated script path
+     * @param {object} dbOptions
+     * @property {object} dbOptions.db
+     * @property {object} dbOptions.table
      */
-    constructor(context, dbmsOptions) {
-        super(context);
+    constructor(context, connector, dbOptions) {
+        this.logger = context.logger;
+        this.buildPath = context.scriptOutputPath;
+        this.connector = connector;
 
         this._events = new EventEmitter();
 
-        this._dbmsOptions = {
-            dbOptions: _.reduce(dbmsOptions.dbOptions,
-                function(result, value, key) {
-                    result[_.upperCase(key)] = value;
-                    return result;
-                }, {}),
-            tableOptions: _.reduce(dbmsOptions.tableOptions,
-                function(result, value, key) {
-                    result[_.upperCase(key)] = value;
-                    return result;
-                }, {})
-        };
+        this._dbOptions = dbOptions ? {
+            db: _.mapKeys(dbOptions.db, (value, key) => _.upperCase(key)),
+            table: _.mapKeys(dbOptions.table, (value, key) => _.upperCase(key))
+        } : {};
 
         this._references = {};
     }
 
-    modeling(dbService, schema, buildPath) {
-        super.modeling(dbService, schema, buildPath);
+    modeling(schema) {
+        this.logger.log('info', 'Generating mysql scripts for schema "' + schema.name + '"...');
 
         let modelingSchema = schema.clone();
 
@@ -100,7 +92,7 @@ class MySQLModelerler extends OolongDbModeler {
         this._events.emit('afterRelationshipBuilding');        
 
         //build SQL scripts
-        let sqlFilesDir = path.join('mysql', dbService.name);
+        let sqlFilesDir = path.join('mysql', this.connector.database);
         let dbFilePath = path.join(sqlFilesDir, 'entities.sql');
         let fkFilePath = path.join(sqlFilesDir, 'relations.sql');
         let initIdxFilePath = path.join(sqlFilesDir, 'data', '_init', 'index.list');
@@ -182,20 +174,21 @@ class MySQLModelerler extends OolongDbModeler {
             });
         });
 
-        this._writeFile(path.join(buildPath, dbFilePath), tableSQL);
-        this._writeFile(path.join(buildPath, fkFilePath), relationSQL);
+        this._writeFile(path.join(this.buildPath, dbFilePath), tableSQL);
+        this._writeFile(path.join(this.buildPath, fkFilePath), relationSQL);
 
         if (!_.isEmpty(data)) {
-            this._writeFile(path.join(buildPath, initFilePath), JSON.stringify(data, null, 4));
+            this._writeFile(path.join(this.buildPath, initFilePath), JSON.stringify(data, null, 4));
 
-            if (!fs.existsSync(path.join(buildPath, initIdxFilePath))) {
-                this._writeFile(path.join(buildPath, initIdxFilePath), '0-init.json\n');
+            if (!fs.existsSync(path.join(this.buildPath, initIdxFilePath))) {
+                this._writeFile(path.join(this.buildPath, initIdxFilePath), '0-init.json\n');
             }
         }
 
         let funcSQL = '';
         
         //process view
+        /*
         _.each(modelingSchema.views, (view, viewName) => {
             view.inferTypeInfo(modelingSchema);
 
@@ -216,14 +209,13 @@ class MySQLModelerler extends OolongDbModeler {
 
             funcSQL += '\nEND;\n\n';
         });
+        */
 
         let spFilePath = path.join(sqlFilesDir, 'procedures.sql');
-        this._writeFile(path.join(buildPath, spFilePath), funcSQL);
+        this._writeFile(path.join(this.buildPath, spFilePath), funcSQL);
 
         return modelingSchema;
-    }
-
-    
+    }    
 
     _addReference(left, leftField, right, rightField) {
         let refs4LeftEntity = this._references[left];
@@ -304,7 +296,7 @@ class MySQLModelerler extends OolongDbModeler {
             case 'autoId':
                 field = entity.fields[feature.field];
 
-                if (field.type === 'int' && !field.generator) {
+                if (field.type === 'integer' && !field.generator) {
                     field.autoIncrementId = true;
                     if ('startFrom' in field) {
                         this._events.on('setTableOptions:' + entity.name, extraOpts => {
@@ -453,6 +445,13 @@ class MySQLModelerler extends OolongDbModeler {
 
     _refineLeftField(fieldInfo) {
         return Object.assign(_.pick(fieldInfo, Oolong.BUILTIN_TYPE_ATTR), { isReference: true });
+    }
+
+    _writeFile(filePath, content) {
+        fs.ensureFileSync(filePath);
+        fs.writeFileSync(filePath, content);
+
+        this.logger.log('info', 'Generated db script: ' + filePath);
     }
     
     static oolOpToSql(op) {
@@ -609,7 +608,7 @@ class MySQLModelerler extends OolongDbModeler {
         //table options
         let extraProps = {};
         this._events.emit('setTableOptions:' + entityName, extraProps);
-        let props = Object.assign({}, this._dbmsOptions.tableOptions, extraProps);
+        let props = Object.assign({}, this._dbOptions.table, extraProps);
 
         sql = _.reduce(props, function(result, value, key) {
             return result + ' ' + key + '=' + value;
@@ -677,12 +676,11 @@ class MySQLModelerler extends OolongDbModeler {
         let col;
         
         switch (field.type) {
-            case 'int':
+            case 'integer':
             col = MySQLModeler.intColumnDefinition(field);
                 break;
 
-            case 'float':
-            case 'decimal':
+            case 'number':
             col =  MySQLModeler.floatColumnDefinition(field);
                 break;
 
@@ -690,7 +688,7 @@ class MySQLModelerler extends OolongDbModeler {
             col =  MySQLModeler.textColumnDefinition(field);
                 break;
 
-            case 'bool':
+            case 'boolean':
             col =  MySQLModeler.boolColumnDefinition(field);
                 break;
 
@@ -702,19 +700,15 @@ class MySQLModelerler extends OolongDbModeler {
             col =  MySQLModeler.datetimeColumnDefinition(field);
                 break;
 
-            case 'json':
+            case 'object':
             col =  MySQLModeler.textColumnDefinition(field);
-                break;
-
-            case 'xml':
-            col =  MySQLModeler.textColumnDefinition(field);
-                break;
+                break;            
 
             case 'enum':
             col =  MySQLModeler.enumColumnDefinition(field);
                 break;
 
-            case 'csv':
+            case 'array':
             col =  MySQLModeler.textColumnDefinition(field);
                 break;
 

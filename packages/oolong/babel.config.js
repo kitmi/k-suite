@@ -7,6 +7,9 @@ module.exports = function (api) {
         "sourceMaps": "inline",
         "plugins": ["source-map-support"]
       },
+      "test": {
+        "sourceMaps": true
+      },
       "production": {
         "minified": true        
       }

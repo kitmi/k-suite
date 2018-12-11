@@ -3,6 +3,7 @@
 const path = require('path');
 const { _, fs, eachAsync_ } = require('rk-utils');
 const { HashRules } = require('@k-suite/rules-engine');
+const Rules = require('../lang/Rules');
 
 const basePath = path.resolve(__dirname, '..', 'lang', 'features');
 const features = fs.readdirSync(basePath);
@@ -17,6 +18,7 @@ features.forEach(file => {
 
         if (feature.__metaRules) {
             _.forOwn(feature.__metaRules, (actions, ruleName) => {
+                
                 featureRules.addRule(g+'.'+ruleName, actions);
             })            
         }
@@ -24,11 +26,7 @@ features.forEach(file => {
 });
 
 module.exports = {
-    applyRules_: async (ruleName, entityMeta, context) => 
-        eachAsync_(entityMeta.features, (feature) => featureRules.run_(feature.name + '.' + ruleName, { feature: feature.args, entityMeta, context })),
-
-    RULE_POST_DATA_VALIDATION: 'postDataValidation',
-    RULE_POST_CREATE_CHECK: 'postCreateCheck',
-    RULE_POST_UPDATE_CHECK: 'postUpdateCheck',
-    RULE_BEFORE_CREATED_RETRIEVE: 'beforeCreatedRetrieve'
+    applyRules_: async (ruleName, entityModel, context) => 
+        eachAsync_(entityModel.meta.features, (feature, name) => featureRules.run_(name + '.' + ruleName, { feature, entityModel, context })),
+    ...Rules
 };

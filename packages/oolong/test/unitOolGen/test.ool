@@ -1,0 +1,9 @@
+import 'entities/**'
+
+schema test
+  entities
+    user
+    profile
+    gender
+    group
+    usergroup

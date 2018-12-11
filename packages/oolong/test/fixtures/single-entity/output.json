@@ -2,11 +2,15 @@
     "type": {
         "password": {
             "type": "text",
-            "maxLength": 200
+            "maxLength": [
+                200
+            ]
         },
         "email": {
             "type": "text",
-            "maxLength": 200,
+            "maxLength": [
+                200
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
@@ -16,23 +20,29 @@
         },
         "phone": {
             "type": "text",
-            "maxLength": 20,
+            "maxLength": [
+                20
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
                     "name": "matches",
-                    "args": "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    "args": [
+                        "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    ]
                 }
             ]
         },
         "userStatus": {
             "type": "enum",
             "values": [
-                "inactive",
-                "active",
-                "disabled",
-                "forbidden",
-                "deleted"
+                [
+                    "inactive",
+                    "active",
+                    "disabled",
+                    "forbidden",
+                    "deleted"
+                ]
             ]
         }
     },
@@ -42,27 +52,35 @@
             "features": [
                 {
                     "name": "autoId",
-                    "args": {
-                        "startFrom": 100000
-                    }
+                    "args": [
+                        {
+                            "startFrom": 100000
+                        }
+                    ]
                 },
                 "createTimestamp",
                 "updateTimestamp",
                 {
                     "name": "logicalDeletion",
-                    "args": {
-                        "status": "deleted"
-                    }
+                    "args": [
+                        {
+                            "status": "deleted"
+                        }
+                    ]
                 },
                 {
                     "name": "stateTracking",
-                    "args": "status"
+                    "args": [
+                        "status"
+                    ]
                 },
                 {
                     "name": "atLeastOneNotNull",
                     "args": [
-                        "email",
-                        "mobile"
+                        [
+                            "email",
+                            "mobile"
+                        ]
                     ]
                 }
             ],
@@ -78,19 +96,21 @@
                         {
                             "oolType": "Validator",
                             "name": "isMobilePhone",
-                            "args": {
-                                "oolType": "PipedValue",
-                                "value": {
-                                    "oolType": "ObjectReference",
-                                    "name": "latest.locale"
-                                },
-                                "modifiers": [
-                                    {
-                                        "oolType": "Processor",
-                                        "name": "stringDasherize"
-                                    }
-                                ]
-                            }
+                            "args": [
+                                {
+                                    "oolType": "PipedValue",
+                                    "value": {
+                                        "oolType": "ObjectReference",
+                                        "name": "latest.locale"
+                                    },
+                                    "modifiers": [
+                                        {
+                                            "oolType": "Processor",
+                                            "name": "stringDasherize"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "oolType": "Processor",
@@ -105,10 +125,12 @@
                         {
                             "oolType": "Processor",
                             "name": "hashPassword",
-                            "args": {
-                                "oolType": "ObjectReference",
-                                "name": "latest.passwordSalt"
-                            }
+                            "args": [
+                                {
+                                    "oolType": "ObjectReference",
+                                    "name": "latest.passwordSalt"
+                                }
+                            ]
                         },
                         {
                             "oolType": "Validator",
@@ -119,7 +141,9 @@
                 "passwordSalt": {
                     "name": "passwordSalt",
                     "type": "text",
-                    "fixedLength": 32,
+                    "fixedLength": [
+                        32
+                    ],
                     "auto": true,
                     "readOnly": true,
                     "fixedValue": true
@@ -127,49 +151,63 @@
                 "displayName": {
                     "name": "displayName",
                     "type": "text",
-                    "maxLength": 40,
+                    "maxLength": [
+                        40
+                    ],
                     "optional": true
                 },
                 "locale": {
                     "name": "locale",
                     "type": "text",
-                    "maxLength": 10,
-                    "default": "en_AU"
+                    "maxLength": [
+                        10
+                    ],
+                    "default": [
+                        "en_AU"
+                    ]
                 },
                 "isEmailVerified": {
                     "name": "isEmailVerified",
                     "type": "bool",
-                    "default": false
+                    "default": [
+                        false
+                    ]
                 },
                 "isMobileVerified": {
                     "name": "isMobileVerified",
                     "type": "bool",
-                    "default": false,
+                    "default": [
+                        false
+                    ],
                     "comment": "Flag indicates mobile verified or not"
                 },
                 "status": {
                     "name": "status",
                     "type": "userStatus",
-                    "default": "inactive"
+                    "default": [
+                        "inactive"
+                    ]
                 },
                 "tag": {
                     "name": "tag",
                     "type": "array",
-                    "valueType": "text",
+                    "valueType": [
+                        "text"
+                    ],
                     "optional": true
                 },
                 "profile": {
                     "name": "profile",
                     "association": {
                         "type": "hasOne",
-                        "target": "personalProfile"
+                        "entity": "personalProfile"
                     }
                 },
                 "securityGroups": {
                     "name": "securityGroups",
                     "association": {
                         "type": "hasMany",
-                        "target": "securityGroup"
+                        "entity": "securityGroup"
                     }
                 }
             },

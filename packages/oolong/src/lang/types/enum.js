@@ -14,5 +14,6 @@ module.exports = {
     serialize: value => value,
 
     qualifiers: any.qualifiers.concat([
+        'values'
     ])
 };

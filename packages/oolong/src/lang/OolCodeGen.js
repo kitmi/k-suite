@@ -3,7 +3,7 @@
 const Util = require('rk-utils');
 const { _ } = Util;
 const { generateDisplayName } = require('./OolUtils');
-const { isNothing } = require('../utils/lang');
+const { isNothing, isQuotedWith } = require('../utils/lang');
 
 const KW_NAMESPACE = 'use';
 const KW_SCHEMA = 'schema';
@@ -21,7 +21,6 @@ const KW_INDEXES = 'index';
 
 const Types = require('./types');
 const OolTypes = require('./OolTypes');
-const validator = require('validator');
 
 class OolCodeGen {
     static transform(json, options) {
@@ -74,7 +73,7 @@ class OolCodeGen {
                 return this[generateMethod](v);
             }
 
-            throw new Error('to be implemented.');
+            throw new Error('to be implemented, object: ' + k);
         });
     }
 
@@ -135,14 +134,14 @@ class OolCodeGen {
             this.appendLine(KW_TYPE_DEFINE).indent();
 
             _.forOwn(types, (type, name) => {
-                if (type.type === 'enum') {
-                    this.appendLine(name, ':', JSON.stringify(type.values));
-                } else {
-                    this.appendLine(name, ':', type.type);
-                }
+                let lineInfo = [ name, ':', type.type ];
+
+                this._translateType(type, lineInfo);
+
+                this.appendLine(...lineInfo);
             });
 
-            this.dedent();
+            this.dedent().appendLine();
         }
 
         post: this.indented == 0, 'Unexpected indented state.';
@@ -185,12 +184,16 @@ class OolCodeGen {
                 this.appendLine(KW_WITH_FEATURE).indent();
 
                 entity.features.forEach(feature => {
+                    if (typeof feature === 'string') {
+                        feature = { name: feature };
+                    }
+
                     if (feature.name === 'autoId') {
                         hasAutoId = true;
                     }
 
-                    if (feature.options) {
-                        this.appendLine(feature.name + '(' + JSON.stringify(feature.options) + ')');
+                    if (feature.args) {
+                        this.appendLine(feature.name + '(' + feature.args.map(a => JSON.stringify(a)).join(', ') + ')');
                     } else {
                         this.appendLine(feature.name);
                     }
@@ -203,9 +206,7 @@ class OolCodeGen {
                 this.appendLine().appendLine(KW_FIELDS).indent();
 
                 _.forOwn(entity.fields, (field, name) => {
-                    assert: field.type;
-
-                    if (field.type === '$association') return;
+                    assert: field.type;                    
 
                     let lineInfo = [];
                     lineInfo.push(Types.Builtin.has(name) ? Util.quote(name) : name);                    
@@ -215,44 +216,7 @@ class OolCodeGen {
                         lineInfo.push(field.type);
                     }                  
 
-                    let extraTypeInfo = _.omit(field, ['type', 'modifiers']);                    
-                    
-                    let typeMeta = Types[field.type];
-
-                    _.forOwn(extraTypeInfo, (v, k) => {
-                        if (!typeMeta.qualifiers.includes(k)) {
-                            throw new Error(`"${k}" is not a valid qualifier for type "${field.type}".`);
-                        }
-
-                        if (typeof v === 'boolean' || isNothing(v)) {
-                            if (v) {
-                                lineInfo.push(k);
-                            }
-                        } else {
-                            lineInfo.push(k + '(' + JSON.stringify(v) + ')');
-                        }
-                    });
-
-                    if (field.modifiers) {
-                        field.modifiers.forEach(v => {
-                            switch (v.oolType) {
-                                case OolTypes.Lang.VALIDATOR:
-                                lineInfo.push('~' + this._translateFunctor(v));
-                                break;
-
-                                case OolTypes.Lang.PROCESSOR:
-                                lineInfo.push('|>' + this._translateFunctor(v));
-                                break;
-
-                                case OolTypes.Lang.ACTIVATOR:
-                                lineInfo.push('=' + this._translateFunctor(v));
-                                break;
-
-                                default:
-                                    throw new Error(`Unknown modifier type: "${v.oolType}"!`);
-                            }                                
-                        });
-                    } 
+                    this._translateType(field, lineInfo);
 
                     lineInfo.push(KW_COMMENT + ' ' + (field.comment || Util.quote(this.generate_field_comment(enityName, name))));
 
@@ -265,11 +229,13 @@ class OolCodeGen {
             if (!_.isEmpty(entity.associations)) {
                 this.appendLine().appendLine(KW_ASSOCIATIONS).indent();
 
-                entity.associations.forEach(({ type, from, entity }) => {
+                entity.associations.forEach(({ type, from, entity, through }) => {
                     if (from) {
-                        this.appendLine(type, entity, 'as', from);
+                        this.appendLine(type, Util.quote(entity, "'"), 'as', Util.quote(from, "'"));
+                    } else if (through) {
+                        this.appendLine(type, Util.quote(entity, "'"), 'through', Util.quote(through, "'"));
                     } else {
-                        this.appendLine(type, entity);
+                        this.appendLine(type, Util.quote(entity, "'"));
                     }                    
                 });
 
@@ -277,7 +243,12 @@ class OolCodeGen {
             }
 
             if (entity.key && !hasAutoId) {
-                this.appendLine().appendLine(KW_KEY, entity.key);
+                let key = (Array.isArray(entity.key) && entity.key.length === 1) ? entity.key[0] : entity.key;
+                if (Array.isArray(key)) {
+                    this.appendLine().appendLine(KW_KEY, '[ ' + key.join(', ') + ' ]');
+                } else {
+                    this.appendLine().appendLine(KW_KEY, key);
+                }                
             }
 
             if (!_.isEmpty(entity.indexes)) {
@@ -309,32 +280,89 @@ class OolCodeGen {
         post: this.indented == 0, 'Unexpected indented state.';
     }
 
-    _translateFunctor(f) {
+    _translateType(field, lineInfo) {
+        let extraTypeInfo = _.omit(field, ['type', 'modifiers', 'name']);
+        //let typeMeta = Types[field.type];
+        _.forOwn(extraTypeInfo, (v, k) => {
+            //if (!typeMeta.qualifiers.includes(k)) {
+            //    throw new Error(`"${k}" is not a valid qualifier for type "${field.type}".`);
+            //}
+            if (typeof v === 'boolean' || isNothing(v)) {
+                if (v) {
+                    lineInfo.push(k);
+                }
+            } else {
+                v = _.castArray(v);
+                lineInfo.push(k + '(' + this._translateArgs(v) + ')');
+            }
+        });
+
+        if (field.modifiers) {
+            this._translatePipedValue(lineInfo, field);
+        }        
+    }
+
+    _translatePipedValue(lineInfo, value) {        
+        if (value.modifiers) {
+            value.modifiers.forEach(v => {
+                switch (v.oolType) {
+                    case OolTypes.Lang.VALIDATOR:
+                    lineInfo.push('~' + this._translateModifier(v));
+                    break;
+
+                    case OolTypes.Lang.PROCESSOR:
+                    lineInfo.push('|>' + this._translateModifier(v));
+                    break;
+
+                    case OolTypes.Lang.ACTIVATOR:
+                    lineInfo.push('=' + this._translateModifier(v));
+                    break;
+
+                    default:
+                        throw new Error(`Unknown modifier type: "${v.oolType}"!`);
+                }                                
+            });
+        } 
+    }
+
+    _translateModifier(f) {
         let r = f.name;
 
         if (!_.isEmpty(f.args)) {
             r += '(';
 
-            f.args.forEach((a, i) => {
-                if (i > 0) {
-                    r += ', '
-                }
-
-                if (_.isPlainObject(a)) {
-                    if (a.oolType === 'ObjectReference') {
-                        r += '@' + a.name;
-                    } else {
-                        throw new Error('to be implemented.');
-                    }
-                } else {
-                    r += JSON.stringify(a);
-                }
-            });
+            r += this._translateArgs(f.args);
 
             r += ')';
         }
 
         return r;
+    }
+
+    _translateArgs(args) {
+        return args.map(a => this._translateArg(a)).join(', ');
+    }
+
+    _translateArg(a) {
+        if (_.isPlainObject(a) && a.hasOwnProperty('oolType')) {
+            if (a.oolType === 'PipedValue') {
+                let pipeline = [ this._translateArg(a.value) ];
+
+                if (a.modifiers) {
+                    this._translatePipedValue(pipeline, a);
+                }
+
+                return pipeline.join(' ');
+            } else if (a.oolType === 'ObjectReference') {
+                return '@' + a.name;
+            } else {
+                throw new Error('Not supported oolType: ' + a.oolType);
+            }
+        } 
+
+        if (typeof a === 'string' && isQuotedWith(a, '/')) return a;
+        
+        return JSON.stringify(a);
     }
 }
 

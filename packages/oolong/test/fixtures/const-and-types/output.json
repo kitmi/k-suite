@@ -5,17 +5,21 @@
     "type": {
         "password": {
             "type": "text",
-            "maxLength": {
-                "oolType": "ConstReference",
-                "name": "normalLength"
-            }
+            "maxLength": [
+                {
+                    "oolType": "ConstReference",
+                    "name": "normalLength"
+                }
+            ]
         },
         "email": {
             "type": "text",
-            "maxLength": {
-                "oolType": "ConstReference",
-                "name": "normalLength"
-            },
+            "maxLength": [
+                {
+                    "oolType": "ConstReference",
+                    "name": "normalLength"
+                }
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
@@ -25,12 +29,16 @@
         },
         "phone": {
             "type": "text",
-            "maxLength": 20,
+            "maxLength": [
+                20
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
                     "name": "matches",
-                    "args": "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    "args": [
+                        "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    ]
                 },
                 {
                     "oolType": "Processor",

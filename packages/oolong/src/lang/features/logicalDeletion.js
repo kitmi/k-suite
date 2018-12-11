@@ -2,6 +2,9 @@
 
 const Util = require('rk-utils');
 const _ = Util._;
+
+const Rules = require('../Rules');
+
 const FEATURE_NAME = 'logicalDeletion';
 
 /**
@@ -14,13 +17,15 @@ const FEATURE_NAME = 'logicalDeletion';
  * @param {OolongEntity} entity - Entity to apply this feature
  * @param {object} options - Field options, can be a string as a new status field or an object reference to a certain status of an existing field
  */
-function initialize(entity, options) {
+function feature(entity, args = []) {
     let newField = true, fieldInfo = {
         name: 'isDeleted',
         type: 'boolean',
         'default': false,
         readOnly: true
     }, fieldName, featureSetting;
+
+    let [ options ] = args;
 
     if (options) {
         if (_.isPlainObject(options)) {
@@ -68,4 +73,15 @@ function initialize(entity, options) {
     }
 }
 
-module.exports = initialize;
+feature.__metaRules = {
+    [Rules.RULE_BEFORE_FIND]: ({ feature, entityModel, context }, next) => {
+        let findOptions = context.findOptions;
+        if (!findOptions.$includeDeleted) {
+            findOptions.$where = entityModel.mergeCondition(findOptions.$where, { [feature.field]: { $ne: feature.value } });
+        }
+
+        return next();
+    }
+};
+
+module.exports = feature;

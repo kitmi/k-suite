@@ -53,18 +53,6 @@ class Connector {
          */
         this.options = extraOptions || {};          
     }
-
-    /**
-     * Create a new connector instance with the same settings
-     * @returns {Connector}
-     */
-    createNew() {
-        let ConnectorClass = this.constructor;
-        return new ConnectorClass(this.driver, this.name, { 
-            connection: this.connectionString,
-            ... this.options
-        });
-    }
     
     /**
      * Extracted connection string components.

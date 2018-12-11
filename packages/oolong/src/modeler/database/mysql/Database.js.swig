@@ -1,25 +1,27 @@
 const { pascalCase } = require('rk-utils');
 
-const Connector = require('@k-suite/oolong/lib/runtime/drivers/mysql/Connector');
+//const Connector = require('@k-suite/oolong/lib/runtime/drivers/mysql/Connector');
+const Connector = require('../../../lib/runtime/drivers/mysql/Connector');
 
 class {{ className }} {
-    static dataSource = '{{ dataSource }}';
-    static schemaName = '{{ schemaName }}';
-
     constructor(connection, options) {        
-        this.defaultConnector = new Connector(this.constructor.dataSource, { connection, ...options });
-    }
-
-    createNewConnector() {
-        return this.defaultConnector.createNew();
+        this.connector = new Connector(this.constructor.dataSource, { connection, ...options });
     }
 
     model(entityName) {
         let modelClassName = pascalCase(entityName);
-        const modelCreator = require(`./mysql/{{ schemaName }}/${modelClassName}`);
+        const modelCreator = require(`./{{ schemaName }}/${modelClassName}`);
         
         return modelCreator(this);
     }
+
+    async close_() {
+        return this.connector.end_();
+    }
 }
+
+{{ className }}.driver = 'mysql';
+{{ className }}.dataSource = '{{ dataSource }}';
+{{ className }}.schemaName = '{{ schemaName }}';
 
 module.exports = {{ className }};

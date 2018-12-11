@@ -64,7 +64,7 @@ function mapArgs(args) {
     if (_.isEmpty(args)) return [];
 
     return args.map(a => {
-        if (_.isPlainObject(a) && 'type' in args) {
+        if (_.isPlainObject(a) && 'type' in a) {
             return a;
         }
 
@@ -162,7 +162,7 @@ function astMemberMethod(name, params, body, generator = false, async = false, i
         "kind": "method",
         "static": isStatic,
         //"*\n * \n * @param identity\n * @param password\n * @returns {*}\n "
-        ...(comment ? astLeadingComments(`*\n     * ${comment}${params.map(p => `\n     * @param ${p}`).join('')}${Array.isArray(body) && _.last(body).type === 'ReturnStatement' ? '\n     * @returns {*}' : ''}\n     `, 'Block') : {})
+        ...(comment ? astLeadingComments(`*\n * ${comment}${params.map(p => `\n * @param ${p}`).join('')}${Array.isArray(body) && _.last(body).type === 'ReturnStatement' ? '\n * @returns {*}' : ''}\n `, 'Block') : {})
     };
 }
 
@@ -179,6 +179,15 @@ function astIf(test, consequent, alternate, comment = false) {
 function astBinExp(left, operator, right) {
     return {
         "type": "BinaryExpression",
+        "operator": operator,
+        "left": astValue(left),
+        "right": astValue(right)
+    }
+}
+
+function astLogicalExp(left, operator, right) {
+    return {
+        "type": "LogicalExpression",
         "operator": operator,
         "left": astValue(left),
         "right": astValue(right)
@@ -221,14 +230,14 @@ function astArrayAccess(name, index) {
     }
 }
 
-function astVarRef(name) {
+function astVarRef(name, elementStyle = false) {
     if (_.isPlainObject(name)) {
         if (name.type === 'MemberExpression' || name.type === 'Identifier') {
             return name;
         }
 
         if (name.oolType === 'ObjectReference') {
-            return astVarRef(name.name);
+            return astVarRef(name.name, elementStyle);
         }
 
         throw new Error('Invalid reference: ' + JSON.stringify(name));
@@ -239,8 +248,8 @@ function astVarRef(name) {
         //p.reverse();
         let result = {
             "type": "MemberExpression",
-            "computed": false,
-            "property": astId(p.pop())
+            "computed": elementStyle,
+            "property": elementStyle ? astLiteral(p.pop()) : astId(p.pop())
         };
 
         let last = result;
@@ -248,8 +257,8 @@ function astVarRef(name) {
         while (p.length > 1) {
             last["object"] = {
                 "type": "MemberExpression",
-                "computed": false,
-                "property": astId(p.pop())
+                "computed": elementStyle,
+                "property": elementStyle ? astLiteral(p.pop()) : astId(p.pop())
             };
 
             last = last["object"];
@@ -323,7 +332,7 @@ function astValue(value) {
         }
 
         if (value.oolType === 'ObjectReference') {
-            return astVarRef(value.name);
+            return astVarRef(value.name, true);
         }
 
         /*
@@ -454,6 +463,15 @@ function astAssign(left, right, comment = false) {
     }, comment);
 }
 
+function astConditional(test, consequent, alternate) {
+    return {
+        "type": "ConditionalExpression",
+        "test": astValue(test),
+        "consequent": astValue(consequent),
+        "alternate": astValue(alternate)
+    }
+}
+
 function astThrow(name, args) {
     return {
         "type": "ThrowStatement",
@@ -522,7 +540,9 @@ module.exports = {
     astAnonymousFunction,
     astArrowFunction,
     astIf,
+    astConditional,
     astBinExp,
+    astLogicalExp,
     astBlock,
     astMatchObject,
     astExpression,

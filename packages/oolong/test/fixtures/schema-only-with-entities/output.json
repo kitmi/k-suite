@@ -6,9 +6,15 @@
     "schema": {
         "sample": {
             "entities": [
-                "user",
-                "schema",
-                "import"
+                {
+                    "entity": "user"
+                },
+                {
+                    "entity": "schema"
+                },
+                {
+                    "entity": "import"
+                }
             ]
         }
     }

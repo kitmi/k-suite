@@ -28,8 +28,8 @@ let User = app.model('fooBar.user');
 // a user may has many profile  
 
 let User = app.model('fooBar.user');
-User.findOne(/* id */ 1231, /* select */ { '*': true, 'profile.*': true, 'profile.gender.name': 'profile.gender' });
-User.findAll(where, { select, groupBy, orderBy, limitOffset });
+await User.findOne_(/* id */ 1231, /* select */ { '*': true, 'profile.*': true, 'profile.gender.name': 'profile.gender' });
+await User.findAll_(where, { select, groupBy, orderBy, limitOffset });
 
 ```
 ### Create
@@ -54,7 +54,7 @@ let user = {
 
 let User = app.model('fooBar.user');
 
-User.create(user);
+await User.create_(user);
 // 1. insert profile
 // 2. insert user
 
@@ -76,14 +76,12 @@ let user = {
 
 let User = app.model('fooBar.user');
 
-User.updateOne(user);
+await User.update_(user);
 // 1. begin transaction
 // 2. select latest user by id
 // 3. apply modification
 // 4. update
 // 5. commit
-
-User.updateAll(modification, where);
 
 ```
 
@@ -104,3 +102,16 @@ User.deleteAll(where);
 // if not, delete all
 
 ```
+
+## Condition Rules
+
+### operator
+
+* $eq or $equal
+* $ne or $neq or $notEqual
+* $> or $gt or $greaterThan
+* $>= or $gte or $greaterThanOrEqual
+* $< or $lt or $lessThan
+* $<= or $lte or $lessThanOrEqual
+* $in
+* $nin or $notIn

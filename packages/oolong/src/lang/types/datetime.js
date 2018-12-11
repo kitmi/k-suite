@@ -7,6 +7,8 @@ const any = require('./any');
 module.exports = {
     name: 'datetime',
 
+    typeObject: DateTime,
+
     alias: [ 'date', 'time', 'timestamp' ],
 
     sanitize: (value, info, i18n) => {
@@ -33,7 +35,7 @@ module.exports = {
 
     generate: (info, i18n) => i18n ? i18n.now() : DateTime.local(),
 
-    serialize: value => value.toISO(),
+    serialize: value => value.toISO({ includeOffset: false }),
 
     qualifiers: any.qualifiers.concat([
         'timezone'

@@ -14,14 +14,16 @@ const FEATURE_NAME = 'createTimestamp';
  * @param {OolongEntity} entity - Entity to apply this feature
  * @param {array} options - Field options
  */
-function initialize(entity, options) {
+function initialize(entity, args = []) {
     let typeInfo = {
         name: 'createdAt',
         type: 'datetime',
         auto: true,
         readOnly: true,
-        fixedValue: true
+        writeOnce: true
     };
+
+    let [ options ] = args;
 
     if (options) {
         if (typeof options === 'string') {

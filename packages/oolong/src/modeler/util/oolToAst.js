@@ -10,7 +10,7 @@ const { TopoSort } = require('@k-suite/algorithms');
 
 const JsLang = require('./ast.js');
 const OolTypes = require('../../lang/OolTypes');
-const { isDotSeparateName, extractDotSeparateName, getReferenceNameIfItIs } = require('../../lang/OolUtils');
+const { isDotSeparateName, extractDotSeparateName, extractReferenceBaseName } = require('../../lang/OolUtils');
 const OolongValidators = require('../../runtime/Validators');
 const OolongProcessors = require('../../runtime/Processors');
 const OolongActivators = require('../../runtime/Activators');
@@ -33,13 +33,6 @@ const OOL_MODIFIER_CODE_FLAG = {
     [OolTypes.Modifier.VALIDATOR]: AST_BLK_VALIDATOR_CALL,
     [OolTypes.Modifier.PROCESSOR]: AST_BLK_PROCESSOR_CALL,
     [OolTypes.Modifier.ACTIVATOR]: AST_BLK_ACTIVATOR_CALL
-};
-
-//[ JsLang.astReturn(true) ] : 
-const OOL_FUNCTOR_RETURN = {
-    [OolUtil.FUNCTOR_VALIDATOR]: () => [ JsLang.astReturn(true) ],
-    [OolUtil.FUNCTOR_MODIFIER]: args => [ JsLang.astReturn(JsLang.astId(args[0])) ],
-    [OolUtil.FUNCTOR_COMPOSER]: () => [ JsLang.astReturn(JsLang.astId("undefined")) ]
 };
 
 const OOL_MODIFIER_OP = {
@@ -212,18 +205,27 @@ function compileModifier(topoId, value, functor, compileContext) {
     if (functor.oolType === OolTypes.Modifier.ACTIVATOR) {            
         compileContext.astMap[topoId] = JsLang.astCall(functorId, callArgs);
     } else {
-        compileContext.astMap[topoId] = JsLang.astCall(functorId, [ value ].concat(callArgs));
+        let arg0 = value;
+        if (!isTopLevelBlock(topoId) && _.isPlainObject(value) && value.oolType === 'ObjectReference' && value.name.startsWith('latest.')) {
+            //let existingRef =            
+            arg0 = JsLang.astConditional(
+                JsLang.astCall('latest.hasOwnProperty', [ extractReferenceBaseName(value.name) ]), /** test */
+                value, /** consequent */
+                replaceVarRefScope(value, 'existing')
+            );  
+        }
+        compileContext.astMap[topoId] = JsLang.astCall(functorId, [ arg0 ].concat(callArgs));
     }    
 
-    if (topoId.indexOf(':arg[') === -1 && topoId.indexOf('$cases[') === -1 && topoId.indexOf('$exceptions[') === -1) {
+    if (isTopLevelBlock(topoId)) {
         addCodeBlock(compileContext, topoId, {
             type: OOL_MODIFIER_CODE_FLAG[functor.oolType],
             target: value.name,
-            references: references
+            references: references   // latest., exsiting., raw.
         });
     }
 
-    return lastTopoId;
+    return topoId;
 }  
       
 function extractReferencedFields(oolArgs) {   
@@ -320,7 +322,7 @@ function translateModifier(functor, compileContext, args) {
 function compilePipedValue(startTopoId, varOol, compileContext) {
     let lastTopoId = compileConcreteValueExpression(startTopoId, varOol.value, compileContext);
 
-    valOol.modifiers.forEach(modifier => {
+    varOol.modifiers.forEach(modifier => {
         let modifierStartTopoId = createTopoId(compileContext, startTopoId + OOL_MODIFIER_OP[modifier.oolType] + modifier.name);
         dependsOn(compileContext, lastTopoId, modifierStartTopoId);
 
@@ -424,14 +426,19 @@ function compileConcreteValueExpression(startTopoId, value, compileContext) {
                 dependency = refBase;
             } else if (refBase === 'latest' && rest.length > 0) {
                 //latest.password
-                dependency = rest.pop() + ':ready';
+                let refFieldName = rest.pop();
+                if (refFieldName !== startTopoId) {
+                    dependency = refFieldName + ':ready';
+                }
             } else if (_.isEmpty(rest)) {
                 dependency = refBase + ':ready';
             } else {
                 throw new Error('Unrecognized object reference: ' + JSON.stringify(value));
             }
 
-            dependsOn(compileContext, dependency, startTopoId);
+            if (dependency) {
+                dependsOn(compileContext, dependency, startTopoId);
+            }
 
             return compileVariableReference(startTopoId, value, compileContext);
         }
@@ -472,7 +479,7 @@ function translateArgs(topoId, args, compileContext) {
 
     let callArgs = [];
 
-    _.each(args, (arg, i) => {
+    _.each(args, (arg, i) => {                
         let argTopoId = createTopoId(compileContext, topoId + ':arg[' + (i+1).toString() + ']');
         let lastTopoId = compileConcreteValueExpression(argTopoId, arg, compileContext);
 
@@ -584,18 +591,10 @@ function compileField(paramName, param, compileContext) {
     // 4. build dependencies: latest.field -> ... -> field:ready 
     let topoId = createTopoId(compileContext, paramName);
     let contextName = 'latest.' + paramName;
-    compileContext.astMap[topoId] = JsLang.astVarRef(contextName);
+    //compileContext.astMap[topoId] = JsLang.astVarRef(contextName, true);
 
-    let endTopoId;
-    let value = wrapParamReference(contextName, param);
-    
-    if (value.oolType === 'ObjectReference') {
-        endTopoId = compileVariableReference(topoId, value, compileContext);
-    } else {
-        assert: value.oolType === 'PipedValue';
-
-        endTopoId = compilePipedValue(topoId, value, compileContext);
-    }    
+    let value = wrapParamReference(contextName, param);    
+    let endTopoId = compileConcreteValueExpression(topoId, value, compileContext);
 
     let readyTopoId = createTopoId(compileContext, topoId + ':ready');
     dependsOn(compileContext, endTopoId, readyTopoId);
@@ -915,32 +914,40 @@ function addCodeBlock(compileContext, topoId, blockMeta) {
         throw new Error(`AST not found for block with topoId: ${topoId}`);
     }
 
-    compileContext.sourceMap.set(topoId, blockMeta);
+    compileContext.mapOfTokenToMeta.set(topoId, blockMeta);
 
     compileContext.logger.verbose(`Adding ${blockMeta.type} "${topoId}" into source code.`);
     //compileContext.logger.debug('AST:\n' + JSON.stringify(compileContext.astMap[topoId], null, 2));
 }
 
 function getCodeRepresentationOf(topoId, compileContext) {
-    let lastSourceType = compileContext.sourceMap.get(topoId);
+    let lastSourceType = compileContext.mapOfTokenToMeta.get(topoId);
 
     if (lastSourceType && (lastSourceType.type === AST_BLK_PROCESSOR_CALL || lastSourceType.type === AST_BLK_ACTIVATOR_CALL)) {
         //for modifier, just use the final result
-        return JsLang.astVarRef(lastSourceType.target);
+        return JsLang.astVarRef(lastSourceType.target, true);
+    }
+
+    let ast = compileContext.astMap[topoId];
+    if (ast.type === 'MemberExpression' && ast.object.name === 'latest') {
+        return JsLang.astConditional(
+            JsLang.astCall('latest.hasOwnProperty', [ ast.property.value ]), /** test */
+            ast, /** consequent */
+            { ...ast, object: { ...ast.object, name: 'existing' } }
+        );   
     }
 
     return compileContext.astMap[topoId];
 }
 
-function createCompileContext(targetName, dbServiceId, logger, sharedContext) {
+function createCompileContext(targetName, logger, sharedContext) {
     let compileContext = {
-        targetName,
-        dbServiceId,
+        targetName,        
         logger,
         topoNodes: new Set(),
         topoSort: new TopoSort(),
         astMap: {}, // Store the AST for a node
-        sourceMap: new Map(), // Store the source code block point
+        mapOfTokenToMeta: new Map(), // Store the source code block point
         modelVars: new Set(),
         mapOfFunctorToFile: (sharedContext && sharedContext.mapOfFunctorToFile) || {},
         newFunctorFiles: (sharedContext && sharedContext.newFunctorFiles) || []
@@ -948,9 +955,29 @@ function createCompileContext(targetName, dbServiceId, logger, sharedContext) {
 
     compileContext.mainStartId = createTopoId(compileContext, '$main');
 
-    logger.verbose(`Created compilation context for target "${targetName}" with db service "${dbServiceId}".`);
+    logger.verbose(`Created compilation context for "${targetName}".`);
 
     return compileContext;
+}
+
+function isTopLevelBlock(topoId) {
+    return topoId.indexOf(':arg[') === -1 && topoId.indexOf('$cases[') === -1 && topoId.indexOf('$exceptions[') === -1;
+}
+
+function replaceVarRefScope(varRef, targetScope) {
+    if (_.isPlainObject(varRef)) {
+        assert: varRef.oolType === 'ObjectReference';
+
+        return { oolType: 'ObjectReference', name: replaceVarRefScope(varRef.name, targetScope) };        
+    } 
+
+    assert: typeof varRef === 'string';
+
+    let parts = varRef.split('.');
+    assert: parts.length > 1;
+
+    parts.splice(0, 1, targetScope);
+    return parts.join('.');
 }
 
 module.exports = {
@@ -974,6 +1001,5 @@ module.exports = {
     AST_BLK_INTERFACE_RETURN, 
     AST_BLK_EXCEPTION_ITEM,
 
-    OOL_MODIFIER_CODE_FLAG,
-    OOL_FUNCTOR_RETURN
+    OOL_MODIFIER_CODE_FLAG
 };

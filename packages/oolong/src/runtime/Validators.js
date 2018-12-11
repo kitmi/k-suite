@@ -189,14 +189,3 @@ module.exports.lt = function (value, maxValue) {
 module.exports.maxLength = function (value, maxLength) {
     return value.length <= maxLength;
 };
-
-module.exports.$processInt = processInt;
-module.exports.$processFloat = processFloat;
-module.exports.$processBool = processBool;
-module.exports.$processText = processText;
-module.exports.$processBinary = processBinary;
-module.exports.$processDatetime = processDatetime;
-module.exports.$processJson = processJson;
-module.exports.$processXml = processXml;
-module.exports.$processEnum = processEnum;
-module.exports.$processCsv = processCsv;

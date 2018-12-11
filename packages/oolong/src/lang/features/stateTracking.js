@@ -2,7 +2,7 @@
 
 const Util = require('rk-utils');
 const { _, pascalCase } = Util;
-const Features = require('../../runtime/Features');
+const Rules = require('../Rules');
 const { Generators } = require('../../runtime');
 
 const FEATURE_NAME = 'stateTracking';
@@ -25,7 +25,9 @@ function timestampFieldNaming(field, state) {
  * @property {string} options.field - State field to track
  * @property {bool} [options.reversible=false] - Specify whether the field can be set to a previous state again
  */
-function feature(entity, options) {
+function feature(entity, args = []) {
+    let [ options ] = args;
+    
     if (!options) {
         throw new Error('Missing field options!');
     }
@@ -46,7 +48,7 @@ function feature(entity, options) {
     };
 
     if (!options.reversible) {
-        stateSetTimestamp.fixedValue = true;
+        stateSetTimestamp.writeOnce = true;
     }
 
     entity.addFeature(FEATURE_NAME, {
@@ -71,12 +73,14 @@ function feature(entity, options) {
 }
 
 feature.__metaRules = {
-    [Features.RULE_POST_DATA_VALIDATION]: ({ feature, context }, next) => {
-        if (feature.field in context.latest) {
-            let targetState = context.latest[feature.field];
-            let timestampFieldName = timestampFieldNaming(feature.field, targetState);
-            context.latest[timestampFieldName] = Generators.$auto(meta.fields[timestampFieldName], context.i18n);
-        }
+    [Rules.RULE_AFTER_VALIDATION]: ({ feature, entityModel, context }, next) => {
+        feature.forEach(featureItem => {
+            if (featureItem.field in context.latest) {
+                let targetState = context.latest[featureItem.field];
+                let timestampFieldName = timestampFieldNaming(featureItem.field, targetState);
+                context.latest[timestampFieldName] = Generators.default(entityModel.meta.fields[timestampFieldName], context.i18n);
+            }
+        });        
 
         return next();
     }

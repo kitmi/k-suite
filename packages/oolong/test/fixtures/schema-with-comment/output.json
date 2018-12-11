@@ -6,7 +6,9 @@
     "schema": {
         "sample": {
             "entities": [
-                "user"
+                {
+                    "entity": "user"
+                }
             ],
             "views": [
                 "userProfile"

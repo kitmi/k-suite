@@ -18,14 +18,16 @@ const FEATURE_NAME = 'autoId';
  * @property {string} [options.name='id'] - Field name
  * @property {string} [options.type='int'] - Field type
  */
-function initialize(entity, options) {
+function initialize(entity, args = []) {
     let typeInfo = {
         name: 'id',
         type: 'integer',
         auto: true,
         readOnly: true,
-        fixedValue: true
+        writeOnce: true
     };
+
+    let [ options ] = args;
 
     if (options) {
         if (typeof options === 'string') {

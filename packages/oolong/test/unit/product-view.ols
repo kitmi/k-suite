@@ -1,8 +1,0 @@
-import './entities/product';
-import './views/productView';
-
-schema product
-  entities
-    product
-  view
-    productView

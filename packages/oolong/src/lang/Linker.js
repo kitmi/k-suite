@@ -19,7 +19,7 @@ const ELEMENT_CLASS_MAP = {
     [OolTypes.Element.DATASET]: Dataset,
 };
 
-const OOLONG_SOURCE_EXT = '.ols';
+const OOLONG_SOURCE_EXT = '.ool';
 const BUILTINS_PATH = path.resolve(__dirname, 'builtins');
 
 /**
@@ -44,8 +44,9 @@ class Linker {
     /**
      * @param {object} context
      * @property {Logger} context.logger - Logger object
-     * @property {string} context.sourcePath - Oolong source files path     
-     * @property {bool} [context.useJsonSource=false] - Use .json intermediate source file instead of .ols
+     * @property {string} context.dslSourcePath - Oolong source files path     
+     * @property {bool} [context.useJsonSource=false] - Use .json intermediate source file instead of .ool
+     * @property {bool} [context.saveIntermediate=false] - Save intermediate source file while linking
      */
     constructor(context) {
         /**
@@ -58,13 +59,19 @@ class Linker {
          * Oolong source files path
          * @member {string}
          */
-        this.sourcePath = context.sourcePath;
+        this.sourcePath = context.dslSourcePath;
 
         /**
          * Use json or ols
          * @member {bool}
          */
         this.useJsonSource = context.useJsonSource || false;
+
+        /**
+         * Save intermediate files
+         * @member {bool}
+         */
+        this.saveIntermediate = context.saveIntermediate || false;
 
         /**
          * Linked schemas
@@ -146,10 +153,15 @@ class Linker {
             let schema = new Schema(this, schemaName, entryModule, schemaInfo);
             schema.link();
 
+            if (this.schemas.hasOwnProperty(schemaName)) {
+                throw new Error(`Duplicate schema: "${schemaName}".`);
+            }
             this.schemas[schemaName] = schema;
 
-            let jsFile = path.resolve(this.sourcePath, entryFileName + '-linked.json');
-            fs.writeFileSync(jsFile, JSON.stringify(schema.toJSON(), null, 4));
+            if (this.saveIntermediate) {
+                let jsFile = path.resolve(this.sourcePath, entryFileName + '-linked.json');
+                fs.writeFileSync(jsFile, JSON.stringify(schema.toJSON(), null, 4));
+            }
         });        
     }
 
@@ -303,7 +315,7 @@ class Linker {
                 return targetModule && targetModule[elementType] && (elementName in targetModule[elementType]);
             });
 
-            if (index === -1) {
+            if (index === -1) {                
                 throw new Error(`${elementType} "${elementName}" not found in imported namespaces.`);
             }
         }
@@ -433,7 +445,7 @@ class Linker {
         ool.id = this.getModuleIdByPath(oolFile);        
         ool.name = baseName;       
         
-        if (!this.useJsonSource) {        
+        if (!this.useJsonSource && this.saveIntermediate) {        
             fs.writeFileSync(jsFile, JSON.stringify(ool, null, 4));
         }
 

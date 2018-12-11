@@ -8,7 +8,7 @@ module.exports = {
 
     alias: [ 'string', 'char' ],
 
-    sanitize: (value, info, i18n) => (typeof raw !== 'string' ? value.toString() : value).trim(),
+    sanitize: (value, info, i18n) => (typeof value !== 'string' ? value.toString() : value).trim(),
 
     defaultValue: '',
 

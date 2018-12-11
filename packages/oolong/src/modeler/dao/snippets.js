@@ -1,8 +1,9 @@
 "use strict";
 
-const { _ } = require('rk-utils');
+const { _, quote } = require('rk-utils');
+const { extractDotSeparateName } = require('../../lang/OolUtils');
 
-const _doValidateAndFillHeader = [        
+const _applyModifiersHeader = [   
     {
         "type": "VariableDeclaration",
         "declarations": [
@@ -40,6 +41,36 @@ const _doValidateAndFillHeader = [
                             "kind": "init",
                             "method": false,
                             "shorthand": true
+                        },
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "existing"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "Identifier",
+                                "name": "existing"
+                            },
+                            "kind": "init",
+                            "method": false,
+                            "shorthand": true
+                        },
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "i18n"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "Identifier",
+                                "name": "i18n"
+                            },
+                            "kind": "init",
+                            "method": false,
+                            "shorthand": true
                         }
                     ]
                 },
@@ -50,6 +81,28 @@ const _doValidateAndFillHeader = [
             }
         ],
         "kind": "let"
+    },{
+        "type": "ExpressionStatement",
+        "expression": {
+            "type": "LogicalExpression",
+            "operator": "||",
+            "left": {
+                "type": "Identifier",
+                "name": "existing"
+            },
+            "right": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "existing"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": []
+                }
+            }
+        }
     }];
 
 const _validateCheck = (fieldName, validatingCall) => { 
@@ -123,7 +176,7 @@ const _validateCheck = (fieldName, validatingCall) => {
                                         "value": {
                                             "type": "Literal",
                                             "value": fieldName,
-                                            "raw": Util.quote(fieldName, "'")
+                                            "raw": quote(fieldName, "'")
                                         },
                                         "kind": "init",
                                         "method": false,
@@ -162,7 +215,7 @@ function buildTest(conditions) {
             "left": {
                 "type": "Literal",
                 "value": c,
-                "raw": Util.quote(c, "'")
+                "raw": quote(c, "'")
             },
             "right": {
                 "type": "Identifier",
@@ -181,14 +234,14 @@ function buildTest(conditions) {
             "left": {
                 "type": "Literal",
                 "value": c,
-                "raw": Util.quote(c, "'")
+                "raw": quote(c, "'")
             },
             "right": {
                 "type": "Identifier",
                 "name": "latest"
             }
         }
-    }
+    };
 }
 
 /**
@@ -201,7 +254,10 @@ function buildTest(conditions) {
 const _fieldRequirementCheck = (fieldName, references, content, requireTargetField) => { 
     if (!references) references = [];
 
-    let test = buildTest(_.reverse((requireTargetField ? [fieldName] : []).concat(references)));
+    references = references.map(ref => extractDotSeparateName(ref).pop());
+
+    //let test = buildTest(_.reverse((requireTargetField ? [fieldName] : []).concat(references)));
+    //let test = requireTargetField && buildTest([fieldName]);
 
     let throwMessage = `"${fieldName}" is required due to change of its dependencies. (e.g: ${references.join(' or ')})`;
 
@@ -209,22 +265,34 @@ const _fieldRequirementCheck = (fieldName, references, content, requireTargetFie
         {
             "type": "IfStatement",
             "test": {
-                "type": "UnaryExpression",
-                "operator": "!",
-                "argument": {
-                    "type": "BinaryExpression",
-                    "operator": "in",
-                    "left": {
-                        "type": "Literal",
-                        "value": fieldName,
-                        "raw": Util.quote(fieldName, "'")
-                    },
-                    "right": {
-                        "type": "Identifier",
-                        "name": "latest"
-                    }
+                "type": "LogicalExpression",
+                "operator": "&&",
+                "left": {
+                    "type": "Identifier",
+                    "name": "isUpdating"
                 },
-                "prefix": true
+                "right": {
+                    "type": "CallExpression",
+                    "callee": {
+                        "type": "Identifier",
+                        "name": "isNothing"
+                    },
+                    "arguments": [
+                        {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                                "type": "Identifier",
+                                "name": "latest"
+                            },
+                            "property": {
+                                "type": "Literal",
+                                "value": fieldName,
+                                "raw": quote(fieldName, "'")
+                            }
+                        }
+                    ]
+                }                
             },
             "consequent": {
                 "type": "BlockStatement",
@@ -235,13 +303,13 @@ const _fieldRequirementCheck = (fieldName, references, content, requireTargetFie
                             "type": "NewExpression",
                             "callee": {
                                 "type": "Identifier",
-                                "name": "ModelUsageError"
+                                "name": "DataValidationError"
                             },
                             "arguments": [
                                 {
                                     "type": "Literal",
                                     "value": throwMessage,
-                                    "raw": Util.quote(throwMessage, "'")
+                                    "raw": quote(throwMessage, "'")
                                 }
                             ]
                         }
@@ -253,27 +321,49 @@ const _fieldRequirementCheck = (fieldName, references, content, requireTargetFie
     ] : [];
 
     references.forEach(ref => {
-        let refThrowMessage = `"${ref}" is required by the filter function of "${fieldName}".`;
+        let refThrowMessage = `Missing "${ref}" value, which is a dependency of "${fieldName}".`;
 
         checks.push({
             "type": "IfStatement",
             "test": {
-                "type": "UnaryExpression",
-                "operator": "!",
-                "argument": {
-                    "type": "BinaryExpression",
-                    "operator": "in",
-                    "left": {
-                        "type": "Literal",
-                        "value": ref,
-                        "raw": Util.quote(ref, "'")
+                "type": "LogicalExpression",
+                "operator": "&&",
+                "left": {
+                    "type": "UnaryExpression",
+                    "operator": "!",
+                    "argument": {
+                        "type": "BinaryExpression",
+                        "operator": "in",
+                        "left": {
+                            "type": "Literal",
+                            "value": ref,
+                            "raw": quote(ref, "'")
+                        },
+                        "right": {
+                            "type": "Identifier",
+                            "name": "latest"
+                        }
                     },
-                    "right": {
-                        "type": "Identifier",
-                        "name": "latest"
-                    }
+                    "prefix": true
                 },
-                "prefix": true
+                "right": {
+                    "type": "UnaryExpression",
+                    "operator": "!",
+                    "argument": {
+                        "type": "BinaryExpression",
+                        "operator": "in",
+                        "left": {
+                            "type": "Literal",
+                            "value": ref,
+                            "raw": quote(ref, "'")
+                        },
+                        "right": {
+                            "type": "Identifier",
+                            "name": "existing"
+                        }
+                    },
+                    "prefix": true
+                }                    
             },
             "consequent": {
                 "type": "BlockStatement",
@@ -284,13 +374,13 @@ const _fieldRequirementCheck = (fieldName, references, content, requireTargetFie
                             "type": "NewExpression",
                             "callee": {
                                 "type": "Identifier",
-                                "name": "ModelUsageError"
+                                "name": "DataValidationError"
                             },
                             "arguments": [
                                 {
                                     "type": "Literal",
                                     "value": refThrowMessage,
-                                    "raw": Util.quote(refThrowMessage, "'")
+                                    "raw": quote(refThrowMessage, "'")
                                 }
                             ]
                         }
@@ -301,15 +391,41 @@ const _fieldRequirementCheck = (fieldName, references, content, requireTargetFie
         });
     });
     
-    return {
+    return requireTargetField ? {
         "type": "IfStatement",
-        "test": test,
+        "test": {
+            "type": "UnaryExpression",
+            "operator": "!",
+            "argument": {
+                "type": "CallExpression",
+                "callee": {
+                    "type": "Identifier",
+                    "name": "isNothing"
+                },
+                "arguments": [
+                    {
+                        "type": "MemberExpression",
+                        "computed": true,
+                        "object": {
+                            "type": "Identifier",
+                            "name": "latest"
+                        },
+                        "property": {
+                            "type": "Literal",
+                            "value": fieldName,
+                            "raw": quote(fieldName, "'")
+                        }
+                    }
+                ]
+            },
+            "prefix": true
+        },
         "consequent": {
             "type": "BlockStatement",
             "body": checks.concat(content)
         },
         "alternate": null
-    };
+    } : checks.concat(content);
 };
 
 const restMethods = (serviceId, entityName, className) => ({
@@ -1555,7 +1671,7 @@ const restMethods = (serviceId, entityName, className) => ({
 });
 
 module.exports = {
-    _doValidateAndFillHeader,
+    _applyModifiersHeader,
     _validateCheck,    
     _fieldRequirementCheck,
     restMethods

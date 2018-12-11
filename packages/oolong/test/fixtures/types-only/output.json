@@ -3,24 +3,32 @@
         "userStatus": {
             "type": "enum",
             "values": [
-                "inactive",
-                "active",
-                "disabled",
-                "forbidden",
-                "deleted"
+                [
+                    "inactive",
+                    "active",
+                    "disabled",
+                    "forbidden",
+                    "deleted"
+                ]
             ]
         },
         "name": {
             "type": "text",
-            "maxLength": 40
+            "maxLength": [
+                40
+            ]
         },
         "shortName": {
             "type": "text",
-            "maxLength": 20
+            "maxLength": [
+                20
+            ]
         },
         "flag": {
             "type": "bool",
-            "default": false
+            "default": [
+                false
+            ]
         },
         "id": {
             "type": "name",
@@ -28,17 +36,23 @@
                 {
                     "oolType": "Validator",
                     "name": "matches",
-                    "args": "/^[A-Za-z_]\\w{2,39}$/"
+                    "args": [
+                        "/^[A-Za-z_]\\w{2,39}$/"
+                    ]
                 }
             ]
         },
         "password": {
             "type": "text",
-            "maxLength": 200
+            "maxLength": [
+                200
+            ]
         },
         "email": {
             "type": "text",
-            "maxLength": 200,
+            "maxLength": [
+                200
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
@@ -48,12 +62,16 @@
         },
         "phone": {
             "type": "text",
-            "maxLength": 20,
+            "maxLength": [
+                20
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
                     "name": "matches",
-                    "args": "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    "args": [
+                        "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    ]
                 }
             ]
         }

@@ -17,15 +17,19 @@
         new Set(['import', 'type', 'const', 'schema', 'entity', 'dataset', 'view']), // level 0
         { // level 1
             'schema': new Set(['entities', 'views']),
-            'entity': new Set(['with', 'has', 'key', 'index', 'data', 'interface']),
+            'entity': new Set(['with', 'has', 'associations', 'key', 'index', 'data', 'interface']),
             'dataset': new Set(['contains', 'with'])
+        },
+        {
+            'entity.associations': new Set(['hasOne', 'hasMany', 'refersTo', 'belongsTo', 'through', 'as']),
+            'entity.index': new Set(['is', 'unique'])
         }            
     ];
     
     //statements can be in one line
     const ONE_LINE_KEYWORDS = [ 
         new Set(['import', 'type', 'const', 'entity']), // level
-        new Set(['key'])
+        new Set(['entity.key'])
     ];
 
     //indented child starting state
@@ -85,11 +89,10 @@
             this.indents = [];
         }
 
-        dump(loc) {
-            console.log(loc);
-            console.log('indents:', this.indents.join(' -> '));
-            console.log('current indent:', this.indent, 'current dedented:', this.dedented);            
-            console.log('comment:', this.comment, 'eof:', this.eof, 'brackets:', this.brackets.join(' -> '),'stack:', this.stack.join(' -> '));
+        dump(loc, token) {
+            token ? console.log(loc, token) : console.log(loc);
+            console.log('indents:', this.indents.join(' -> '), 'current indent:', this.indent, 'current dedented:', this.dedented);                   
+            console.log('lastState:', this.lastState, 'comment:', this.comment, 'eof:', this.eof, 'brackets:', this.brackets.join(' -> '),'stack:', this.stack.join(' -> '));
             console.log();
             return this;
         }
@@ -320,7 +323,7 @@ variable                {member_access}|{identifier}
 object_reference        "@"{variable}
 
 identifier              ({id_start})({id_continue})*
-id_start                "_"|({uppercase})|({lowercase})
+id_start                "_"|"$"|({uppercase})|({lowercase})
 id_continue             {id_start}|{digit}
 
 bool_value              "true"|"false"|"yes"|"no"|"on"|"off"
@@ -576,6 +579,10 @@ escapeseq               \\.
                                 state.dump('<INLINE>{newline}');
                                 state.indent = 0;
 
+                                if (state.hasIndent && ONE_LINE_KEYWORDS[1].has(state.lastState)) {
+                                    state.exitState(state.lastState);
+                                }     
+
                                 return 'NEWLINE';
                             }
                         %}
@@ -651,32 +658,49 @@ escapeseq               \\.
                                     throw new Error(`Invalid syntax: ${yytext}`);
                                 }       
 
-                                state.dump(this.topState(1) + ' -> <INLINE>{identifier}');                                     
+                                state.dump(this.topState(1) + ' -> <INLINE>{identifier}', yytext);                                     
 
-                                if (state.lastState === 'schema') {
-                                    if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['schema'].has(yytext)) {
-                                        state.enterState('schema.' + yytext);
-                                        return yytext;
-                                    }
-                                } else if (state.lastState === 'type') {
-                                    state.enterState('type.name');
-                                    return 'NAME';
-                                } else if (state.lastState === 'type.name') {
-                                    state.enterState('type.info');
+                                switch (state.lastState) {
+                                    case 'schema':
+                                        if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['schema'].has(yytext)) {
+                                            state.enterState('schema.' + yytext);
+                                            return yytext;
+                                        }
+                                        break;
 
-                                    if (BUILTIN_TYPES.has(yytext)) {                                        
-                                        return yytext;
-                                    }
-                                } else if (state.lastState === 'entity') {                                    
-                                    if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['entity'].has(yytext)) {
-                                        state.enterState('entity.' + yytext);
-                                        return yytext;
-                                    } else if (!state.hasIndent && yytext === 'extends') {
-                                        return yytext;
-                                    } 
-                                } else if (state.lastState === 'entity.index') {
-                                    if (yytext === 'unique') return yytext;
-                                }                        
+                                    case 'type': 
+                                        state.enterState('type.name');
+                                        return 'NAME';
+
+                                    case 'type.name':
+                                        state.enterState('type.info');
+
+                                        if (BUILTIN_TYPES.has(yytext)) {                                        
+                                            return yytext;
+                                        }
+                                        break;
+
+                                    case 'entity':
+                                        if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['entity'].has(yytext)) {
+                                            state.enterState('entity.' + yytext);                                                                        
+                                            return yytext;
+                                        } else if (!state.hasIndent && yytext === 'extends') {
+                                            return yytext;
+                                        } 
+                                        break;
+
+                                    case 'entity.index':
+                                        if (KEYWORDS_BY_LEVEL[2]['entity.index'].has(yytext)) {
+                                            return yytext;
+                                        }
+                                        break;
+
+                                    case 'entity.associations':
+                                        if (KEYWORDS_BY_LEVEL[2]['entity.associations'].has(yytext)) {
+                                            return yytext;
+                                        }
+                                        break;                                      
+                                }                                         
 
                                 return 'NAME';
                             %}
@@ -775,8 +799,8 @@ schema_entities
     ;
 
 schema_entities_block
-    : identifier_or_string NEWLINE -> [ $1 ]
-    | identifier_or_string NEWLINE schema_entities_block -> [ $1 ].concat($3)
+    : identifier_or_string NEWLINE -> [ { entity: $1 } ]
+    | identifier_or_string NEWLINE schema_entities_block -> [ { entity: $1 } ].concat($3)
     ;
 
 schema_views
@@ -913,7 +937,7 @@ entity_statement_header0
     ;
 
 entity_statement_block
-    : comment_or_not with_features_or_not has_fields_or_not key_or_not index_or_not data_or_not -> Object.assign({}, $1, $2, $3, $4, $5, $6)
+    : comment_or_not with_features_or_not has_fields_or_not associations_or_not key_or_not index_or_not data_or_not -> Object.assign({}, $1, $2, $3, $4, $5, $6, $7)
     ;
 
 comment_or_not
@@ -929,6 +953,11 @@ with_features_or_not
 has_fields_or_not
     :
     | has_fields
+    ;
+
+associations_or_not
+    : 
+    | associations_statement
     ;
 
 key_or_not
@@ -952,8 +981,7 @@ interfaces_or_not
     ;
 
 with_features
-    : "with" feature_inject NEWLINE -> { features: [ $2 ] }
-    | "with" NEWLINE INDENT with_features_block DEDENT -> { features: $4 }
+    : "with" NEWLINE INDENT with_features_block DEDENT -> { features: $4 }
     ;
 
 with_features_block
@@ -962,8 +990,7 @@ with_features_block
     ;
 
 has_fields
-    : "has" field_item NEWLINE -> { fields: { [$2.name]: $2 } }
-    | "has" NEWLINE INDENT has_fields_block DEDENT -> { fields: $4 }
+    : "has" NEWLINE INDENT has_fields_block DEDENT -> { fields: $4 }
     ;
 
 field_item
@@ -1015,6 +1042,42 @@ field_modifier
     | "=" general_function_call -> state.normalizeActivator($2.name, $2.args)
     ;    
 
+associations_statement
+    : "associations" NEWLINE INDENT associations_block DEDENT -> { associations: $4 }
+    ;
+
+associations_block
+    : association_item NEWLINE -> [ $1 ]
+    | association_item NEWLINE associations_block -> [ $1 ].concat($3)
+    ;
+
+association_item
+    : "hasOne" identifier_or_string -> { type: 'hasOne', entity: $2 }
+    | "hasMany" identifier_or_string (association_through)? -> { type: 'hasMany', entity: $2, ...$3 }
+    | "refersTo" identifier_or_string (association_as)? -> { type: 'refersTo', entity: $2, ...$3 }
+    | "belongsTo" identifier_or_string (association_as)? -> { type: 'belongsTo', entity: $2, ...$3 }
+    ;
+
+association_through
+    : "through" identifier_or_string -> { through: $2 }
+    ;
+
+association_as
+    : "as" identifier_or_string -> { from: $2 }
+    ;
+
+/*
+hasone_keywords
+    : "hasOne"
+    | "has" "one"
+    ;
+
+hasmany_keywords
+    : "hasMany"
+    | "has" "one"
+    ;    
+*/
+
 key_statement
     : "key" identifier_or_string NEWLINE -> { key: $2 }
     | "key" array_of_identifier_or_string NEWLINE -> { key: $2 }
@@ -1032,7 +1095,7 @@ index_statement_block
 
 index_item
     : index_item_body
-    | index_item_body "unique" -> Object.assign({}, $1, { unique: true })
+    | index_item_body ("is")? "unique" -> Object.assign({}, $1, { unique: true })
     ;
 
 index_item_body
@@ -1279,7 +1342,7 @@ narrow_function_call
     ;    
 
 nfc_param_list
-    : nfc_param -> $1
+    : nfc_param -> [ $1 ]
     | nfc_param nfc_param_list0 -> [ $1 ].concat($2)
     ;
 
@@ -1298,7 +1361,7 @@ general_function_call
     ;        
 
 gfc_param_list
-    : gfc_param -> $1
+    : gfc_param -> [ $1 ]
     | gfc_param gfc_param_list0 -> [ $1 ].concat($2)
     ;
 
@@ -1324,7 +1387,7 @@ identifier_string_or_dotname
     ;        
 
 identifier_string_or_dotname_list
-    : identifier_string_or_dotname -> $1
+    : identifier_string_or_dotname -> [ $1 ]
     | identifier_string_or_dotname identifier_string_or_dotname_list0 -> [ $1 ].concat($2) 
     ;
 

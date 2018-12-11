@@ -57,13 +57,13 @@ describe('unit:connector:mysql', function () {
         });
 
         it('find', async function() {
-            let result = await connector.find_('t', { where: { a: 1 } });
+            let result = await connector.find_('t', { $where: { a: 1 } });
             result.length.should.be.exactly(1);            
             result[0].b.should.be.exactly(1);
         });
 
         it('find with count', async function() {
-            let result = await connector.find_('t', { columns: { type: 'function', name: 'count', args: [ 'a' ], alias: 'count' }, where: { a: 1 } });
+            let result = await connector.find_('t', { $select: { type: 'function', name: 'count', args: [ 'a' ], alias: 'count' }, $where: { a: 1 } });
             result.length.should.be.exactly(1);            
             result[0].count.should.be.exactly(1);
         });
@@ -72,13 +72,13 @@ describe('unit:connector:mysql', function () {
             let result = await connector.create_('t', { a: 3, b: 2 });
             result = await connector.create_('t', { a: 2, b: 3 });
 
-            result = await connector.find_('t', { columns: '*', orderBy: { a: true } });
+            result = await connector.find_('t', { $select: '*', $orderBy: { a: true } });
             result.length.should.be.exactly(3);            
             result[0].a.should.be.exactly(1);
             result[1].a.should.be.exactly(2);
             result[2].a.should.be.exactly(3);
 
-            result = await connector.find_('t', { columns: '*', orderBy: { b: false } });
+            result = await connector.find_('t', { $select: '*', $orderBy: { b: false } });
             result.length.should.be.exactly(3);            
             result[0].b.should.be.exactly(3);
             result[1].b.should.be.exactly(2);
@@ -86,10 +86,10 @@ describe('unit:connector:mysql', function () {
         });
 
         it('find limit', async function() {
-            let result = await connector.find_('t', { columns: '*', limitOffset: 1 });
+            let result = await connector.find_('t', { $select: '*', $limit: 1, $offset: 0 });
             result.length.should.be.exactly(1);
 
-            result = await connector.find_('t', { columns: '*', orderBy: { b: false }, limitOffset: [1, 1] });
+            result = await connector.find_('t', { $select: '*', $orderBy: { b: false }, $limit: 1, $offset: 1 });
             result.length.should.be.exactly(1);            
             result[0].b.should.be.exactly(2);
         });
@@ -98,7 +98,7 @@ describe('unit:connector:mysql', function () {
             let result = await connector.delete_('t', { a: 1 });
             connector.getNumOfAffectedRows(result).should.be.exactly(1);
 
-            result = await connector.find_('t', { columns: { type: 'function', name: 'count', args: [ 'a' ], alias: 'count' }, where: { a: 1 } });
+            result = await connector.find_('t', { $select: { type: 'function', name: 'count', args: [ 'a' ], alias: 'count' }, $where: { a: 1 } });
             result.length.should.be.exactly(1);            
             result[0].count.should.be.exactly(0);
         });

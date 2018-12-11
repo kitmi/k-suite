@@ -4,7 +4,13 @@
 
 ## features
 
-
+* atLeastOneNotNull
+* autoId
+* createTimestamp
+* i18n
+* logicalDeletion
+* stateTracking
+* updateTimestamp
 
 ## fields
 

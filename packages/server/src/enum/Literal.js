@@ -88,11 +88,6 @@ module.exports = Object.assign({}, Literal, {
     MODELS_PATH: 'models',
 
     /**
-     * Oolong files path
-     */
-    OOLONG_PATH: 'oolong',
-
-    /**
      * Database scripts path
      */
     DB_SCRIPTS_PATH: 'db',

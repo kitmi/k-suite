@@ -6,92 +6,102 @@ const Util = require('rk-utils');
 const { _, fs, eachAsync_ } = Util;
 
 const Linker = require('./lang/Linker');
+const Connector = require('./runtime/Connector');
 
 /**
  * Oolong DSL api
  * @module Oolong
  */
 
-function createLinker(context, schemaFile) {
-    let linker = new Linker(context);
-    linker.link(schemaFile);
+ function createConnector(context, schemaName) {
+    let deployment = context.schemaDeployment[schemaName];
 
-    if (_.isEmpty(linker.schemas)) {
-        throw new Error(`Schema information not found in "${schemaFile}".`);
+    if (!deployment) {
+        context.logger.log('warn', `Schema "${schemaName}" has no configured deployment and is ignored in modeling.`);
+        return;
     }
 
-    return linker;
-}
+    let { dataSource, connOptions } = deployment;
+    let [ driver, connectorName ] = dataSource.split('.');
+
+    return Connector.createConnector(driver, connectorName, { logger: context.logger, logSQLStatement: true, ...connOptions });       
+ }
 
 /**
- * Build database scripts from oolong files
+ * Build database scripts and entity models from oolong files.
  * @param {object} context
  * @property {Logger} context.logger - Logger object
- * @property {string} context.sourcePath
- * @property {string} context.modelOutputPath  
+ * @property {string} context.dslSourcePath
+ * @property {string} context.modelOutputPath         
+ * @property {string} context.scriptOutputPath
  * @property {bool} context.useJsonSource
- * @property {object} context.modelMapping   
+ * @property {object} context.schemaDeployment   
  * @returns {Promise}
  */
-exports.buildModels_ = async (context) => {
+exports.build_ = async (context) => {
     context.logger.log('verbose', 'Start building models ...');
 
-    let schemaFiles = Linker.getOolongFiles(context.sourcePath, context.useJsonSource);
+    let linker = new Linker(context);
+    context.linker = linker;
 
-    return eachAsync_(schemaFiles, async schemaFile => {
-        let linker = createLinker(context, schemaFile);
+    let schemaFiles = Linker.getOolongFiles(context.dslSourcePath, context.useJsonSource);
+    schemaFiles.forEach(schemaFile => linker.link(schemaFile));    
 
-        return eachAsync_(linker.schemas, (schema, schemaName) => {
-            let modelMapping = context.modelMapping[schemaName];
+    return eachAsync_(linker.schemas, async (schema, schemaName) => {        
+        let connector = createConnector(context, schemaName);
 
-            if (!modelMapping) {
-                context.logger.log('warn', `Schema "${schemaName}" has no data source mapping and is ignored in modeling.`);
-                return;
-            }
+        if (!connector) return; 
+
+        try {
+            let DbModeler = require(`./modeler/database/${connector.driver}/Modeler`);
+            let dbModeler = new DbModeler(context, connector);
+            let refinedSchema = dbModeler.modeling(schema);
 
             const DaoModeler = require('./modeler/Dao');
-            let daoModeler = new DaoModeler({ logger: context.logger, schema, modelMapping, outputPath: context.modelOutputPath });
+            let daoModeler = new DaoModeler(context, connector);
 
-            return daoModeler.modeling_();
-        });        
-    });    
+            await daoModeler.modeling_(refinedSchema);
+        } catch (error) {
+            throw error;
+            //context.logger.log('error', error);
+        } finally {
+            if (connector) await connector.end_();
+        } 
+    });            
 };
 
 /**
- * Deploy database
+ * Deploy database scripts into database.
  * @param {object} context
  * @property {Logger} context.logger - Logger object
- * @property {AppModule} context.currentApp - Current app module
- * @property {bool} context.verbose - Verbose mode
- * @param {string} schemaFile
+ * @property {string} context.dslSourcePath 
+ * @property {string} context.scriptSourcePath 
+ * @property {object} context.schemaDeployment   
  * @param {bool} reset
  * @returns {Promise}
  */
-exports.deploy = function (context, schemaFile, reset = false) {
-    let oolongConfig = createLinker(context, schemaFile);
+exports.migrate_ = async (context, reset = false) => {
+    context.logger.log('verbose', 'Start deploying models ...');
 
-    let promises = [];
+    return eachAsync_(context.schemaDeployment, async (info, schemaName) => {
+        let connector = createConnector(context, schemaName);
 
-    let schema = context.linker.schema;
-    let schemaName = schema.name;
+        try {
+            let Migration = require(`./migration/${connector.driver}`);
+            let migration = new Migration(context, connector);
 
-    if (!(schemaName in oolongConfig.schemas)) {
-        throw new Error('Schema "' + schemaName + '" not exist in oolong config.');
-    }
+            if (reset) {
+                await migration.reset_();
+            }
 
-    let schemaOolongConfig = oolongConfig.schemas[schemaName];
-    let deployment = _.isArray(schemaOolongConfig.deployTo) ? schemaOolongConfig.deployTo : [ schemaOolongConfig.deployTo ];
-
-    _.each(deployment, (dbServiceKey) => {
-        let service = context.currentApp.getService(dbServiceKey);
-
-        let Deployer = require(`./deployer/db/${service.dbType}.js`);
-        let deployer = new Deployer(context, service);
-
-        promises.push(() => deployer.deploy(reset));
+            await migration.create_();
+        } catch (error) {
+            throw error;
+            //context.logger.log('error', error);
+        } finally {
+            await connector.end_();
+        } 
     });
-
-    return Util.eachPromise_(promises);
 };
 
 /**

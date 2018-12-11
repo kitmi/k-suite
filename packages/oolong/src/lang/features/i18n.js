@@ -16,7 +16,9 @@ const FEATURE_NAME = 'i18n';
  * @property {string} options.field - State field to apply this feature
  * @property {object} [options.locales] - Specify the locale mapping rule
  */
-function initialize(entity, options) {
+function initialize(entity, args = []) {
+    let [ options ] = args;
+    
     if (!options) {
         throw new Error('Missing feature options!');
     }

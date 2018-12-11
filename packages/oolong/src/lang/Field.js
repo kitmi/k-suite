@@ -2,6 +2,8 @@
 
 const { _ } = require('rk-utils');
 const { generateDisplayName, deepCloneField, Clonable, fieldNaming } = require('./OolUtils');
+const Types = require('./types');
+const RESERVED_KEYS = new Set(['name', 'type', 'modifiers', 'subClass', 'values']);
 
 /**
  * Oolong entity field class.
@@ -15,7 +17,7 @@ class Field extends Clonable {
     constructor(name, info) {
         super();
 
-        this.name = fieldNaming(this.name);
+        this.name = fieldNaming(name);
 
         /**
          * Original type information.
@@ -28,7 +30,22 @@ class Field extends Clonable {
      * Linking the 
      */
     link() {
-        Object.assign(this, this.info);
+        assert: Types.Builtin.has(this.info.type);
+        let typeObject = Types[this.info.type];
+
+        _.forOwn(this.info, (value, key) => {
+            if (RESERVED_KEYS.has(key)) {
+                this[key] = value;
+                return;
+            }       
+
+            if (!typeObject.qualifiers.includes(key)) {
+                this[key] = value;                
+                return;
+            }
+
+            this[key] = Array.isArray(value) ? value[0] : value;
+        });
 
         /**
          * The default name of the field

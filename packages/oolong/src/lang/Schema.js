@@ -92,7 +92,7 @@ class Schema extends Clonable {
         //1st round, get direct output entities
         assert: !_.isEmpty(this.info.entities);
 
-        this.info.entities.forEach(entityEntry => {
+        this.info.entities.forEach(entityEntry => {            
             let entity = this.linker.loadEntity(this.oolModule, entityEntry.entity);
             assert: entity.linked;
 

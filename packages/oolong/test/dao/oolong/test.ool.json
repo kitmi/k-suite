@@ -1,0 +1,14 @@
+{
+  "namespace": [
+    "entities/**"
+  ],
+  "schema": {
+    "test": {
+      "entities": [        
+        {
+          "entity": "user"
+        }
+      ]
+    }
+  }
+}

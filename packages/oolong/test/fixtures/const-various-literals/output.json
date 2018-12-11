@@ -30,8 +30,12 @@
     "schema": {
         "sample": {
             "entities": [
-                "user",
-                "profile"
+                {
+                    "entity": "user"
+                },
+                {
+                    "entity": "profile"
+                }
             ],
             "views": [
                 "userProfile",

@@ -1,0 +1,16 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/test/unitLinker/entities/product.ool"
+    ],
+    "schema": {
+        "product": {
+            "entities": [
+                {
+                    "entity": "product"
+                }
+            ]
+        }
+    },
+    "id": "./product.ool",
+    "name": "product"
+}

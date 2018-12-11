@@ -1,0 +1,10 @@
+entity group
+  -- "Group"
+  with
+    autoId
+
+  has
+    name : text maxLength(255) optional -- "Group Name"
+
+  associations
+    hasMany user

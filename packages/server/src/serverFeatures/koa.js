@@ -4,7 +4,7 @@ const Feature = require('@k-suite/app/lib/enum/Feature');
 const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;
-const { Convertors } = require('../oolong/runtime');
+const validator = require('validator');
 const { InvalidConfiguration } = require('../Errors');
 
 /**
@@ -44,7 +44,7 @@ module.exports = {
         let koa = server.router;
         
         koa.env = server.env;
-        koa.proxy = options.trustProxy && Convertors.toBoolean(options.trustProxy);
+        koa.proxy = options.trustProxy && validator.toBoolean(options.trustProxy);
 
         if (('subdomainOffset' in options) && options.subdomainOffset !== 2) {
             if (options.subdomainOffset < 2) {

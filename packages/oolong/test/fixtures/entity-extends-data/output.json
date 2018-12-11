@@ -2,11 +2,15 @@
     "type": {
         "password": {
             "type": "text",
-            "maxLength": 200
+            "maxLength": [
+                200
+            ]
         },
         "email": {
             "type": "text",
-            "maxLength": 200,
+            "maxLength": [
+                200
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
@@ -16,28 +20,36 @@
         },
         "phone": {
             "type": "text",
-            "maxLength": 20,
+            "maxLength": [
+                20
+            ],
             "modifiers": [
                 {
                     "oolType": "Validator",
                     "name": "matches",
-                    "args": "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    "args": [
+                        "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                    ]
                 }
             ]
         },
         "userStatus": {
             "type": "enum",
             "values": [
-                "inactive",
-                "active",
-                "disabled",
-                "forbidden",
-                "deleted"
+                [
+                    "inactive",
+                    "active",
+                    "disabled",
+                    "forbidden",
+                    "deleted"
+                ]
             ]
         },
         "name": {
             "type": "text",
-            "maxLength": 20
+            "maxLength": [
+                20
+            ]
         }
     },
     "entity": {
@@ -46,27 +58,35 @@
             "features": [
                 {
                     "name": "autoId",
-                    "args": {
-                        "startFrom": 100000
-                    }
+                    "args": [
+                        {
+                            "startFrom": 100000
+                        }
+                    ]
                 },
                 "createTimestamp",
                 "updateTimestamp",
                 {
                     "name": "logicalDeletion",
-                    "args": {
-                        "status": "deleted"
-                    }
+                    "args": [
+                        {
+                            "status": "deleted"
+                        }
+                    ]
                 },
                 {
                     "name": "stateTracking",
-                    "args": "status"
+                    "args": [
+                        "status"
+                    ]
                 },
                 {
                     "name": "atLeastOneNotNull",
                     "args": [
-                        "email",
-                        "mobile"
+                        [
+                            "email",
+                            "mobile"
+                        ]
                     ]
                 }
             ],
@@ -82,19 +102,21 @@
                         {
                             "oolType": "Validator",
                             "name": "isMobilePhone",
-                            "args": {
-                                "oolType": "PipedValue",
-                                "value": {
-                                    "oolType": "ObjectReference",
-                                    "name": "latest.locale"
-                                },
-                                "modifiers": [
-                                    {
-                                        "oolType": "Processor",
-                                        "name": "stringDasherize"
-                                    }
-                                ]
-                            }
+                            "args": [
+                                {
+                                    "oolType": "PipedValue",
+                                    "value": {
+                                        "oolType": "ObjectReference",
+                                        "name": "latest.locale"
+                                    },
+                                    "modifiers": [
+                                        {
+                                            "oolType": "Processor",
+                                            "name": "stringDasherize"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "oolType": "Processor",
@@ -105,20 +127,46 @@
                 "status": {
                     "name": "status",
                     "type": "userStatus",
-                    "default": "inactive"
+                    "default": [
+                        "inactive"
+                    ]
+                },
+                "password": {
+                    "name": "password",
+                    "type": "password",
+                    "modifiers": [
+                        {
+                            "oolType": "Processor",
+                            "name": "hashPassword",
+                            "args": [
+                                {
+                                    "oolType": "ObjectReference",
+                                    "name": "latest.passwordSalt"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "passwordSalt": {
+                    "name": "passwordSalt",
+                    "type": "text",
+                    "fixedLength": [
+                        8
+                    ],
+                    "auto": true
                 },
                 "profile": {
                     "name": "profile",
                     "association": {
                         "type": "hasOne",
-                        "target": "personalProfile"
+                        "entity": "personalProfile"
                     }
                 },
                 "securityGroups": {
                     "name": "securityGroups",
                     "association": {
                         "type": "hasMany",
-                        "target": "securityGroup"
+                        "entity": "securityGroup"
                     }
                 }
             },
@@ -144,7 +192,7 @@
                     "name": "owner",
                     "association": {
                         "type": "belongsTo",
-                        "target": "user"
+                        "entity": "user"
                     }
                 },
                 "firstName": {
@@ -166,7 +214,7 @@
                     "name": "gender",
                     "association": {
                         "type": "hasOne",
-                        "target": "gender"
+                        "entity": "gender"
                     },
                     "optional": true
                 },
@@ -174,7 +222,7 @@
                     "name": "title",
                     "association": {
                         "type": "hasOne",
-                        "target": "personTitle"
+                        "entity": "personTitle"
                     },
                     "optional": true
                 },
@@ -206,12 +254,16 @@
                 "maleCapable": {
                     "name": "maleCapable",
                     "type": "bool",
-                    "default": true
+                    "default": [
+                        true
+                    ]
                 },
                 "femaleCapable": {
                     "name": "femaleCapable",
                     "type": "bool",
-                    "default": true
+                    "default": [
+                        true
+                    ]
                 }
             },
             "data": {

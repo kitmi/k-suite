@@ -4,9 +4,9 @@ const winston = require('winston');
 const path = require('path');
 const Linker = require('../../../lib/lang/Linker');
 
-const SOURCE_PATH = path.resolve(__dirname, '../../../test/unit');
+const SOURCE_PATH = path.resolve(__dirname, '../../../test/unitLinker');
 
-describe.only('unit:lang:Linker', function () {    
+describe('unit:lang:Linker', function () {    
     let linker;
 
     let logger = winston.createLogger({
@@ -19,26 +19,26 @@ describe.only('unit:lang:Linker', function () {
     });
 
     beforeEach(function () {
-        linker = new Linker({ logger, sourcePath: SOURCE_PATH });
+        linker = new Linker({ logger, dslSourcePath: SOURCE_PATH });
     });
 
     describe('load module', function () {
         it('compile product schema', function () {
-            let mod = linker.loadModule('product.ols');
+            let mod = linker.loadModule('product.ool');
 
             let expected =
             {
                 "namespace": [
-                    path.join(SOURCE_PATH, 'entities', 'product.ols')
+                    path.join(SOURCE_PATH, 'entities', 'product.ool')
                 ],
                 "schema": {
                     "product": {
                         "entities": [
-                            "product"
+                            { "entity": "product" }
                         ]
                     }
                 },
-                "id": "./product.ols",
+                "id": "./product.ool",
                 "name": "product"
             };
             should.exists(mod);            
@@ -46,13 +46,13 @@ describe.only('unit:lang:Linker', function () {
         });
 
         it('compile product entity', function () {
-            let mod = linker.loadModule('entities/product.ols');
+            let mod = linker.loadModule('entities/product.ool');
 
             let expected =
             {
                 "namespace": [
-                    path.resolve(__dirname, '../../../lib/lang/builtins/types.ols'),
-                    path.resolve(__dirname, '../../../lib/lang/builtins/dictionary.ols')
+                    path.resolve(__dirname, '../../../lib/lang/builtins/types.ool'),
+                    path.resolve(__dirname, '../../../lib/lang/builtins/dictionary.ool')
                 ],
                 "entity": {
                     "product": {
@@ -61,8 +61,7 @@ describe.only('unit:lang:Linker', function () {
                             {
                                 "name": "atLeastOneNotNull",
                                 "args": [
-                                    "name",
-                                    "email"
+                                    [ "name", "email" ]
                                 ]
                             }
                         ],
@@ -70,7 +69,7 @@ describe.only('unit:lang:Linker', function () {
                             "name": {
                                 "name": "name",
                                 "type": "text",
-                                "maxLength": 40
+                                "maxLength": [ 40 ]
                             },
                             "email": {
                                 "name": "email",
@@ -79,14 +78,14 @@ describe.only('unit:lang:Linker', function () {
                             "desc": {
                                 "name": "desc",
                                 "type": "text",
-                                "maxLength": 2000,
+                                "maxLength": [ 2000 ],
                                 "optional": true,
                                 "comment": "Description"
                             }
                         }
                     }
                 },
-                "id": "./entities/product.ols",
+                "id": "./entities/product.ool",
                 "name": "product"
             };
             should.exists(mod);            
@@ -96,10 +95,10 @@ describe.only('unit:lang:Linker', function () {
 
     describe('load element', function () {
         it('load product entity from schema', function () {
-            let schemaMod = linker.loadModule('product.ols');
+            let schemaMod = linker.loadModule('product.ool');
             let refId = 'entity:product<-' + schemaMod.id;
 
-            let productMod = linker.loadModule('entities/product.ols');
+            let productMod = linker.loadModule('entities/product.ool');
             let selfId = 'entity:product@' + productMod.id;
 
             linker._elementsCache.should.not.have.key(refId);
@@ -119,8 +118,18 @@ describe.only('unit:lang:Linker', function () {
 
     describe('link a schema', function () {
         it('linker.link', function () {
-            linker.link('product.ols', 'product');
-            console.log(linker.schema.toJSON());
+            linker.link('product.ool', 'product');
+            linker.schemas.should.have.key('product')
+            let linked = linker.schemas['product'].toJSON();
+            linked.displayName.should.equal('Product');
+            linked.entities.should.have.key('product');
+
+            let product = linked.entities['product'];
+            product.should.have.key('name', 'displayName', 'fields', 'key');
+            product.name.should.equal('product');
+            product.displayName.should.equal('Product');
+            product.fields.should.have.key('id', 'name', 'email', 'desc');
+            product.key.should.equal('id');
         });
     });
 

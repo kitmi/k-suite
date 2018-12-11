@@ -29,12 +29,8 @@ class MySQLConnector extends Connector {
      * @param {string} name 
      * @param {object} options 
      */
-    constructor(name, options) {
-        super('mysql', name, Object.assign({ multipleStatements: 1 }, options));
-
-        if (this.options.multipleStatements) {
-            this.updateConnectionComponents({ options: { multipleStatements: 1 } });
-        }
+    constructor(name, options) {        
+        super('mysql', name, options);
     }
 
     /**
@@ -96,10 +92,12 @@ class MySQLConnector extends Connector {
                 throw new OolongUsageError(`Invalid isolation level: "${isolationLevel}"!"`);
             }
 
-            let [result] = await conn.query('SET SESSION TRANSACTION ISOLATION LEVEL ' + isolationLevel);            
+            await conn.query('SET SESSION TRANSACTION ISOLATION LEVEL ' + isolationLevel);            
         }
 
         await conn.beginTransaction();
+        
+        this.log('debug', 'Begins a new transaction.');
         return conn;
     }
 
@@ -108,7 +106,9 @@ class MySQLConnector extends Connector {
      * @param {MySQLConnection} conn - MySQL connection.
      */
     async commit_(conn) {
-        let [result] = await conn.commit();
+        await conn.commit();
+        
+        this.log('debug', 'Commits a transaction.');
         return this.disconnect_(conn);
     }
 
@@ -117,7 +117,9 @@ class MySQLConnector extends Connector {
      * @param {MySQLConnection} conn - MySQL connection.
      */
     async rollback_(conn) {
-        let [result] = await conn.rollback();
+        await conn.rollback();
+        
+        this.log('debug', 'Rollbacks a transaction.');
         return this.disconnect_(conn);
     }
 
@@ -130,7 +132,9 @@ class MySQLConnector extends Connector {
         if (options && options.createDatabase) {
             let connector = new MySQLConnector(this.name, { connection: this.connectionString, ...this.options });
             connector.updateConnectionComponents({ database: '' });
+            
             let result = await connector.execute_(sql, params);            
+            
             await connector.end_();
             return result;
         }
@@ -151,7 +155,7 @@ class MySQLConnector extends Connector {
         } catch (err) {      
             throw new DsOperationError(err.message, err);
         } finally {
-            conn && await this._releaseConnection_(conn);
+            conn && await this._releaseConnection_(conn, options);
         }
     }
 
@@ -192,6 +196,20 @@ class MySQLConnector extends Connector {
     }
 
     /**
+     * Replace an existing entity or create a new one.
+     * @param {string} model 
+     * @param {object} data 
+     * @param {*} options 
+     */
+    async replace_(model, data, options) {        
+        let params = [ model, data ]; 
+
+        let sql = 'REPLACE ?? SET ?';
+
+        return this.execute_(sql, params, options);
+    }
+
+    /**
      * Remove an existing entity.
      * @param {string} model 
      * @param {*} condition 
@@ -208,31 +226,44 @@ class MySQLConnector extends Connector {
     }
 
     /**
-     * 
+     * Perform select operation.
      * @param {*} model 
      * @param {*} condition 
      * @param {*} options 
      */
-    async find_(model, { columns, where, groupBy, orderBy, limitOffset },  options) {
+    async find_(model, { $select, $where, $groupBy, $having, $orderBy, $offset, $limit }, options) {
         let params = [ model ];
 
-        let whereClause = where && this._joinCondition(where, params);
+        let whereClause = $where && this._joinCondition($where, params);
         
-        let sql = 'SELECT ' + (columns ? this._buildColumns(columns) : '*') + ' FROM ??';
+        let sql = 'SELECT ' + ($select ? this._buildColumns($select) : '*') + ' FROM ??';
         if (whereClause) {
             sql += ' WHERE ' + whereClause;
         }
 
-        if (groupBy) {
-            sql += ' ' + this._buildGroupBy(groupBy);
+        if ($groupBy) {
+            sql += ' ' + this._buildGroupBy($groupBy);
         }
 
-        if (orderBy) {
-            sql += ' ' + this._buildOrderBy(orderBy);
+        if ($having) {
+            let havingClause = this._joinCondition($having, params);
+            if (havingClause) {
+                sql += ' HAVING ' + havingClause;
+            }
         }
 
-        if (limitOffset) {
-            sql += ' ' + this._buildLimitOffset(limitOffset);
+        if ($orderBy) {
+            sql += ' ' + this._buildOrderBy($orderBy);
+        }
+
+        if (_.isInteger($limit) && $limit > 0) {
+            sql += ' LIMIT ?';
+            params.push($limit);
+        }
+
+        if (_.isInteger($offset) && $offset > 0) {            
+            sql += ' OFFSET ?';
+            params.push($offset);
         }
 
         return this.execute_(sql, params, options);
@@ -505,22 +536,6 @@ class MySQLConnector extends Connector {
         }
 
         throw new OolongUsageError(`Unknown order by syntax: ${JSON.stringify(orderBy)}`);
-    }
-
-    _buildLimitOffset(limitOffset) {
-        if (_.isInteger(limitOffset)) return `LIMIT ${limitOffset}`;
-
-        if (_.isPlainObject(limitOffset)) {
-            let { limit, offset } = limitOffset;
-            return this._buildLimitOffset(limit) + (_.isInteger(offset) ? `, ${offset}` : '');
-        }
-
-        if (Array.isArray(limitOffset)) {
-            let [ limit, offset ] = limitOffset;
-            return this._buildLimitOffset({ limit, offset });
-        }
-
-        throw new OolongUsageError(`Unknown limitOffset syntax: ${JSON.stringify(limitOffset)}`);
     }
 
     async _getConnection_(options) {

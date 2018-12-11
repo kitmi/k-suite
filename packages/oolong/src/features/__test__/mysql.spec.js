@@ -6,7 +6,7 @@ const CliApp = require('@k-suite/app');
 
 const WORKING_DIR = path.resolve(__dirname, '../../../test/temp');
 
-describe('feature:mysql', function () {
+describe.skip('feature:mysql', function () {
     let cliApp;
 
     before(async function () {

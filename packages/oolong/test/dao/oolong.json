@@ -1,0 +1,23 @@
+{
+    "mysql": {
+        "fooBar": {
+            "connection": "mysql://root:root@localhost/test-db",
+            "logSQLStatement": true,
+            "reverseRules": "reverseRules.js",
+            "saveDatabaseMeta": true
+        }
+    },
+    "oolong": {
+        "dslSourceDir": "oolong",
+        "modelOutputDir": "models",
+        "scriptSourceDir": "scripts",
+        "scriptOutputDir": "scripts",
+        "dslOutputDir": "oolong",
+        "useJsonSource": true,
+        "schemaDeployment": { 
+            "test": {
+                "dataSource": "mysql.fooBar"
+            }
+        }
+    }
+}

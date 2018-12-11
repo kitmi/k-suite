@@ -3,7 +3,7 @@
 
 const path = require('path');
 const Util = require('rk-utils');
-const { Builtin } = require('../lang/types');
+const Types = require('../lang/types');
 
 const basePath = path.resolve(__dirname, 'auto');
 
@@ -20,7 +20,7 @@ generators.forEach(file => {
 
 function auto(info, i18n) {
     pre: {
-        Builtin.has(info.type), `Unknown primitive type: "${info.type}"."`;
+        Types.Builtin.has(info.type), `Unknown primitive type: "${info.type}"."`;
         info.auto, `Not an automatically generated field "${ info.name }".`;
     }
 
@@ -43,5 +43,7 @@ function auto(info, i18n) {
     return typeObjerct.generate(info, i18n);
 };
 
-Object.assign(exports, G);
-exports.$auto = auto;
+module.exports = {
+    'default': auto,
+    ...G
+};

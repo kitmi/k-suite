@@ -12,10 +12,11 @@
     "test:all": "mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
     "test:spec": "mocha --recursive src/**/*.spec.js --timeout 5000",
     "test": "npm run build && npm run test:all",
-    "cover": "nyc --reporter=html --reporter=text mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
+    "cover": "npm run build:test && nyc --reporter=html --reporter=text mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
     "bulid:clean": "rm -rf lib",
     "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files && del lib/**/__test__",
     "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && del lib/**/__test__",
+    "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files && del lib/**/__test__",
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
   "repository": "https://github.com/kitmi/k-suite/tree/master/packages/oolong",
@@ -24,6 +25,17 @@
   },
   "author": "Rockie Guo <rockie@kitmi.com.au>",
   "license": "MIT",
+  "nyc": {
+    "exclude": [
+      "babel.config.js",
+      "test",
+      "src",
+      "lib/cli",
+      "lib/modeler",
+      "lib/lang/grammar",
+      "lib/migration"
+    ]
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
@@ -42,7 +54,9 @@
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
     "mysql2": "^1.6.4",
+    "number-to-letter": "^1.0.1",
     "nyc": "^13.0.1",
+    "pluralize": "^7.0.0",
     "shelljs": "^0.8.2",
     "should": "^13.2.3",
     "source-map-support": "^0.5.9",

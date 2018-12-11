@@ -183,6 +183,29 @@ class OolongCore {
         return (this._oolongConfig = fs.readJsonSync(this.app.toAbsolutePath(configFile)));
     }
 
+    get schemaDeployment() {
+        let modelMapping = Util.getValueByPath(this.oolongConfig, 'oolong.schemaDeployment');
+
+        if (_.isEmpty(modelMapping)) {
+            throw new Error('"schemaDeployment" is empty.');
+        }
+
+        return _.mapValues(modelMapping, (mapping, schemaName) => {
+            let { dataSource, ...others } = mapping;
+    
+            if (!dataSource) {
+                throw new Error(`Configuration item "schemaDeployment.${schemaName}.dataSource" not found.`);
+            }
+    
+            let connOptions = Util.getValueByPath(this.oolongConfig, dataSource);
+            if (!connOptions) {
+                throw new Error(`Data source config "${dataSource}" not found.`);
+            }
+    
+            return { dataSource, connOptions, ...others };
+        });
+    }
+
     /**
      * Get default oolong output path.
      * @param {string} prefix 
@@ -211,8 +234,13 @@ class OolongCore {
         let valid = true;
 
         _.forOwn(this.usageOptions.options, (opts, name) => {
+            let required = opts.required;
 
-            if (opts.required && !(name in this.argv)) {
+            if (typeof required === 'function') {
+                required = required();
+            } 
+
+            if (required && !(name in this.argv)) {
                 console.error(`Argument "${name}" is required.`);
                 valid = false;
             }

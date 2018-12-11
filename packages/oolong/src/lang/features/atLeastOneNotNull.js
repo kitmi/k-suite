@@ -3,7 +3,7 @@
 const Util = require('rk-utils');
 const { _ } = Util;
 const { DataValidationError } = require('../../runtime/Errors');
-const Features = require('../../runtime/Features');
+const Rules = require('../Rules');
 
 const FEATURE_NAME = 'atLeastOneNotNull';
 
@@ -17,7 +17,7 @@ const FEATURE_NAME = 'atLeastOneNotNull';
  * @param {OolongEntity} entity - Entity to apply this feature
  * @param {array} fields - List of field names
  */
-function feature(entity, fields) {
+function feature(entity, [ fields ]) {
     if (!fields) {
         throw new Error('Missing field names!');
     }
@@ -38,23 +38,30 @@ function feature(entity, fields) {
 }
 
 feature.__metaRules = {
-    [Features.RULE_POST_CREATE_CHECK]: ({ feature, entityMeta, context }, next) => {
-        if (_.every(feature, fieldName => _.isNil(context.latest[fieldName]))) {
-            throw new DataValidationError(`At least one of these fields ${ featureSetting.map(f => Util.quote(f)).join(', ') } should not be null.`, {
-                entity: entityMeta.name,
-                fields: featureSetting
-            });
-        }
+    [Rules.RULE_BEFORE_CREATE]: ({ feature, entityModel, context }, next) => {
+        _.each(feature, item => {
+            if (_.every(item, fieldName => _.isNil(context.latest[fieldName]))) {
+                throw new DataValidationError(`At least one of these fields ${ item.map(f => Util.quote(f)).join(', ') } should not be null.`, {
+                    entity: entityModel.meta.name,
+                    fields: feature
+                });
+            }
+        });  
 
         return next();
     },
-    [Features.RULE_POST_UPDATE_CHECK]: ({ feature, entityMeta, context }, next) => {
-        if (_.every(feature, fieldName => ((fieldName in context.latest) && _.isNil(context.latest[fieldName])) || (!(fieldName in context.latest) && _.isNil(context.existing[fieldName])))) {
-            throw new DataValidationError(`At least one of these fields ${ featureSetting.map(f => Util.quote(f)).join(', ') } should not be null.`, {
-                entity: entityMeta.name,
-                fields: featureSetting
-            });
-        }
+    [Rules.RULE_BEFORE_UPDATE]: ({ feature, entityModel, context }, next) => {
+        _.each(feature, item => {
+            if (_.every(item, fieldName => context.latest.hasOwnProperty(fieldName) ? 
+                _.isNil(context.latest[fieldName]) : 
+                (context.existing && _.isNil(context.existing[fieldName])))
+            ) {
+                throw new DataValidationError(`At least one of these fields ${ item.map(f => Util.quote(f)).join(', ') } should not be null.`, {
+                    entity: entityModel.meta.name,
+                    fields: feature
+                });
+            }
+        });  
 
         return next();
     }

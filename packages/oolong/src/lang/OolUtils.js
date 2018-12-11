@@ -1,9 +1,8 @@
 "use strict";
 
-const Util = require('rk-utils');
-const _ = Util._;
+const { _ } = require('rk-utils');
 
-const Entity = require('./Entity');
+//const Entity = require('./Entity');
 //const Schema = require('./schema.js');
 //const Field = require('./field.js');
 
@@ -24,6 +23,8 @@ const deepCloneField = (src, dest, field) => {
 const isDotSeparateName = (name) => (name.indexOf('.') > 0);
 
 const extractDotSeparateName = (name) => name.split('.');
+
+const extractReferenceBaseName = (name) => extractDotSeparateName(name).pop();
 
 const getReferenceNameIfItIs = (obj) => {
     if (_.isPlainObject(obj) && obj.oolType === 'ObjectReference') {
@@ -121,6 +122,7 @@ exports.deepClone = deepClone;
 exports.deepCloneField = deepCloneField;
 exports.isDotSeparateName = isDotSeparateName;
 exports.extractDotSeparateName = extractDotSeparateName;
+exports.extractReferenceBaseName = extractReferenceBaseName;
 exports.getReferenceNameIfItIs = getReferenceNameIfItIs;
 exports.schemaNaming = name => _.camelCase(name);
 exports.entityNaming = name => _.camelCase(name);

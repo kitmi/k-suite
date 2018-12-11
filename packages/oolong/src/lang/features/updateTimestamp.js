@@ -14,7 +14,7 @@ const FEATURE_NAME = 'updateTimestamp';
  * @param {OolongEntity} entity - Entity to apply this feature
  * @param {object} options - Field options
  */
-function initialize(entity, options) {
+function initialize(entity, args = []) {
     let typeInfo = {
         name: 'updatedAt',
         type: 'datetime',
@@ -22,6 +22,8 @@ function initialize(entity, options) {
         forceUpdate: true,
         optional: true
     };
+
+    let [ options ] = args;
 
     if (options) {
         if (typeof options === 'string') {
