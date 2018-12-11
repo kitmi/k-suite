@@ -1,6 +1,6 @@
 {
   "name": "@k-suite/rules-engine",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "General Rules Engine",
   "main": "lib/index.js",
   "publishConfig": {
@@ -14,7 +14,7 @@
     "cover": "nyc --reporter=html --reporter=text mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000 && rm -rf ./.nyc_output",
     "bulid:clean": "rm -rf lib",
     "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files && del lib/**/__test__",
-    "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && del lib/**/__test__",    
+    "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && del lib/**/__test__",
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
   "author": "Rockie Guo <rockie@kitmi.com.au>",
@@ -58,7 +58,7 @@
     "winston-mongodb": "github:kitmi/winston-mongodb"
   },
   "dependencies": {
-    "@k-suite/algorithms": "^0.0.1",
+    "@k-suite/algorithms": "^0.1.0",
     "rk-config": "^2.0.0",
     "rk-utils": "^2.1.8",
     "winston": "^3.1.0",

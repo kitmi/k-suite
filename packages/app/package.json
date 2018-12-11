@@ -1,6 +1,6 @@
 {
   "name": "@k-suite/app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "General Application Template",
   "main": "index.js",
   "publishConfig": {
@@ -58,9 +58,9 @@
     "winston-daily-rotate-file": "^3.3.3",
     "winston-mongodb": "github:kitmi/winston-mongodb"
   },
-  "dependencies": {    
+  "dependencies": {
     "rk-config": "^2.0.0",
-    "rk-utils": "^2.1.8",    
+    "rk-utils": "^2.1.8",
     "winston": "^3.1.0",
     "winstonflight": "^1.0.4"
   }
