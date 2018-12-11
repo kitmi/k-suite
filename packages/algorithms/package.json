@@ -55,5 +55,6 @@
   },
   "dependencies": {
     "rk-utils": "^2.1.8"
-  }
+  },
+  "gitHead": "699ff81c93d2966f9a86c251d832151c4a450e81"
 }
