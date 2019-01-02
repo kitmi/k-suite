@@ -20,8 +20,10 @@ entity user
     email 
     mobile : phone ~isMobilePhone(@latest.locale |> stringDasherize) |> normalizeMobile    
     status : userStatus default('inactive')
-    profile -> personalProfile
-    securityGroups -> [ securityGroup ]
+
+  associations  
+    hasMany personalProfile 
+    hasMany securityGroup
 
   index
     email unique
@@ -32,10 +34,11 @@ entity personalProfile
   with
     updateTimestamp
   has
-    owner => user
     firstName : name optional
     middleName : name optional
-    surName : name optional
-    gender -> gender optional
-    title -> personTitle optional
+    surName : name optional    
     dateOfBirth : datetime optional
+  associations
+    belongsTo user as owner
+    refersTo gender 
+    refersTo personTitle

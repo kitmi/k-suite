@@ -76,7 +76,6 @@ class DaoModeler {
 
         let locals = {
             className: capitalized,
-            dataSource: this.connector.name,
             schemaName: schema.name
         };
 

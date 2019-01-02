@@ -26,8 +26,10 @@ entity user
     isMobileVerified : bool default(false) -- 'Flag indicates mobile verified or not'
     status : userStatus default('inactive')
     tag : array valueType('text') optional
-    profile -> personalProfile
-    securityGroups -> [ securityGroup ]
+
+  associations  
+    hasMany personalProfile 
+    hasMany securityGroup      
 
   index
     email unique

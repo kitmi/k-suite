@@ -7,4 +7,4 @@ entity group
     name : text maxLength(255) optional -- "Group Name"
 
   associations
-    hasMany user
+    hasMany user connected by userGroup

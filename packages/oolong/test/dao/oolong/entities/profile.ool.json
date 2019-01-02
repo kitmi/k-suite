@@ -1,54 +1,46 @@
 {
-  "type": {},
-  "entity": {
-    "profile": {
-      "comment": "",
-      "features": [],
-      "fields": {
-        "gender": {
-          "type": "$association"
-        },
-        "id": {
-          "type": "text",
-          "maxLength": 32
-        },
-        "user": {
-          "type": "$association"
+    "entity": {
+        "profile": {
+            "comment": "Profile",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "maxLength": [
+                        32
+                    ],
+                    "comment": "Profile Id"
+                }
+            },
+            "associations": [
+                {
+                    "type": "refersTo",
+                    "destEntity": "gender",
+                    "srcField": "gender"
+                },
+                {
+                    "type": "belongsTo",
+                    "destEntity": "user",
+                    "srcField": "user"
+                }
+            ],
+            "key": "id",
+            "indexes": [
+                {
+                    "fields": [
+                        "user"
+                    ],
+                    "unique": true
+                },
+                {
+                    "fields": [
+                        "gender"
+                    ]
+                }
+            ]
         }
-      },
-      "associations": [
-        {
-          "type": "refersTo",
-          "from": "gender",
-          "entity": "gender"
-        },
-        {
-          "type": "belongsTo",
-          "from": "user",
-          "entity": "user"
-        }
-      ],
-      "key": [
-        "id"
-      ],
-      "indexes": [
-        {
-          "name": "fk_profile_user",
-          "fields": [
-            "user"
-          ],
-          "unique": true,
-          "nullable": true
-        },
-        {
-          "name": "fk_profile_gender",
-          "fields": [
-            "gender"
-          ],
-          "unique": false,
-          "nullable": true
-        }
-      ]
-    }
-  }
+    },
+    "namespace": [],
+    "id": "./entities/profile.ool",
+    "name": "profile"
 }

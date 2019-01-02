@@ -2,9 +2,7 @@ entity profile
   -- "Profile"
 
   has
-    gender : $association -- "Profile Gender"
     id : text maxLength(32) -- "Profile Id"
-    user : $association -- "Profile User"
 
   associations
     refersTo 'gender' as 'gender'

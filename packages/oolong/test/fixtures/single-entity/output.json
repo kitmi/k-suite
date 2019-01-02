@@ -195,22 +195,18 @@
                         "text"
                     ],
                     "optional": true
-                },
-                "profile": {
-                    "name": "profile",
-                    "association": {
-                        "type": "hasOne",
-                        "entity": "personalProfile"
-                    }
-                },
-                "securityGroups": {
-                    "name": "securityGroups",
-                    "association": {
-                        "type": "hasMany",
-                        "entity": "securityGroup"
-                    }
                 }
             },
+            "associations": [
+                {
+                    "type": "hasMany",
+                    "destEntity": "personalProfile"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "securityGroup"
+                }
+            ],
             "indexes": [
                 {
                     "fields": "email",

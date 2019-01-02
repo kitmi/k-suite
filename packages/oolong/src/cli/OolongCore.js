@@ -3,7 +3,7 @@ const { _, fs } = Util;
 const inquirer = require('inquirer');
 const path = require('path');
 const Commands = require('./commands');
-const OolongApi = require('../api');
+const OolongApi = require('../lang/api');
 const { makeDataSourceName, SupportedDrivers } = require('../utils/lang');
 
 /**
@@ -197,12 +197,12 @@ class OolongCore {
                 throw new Error(`Configuration item "schemaDeployment.${schemaName}.dataSource" not found.`);
             }
     
-            let connOptions = Util.getValueByPath(this.oolongConfig, dataSource);
-            if (!connOptions) {
-                throw new Error(`Data source config "${dataSource}" not found.`);
+            let { connection, options } = Util.getValueByPath(this.oolongConfig, dataSource);
+            if (!connection) {
+                throw new Error(`Connection string of data source "${dataSource}" not found.`);
             }
     
-            return { dataSource, connOptions, ...others };
+            return { dataSource, connectionString: connection, ...options, ...others };
         });
     }
 

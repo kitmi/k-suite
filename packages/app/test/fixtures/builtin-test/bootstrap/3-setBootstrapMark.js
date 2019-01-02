@@ -1,6 +1,6 @@
 module.exports = async function (app) {    
     return new Promise((resolve) => {
-        setTimeout(() => {
+        setTimeout(() => {            
             app.bootstrapInfo = 'for test only';
             resolve();
         }, 100);

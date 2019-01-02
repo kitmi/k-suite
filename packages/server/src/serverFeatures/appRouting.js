@@ -23,7 +23,7 @@ const path = require('path');
 const Util = require('rk-utils');
 const Promise = Util.Promise;
 const { InvalidConfiguration } = require('../Errors');
-const WebApp = require('../WebApp');
+const WebModule = require('../WebModule');
 
 module.exports = {
 
@@ -69,7 +69,7 @@ module.exports = {
                 `appRouting.${baseRoute}.name`);
         }
     
-        let app = new WebApp(server, config.name, baseRoute, appPath, options);
+        let app = new WebModule(server, config.name, baseRoute, appPath, options);
         app.settings = config.settings || {};
 
         let relativePath = path.relative(server.workingPath, appPath);

@@ -8,6 +8,7 @@
         }
     },
     "oolong": {
+        "modelDir": "models",
         "dslSourceDir": "oolong",
         "modelOutputDir": "models",
         "scriptSourceDir": "scripts",

@@ -66,7 +66,6 @@ User.meta = {
     "keyField": "id",
     "fields": {
         "id": {
-            "name": "id",
             "type": "integer",
             "auto": true,
             "readOnly": true,
@@ -77,7 +76,6 @@ User.meta = {
             "defaultByDb": true
         },
         "email": {
-            "name": "email",
             "type": "text",
             "maxLength": 200,
             "modifiers": [
@@ -86,14 +84,14 @@ User.meta = {
                     "name": "isEmail"
                 }
             ],
+            "comment": "User Email",
             "subClass": [
                 "email"
             ],
-            "displayName": "Email",
+            "displayName": "User Email",
             "optional": true
         },
         "mobile": {
-            "name": "mobile",
             "type": "text",
             "maxLength": 20,
             "modifiers": [
@@ -121,14 +119,14 @@ User.meta = {
                     "name": "normalizeMobile"
                 }
             ],
+            "comment": "User Mobile",
             "subClass": [
                 "phone"
             ],
-            "displayName": "Mobile",
+            "displayName": "User Mobile",
             "optional": true
         },
         "password": {
-            "name": "password",
             "type": "text",
             "maxLength": 200,
             "modifiers": [
@@ -143,27 +141,37 @@ User.meta = {
                     ]
                 }
             ],
+            "comment": "User Password",
             "subClass": [
                 "password"
             ],
-            "displayName": "Password",
+            "displayName": "User Password",
             "defaultByDb": true
         },
         "passwordSalt": {
-            "name": "passwordSalt",
             "type": "text",
             "fixedLength": 8,
             "auto": true,
-            "displayName": "Password Salt"
+            "comment": "User Password Salt",
+            "displayName": "User Password Salt"
         },
         "locale": {
-            "name": "locale",
             "type": "text",
             "default": "en_AU",
-            "displayName": "Locale"
+            "comment": "User Locale",
+            "displayName": "User Locale"
+        },
+        "isEmailVerified": {
+            "type": "boolean",
+            "default": false,
+            "displayName": "Is Email Verified"
+        },
+        "isMobileVerified": {
+            "type": "boolean",
+            "default": false,
+            "displayName": "Is Mobile Verified"
         },
         "status": {
-            "name": "status",
             "type": "enum",
             "values": [
                 "inactive",
@@ -173,13 +181,18 @@ User.meta = {
                 "deleted"
             ],
             "default": "inactive",
+            "comment": "User Status",
             "subClass": [
                 "userStatus"
             ],
-            "displayName": "Status"
+            "displayName": "User Status"
+        },
+        "tag": {
+            "type": "array",
+            "optional": true,
+            "displayName": "Tag"
         },
         "createdAt": {
-            "name": "createdAt",
             "type": "datetime",
             "auto": true,
             "readOnly": true,
@@ -189,7 +202,6 @@ User.meta = {
             "defaultByDb": true
         },
         "updatedAt": {
-            "name": "updatedAt",
             "type": "datetime",
             "readOnly": true,
             "forceUpdate": true,
@@ -199,7 +211,6 @@ User.meta = {
             "updateByDb": true
         },
         "statusInactiveTimestamp": {
-            "name": "statusInactiveTimestamp",
             "type": "datetime",
             "readOnly": true,
             "optional": true,
@@ -208,7 +219,6 @@ User.meta = {
             "displayName": "Status Inactive Timestamp"
         },
         "statusActiveTimestamp": {
-            "name": "statusActiveTimestamp",
             "type": "datetime",
             "readOnly": true,
             "optional": true,
@@ -217,7 +227,6 @@ User.meta = {
             "displayName": "Status Active Timestamp"
         },
         "statusDisabledTimestamp": {
-            "name": "statusDisabledTimestamp",
             "type": "datetime",
             "readOnly": true,
             "optional": true,
@@ -226,7 +235,6 @@ User.meta = {
             "displayName": "Status Disabled Timestamp"
         },
         "statusForbiddenTimestamp": {
-            "name": "statusForbiddenTimestamp",
             "type": "datetime",
             "readOnly": true,
             "optional": true,
@@ -235,7 +243,6 @@ User.meta = {
             "displayName": "Status Forbidden Timestamp"
         },
         "statusDeletedTimestamp": {
-            "name": "statusDeletedTimestamp",
             "type": "datetime",
             "readOnly": true,
             "optional": true,

@@ -1,10 +1,6 @@
 entity usergroup
   -- "Usergroup"
 
-  has
-    groupid : $association -- "Usergroup Groupid"
-    userid : $association -- "Usergroup Userid"
-
   associations
     refersTo 'group' as 'groupid'
     refersTo 'user' as 'userid'

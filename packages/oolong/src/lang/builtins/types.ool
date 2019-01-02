@@ -7,3 +7,4 @@ type
   path : text maxLength(2000) ~isURL({allow_protocol_relative_urls: true})
   uuid : text maxLength(36) fixedLength ~isUUID =generator('uuid')
   ip : text maxLength(40) ~isIP
+  phone : text maxLength(20) ~matches(/^((\+|00)\d+)?\d+(-\d+)?$/)

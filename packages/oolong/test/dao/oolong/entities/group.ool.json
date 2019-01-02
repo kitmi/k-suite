@@ -1,31 +1,31 @@
 {
-  "type": {},
-  "entity": {
-    "group": {
-      "comment": "",
-      "features": [
-        {
-          "name": "autoId",
-          "options": {}
+    "entity": {
+        "group": {
+            "comment": "Group",
+            "features": [
+                "autoId"
+            ],
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "maxLength": [
+                        255
+                    ],
+                    "optional": true,
+                    "comment": "Group Name"
+                }
+            },
+            "associations": [
+                {
+                    "type": "hasMany",
+                    "destEntity": "user",
+                    "connectedBy": "userGroup"
+                }
+            ]
         }
-      ],
-      "fields": {
-        "name": {
-          "type": "text",
-          "maxLength": 255,
-          "optional": true
-        }
-      },
-      "associations": [
-        {
-          "type": "hasMany",
-          "entity": "user"
-        }
-      ],
-      "key": [
-        "id"
-      ],
-      "indexes": []
-    }
-  }
+    },
+    "namespace": [],
+    "id": "./entities/group.ool",
+    "name": "group"
 }

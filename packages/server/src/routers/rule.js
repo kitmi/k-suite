@@ -15,7 +15,7 @@ const Literal = require('../enum/Literal');
 
 /** 
  * Create a rule-based router.
- * @param {WebApp} app 
+ * @param {WebModule} app 
  * @param {string} baseRoute 
  * @param {object} options 
  * @example

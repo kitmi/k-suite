@@ -3,7 +3,6 @@
 const Util = require('rk-utils');
 const { _, fs } = Util;
 const { extractDriverAndConnectorName } = require('../utils/lang');
-const Connector = require('../runtime/Connector');
 
 exports.commands = {
     'list': 'List all oolong schemas.',
@@ -164,16 +163,6 @@ exports.options = (core) => {
                 promptDefault: "conf/oolong.json",
                 afterInquire: () => { connectionStrings = core.getConnectionStrings(core.option('c')); }
             };   
-            
-            /*
-            cmdOptions['ols'] = {
-                desc: 'Only convert json source to ols, skip database reverse engineering',
-                alias: [ 'ols-only' ],
-                required: true,
-                isBool: true,
-                'default': false
-            };
-            */
 
             cmdOptions['conn'] = {
                 desc: 'The data source connector',
@@ -232,6 +221,7 @@ exports.build = async (core) => {
     }
 
     let useJsonSource = Util.getValueByPath(oolongConfig, 'oolong.useJsonSource', false);       
+    let saveIntermediate = Util.getValueByPath(oolongConfig, 'oolong.saveIntermediate', false);       
 
     return core.api.build_({
         logger: core.app.logger,
@@ -239,6 +229,7 @@ exports.build = async (core) => {
         modelOutputPath,
         scriptOutputPath,
         useJsonSource,
+        saveIntermediate,
         schemaDeployment: core.schemaDeployment
     });
 };
@@ -247,6 +238,11 @@ exports.migrate = async (core) => {
     core.app.log('verbose', 'oolong deploy');
 
     let oolongConfig = core.oolongConfig;
+
+    let modelDir  = Util.getValueByPath(oolongConfig, 'oolong.modelDir');
+    if (!modelDir) {
+        throw new Error('"oolong.modelDir" not found in oolong config.');
+    }
 
     let dslSourceDir = Util.getValueByPath(oolongConfig, 'oolong.dslSourceDir');
     if (!dslSourceDir) {
@@ -258,8 +254,13 @@ exports.migrate = async (core) => {
         throw new Error('"oolong.scriptSourceDir" not found in oolong config.');
     }
 
+    let modelPath = core.app.toAbsolutePath(modelDir);    
     let dslSourcePath = core.app.toAbsolutePath(dslSourceDir);    
     let scriptSourcePath = core.app.toAbsolutePath(scriptSourceDir);
+
+    if (!fs.existsSync(modelPath)) {
+        return Promise.reject(`Model directory "${modelPath}" not found.`);
+    }
 
     if (!fs.existsSync(dslSourcePath)) {
         return Promise.reject(`DSL source directory "${dslSourcePath}" not found.`);
@@ -273,6 +274,7 @@ exports.migrate = async (core) => {
 
     return core.api.migrate_({
         logger: core.app.logger,
+        modelPath,
         dslSourcePath,        
         scriptSourcePath,
         useJsonSource,
@@ -285,17 +287,17 @@ exports.reverse = async (core) => {
 
     let oolongConfig = core.oolongConfig;
 
-    let reverseOutputDir = Util.getValueByPath(oolongConfig, 'oolong.reverseOutputDir');
-    if (!reverseOutputDir) {
-        throw new Error('"oolong.reverseOutputDir" not found in oolong config.');
+    let dslReverseOutputDir = Util.getValueByPath(oolongConfig, 'oolong.dslReverseOutputDir');
+    if (!dslReverseOutputDir) {
+        throw new Error('"oolong.dslOutputDir" not found in oolong config.');
     }
 
-    let outputDir = core.getReverseOutputDir(core.app.toAbsolutePath(reverseOutputDir));
+    let outputDir = core.getReverseOutputDir(core.app.toAbsolutePath(dslReverseOutputDir));
 
     //todo: relocation, and deep copy connection options
     let conn = core.option('conn');
-    let [ driver, connectorName ] = extractDriverAndConnectorName(conn);
-    let connOptions = Util.getValueByPath(oolongConfig, driver + '.' + connectorName);
+    let [ driver ] = extractDriverAndConnectorName(conn);
+    let connOptions = Util.getValueByPath(oolongConfig, conn);
     assert: connOptions;    
 
     if (typeof connOptions.reverseRules === 'string') {
@@ -304,15 +306,10 @@ exports.reverse = async (core) => {
 
     assert: !connOptions.reverseRules || _.isPlainObject(connOptions.reverseRules);
 
-    connOptions.logger = core.app.logger;
-
-    let connector = Connector.createConnector(driver, connectorName, connOptions);
-
-    try {                
-        await core.api.reverse_({ connector, logger: core.app.logger }, outputDir);
-    } catch (error) {
-        throw error;
-    } finally {
-        await connector.end_();
-    }    
+    return core.api.reverse_({ 
+        logger: core.app.logger,
+        dslReverseOutputDir: outputDir,
+        driver,
+        connOptions
+    });
 };

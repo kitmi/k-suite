@@ -21,7 +21,7 @@
             'dataset': new Set(['contains', 'with'])
         },
         {
-            'entity.associations': new Set(['hasOne', 'hasMany', 'refersTo', 'belongsTo', 'through', 'as']),
+            'entity.associations': new Set(['hasOne', 'hasMany', 'refersTo', 'belongsTo', 'connected', 'by', 'through', 'as', 'optional']),
             'entity.index': new Set(['is', 'unique'])
         }            
     ];
@@ -287,20 +287,43 @@
         }
     }
 
-    var KEYWORDS = new Set([        
-        'int', 'integer', 'number', 'text', 'bool', 'boolean', 'blob', 'binary', 'datetime', 'date', 'time', 'year', 'timestamp', 'json', 'xml', 'enum', 'csv',
-        'exact', 'unsigned', "only", "fixedLength",
-        "import", "const", "type", "entity", "schema", "database", "relation", "default", "auto", "entities", "data",
-        "with", "has", "have", "key", "index", "as", "unique", "for",
-        "every", "may", "a", "several", "many", "great", "of", "one", "to", "an",
-        "optional", "readOnly", "fixedValue", "forceUpdate",
-        "interface", "accept", "do", "select", "where", "return", "exists", "null", "otherwise", "unless", "find", "by", "case",
-        "skip", "limit", "update", "create", "delete", "set", "throw", "error",
-        "view", "order", "list", "asc", "desc", "views", "group", "skip",
-        "document", "contains", "being", "which"
-    ]);    
+    function merge(obj1, obj2) {
+        let m = Object.assign({}, obj1);
 
-    var state; // created on start
+        for (let k in obj2) {
+            let v2 = obj2[k];
+            let t2 = typeof v2;
+
+            if (k in obj1) {
+                let v1 = obj1[k];
+                let t1 = typeof v1;
+
+                if (t1 === 'object' || t2 === 'object') {
+                    if (t1 !== 'undefined' && t1 !== 'object') {
+                        throw new Error(`Failed to merge object propery "${k}".`);
+                    }
+
+                    if (t2 !== 'undefined' && t2 !== 'object') {
+                        throw new Error(`Failed to merge object propery "${k}".`);
+                    }
+
+                    m[k] = Object.assign({}, v1, v2);
+                    continue;
+                }
+
+                Array.isArray(v1) || (v1 = [ v1 ]);
+                Array.isArray(v2) || (v2 = [ v2 ]);
+                m[k] = v1.concat(v2);
+                continue;
+            }
+
+            m[k] = v2;
+        }
+
+        return m;
+    }
+
+    let state; // created on start
 %}
 
 %lex
@@ -937,47 +960,27 @@ entity_statement_header0
     ;
 
 entity_statement_block
-    : comment_or_not with_features_or_not has_fields_or_not associations_or_not key_or_not index_or_not data_or_not -> Object.assign({}, $1, $2, $3, $4, $5, $6, $7)
+    : comment_or_not entity_sub_items -> Object.assign({}, $1, $2)
+    ;
+
+entity_sub_items
+    : entity_sub_item
+    | entity_sub_item entity_sub_items -> merge($1, $2)
+    ;
+
+entity_sub_item
+    : with_features
+    | has_fields
+    | associations_statement
+    | key_statement
+    | index_statement
+    | data_statement
+    | interfaces_statement
     ;
 
 comment_or_not
     :
     | "--" STRING NEWLINE -> { comment: $2 }
-    ;
-
-with_features_or_not
-    :
-    | with_features
-    ;
-
-has_fields_or_not
-    :
-    | has_fields
-    ;
-
-associations_or_not
-    : 
-    | associations_statement
-    ;
-
-key_or_not
-    :
-    | key_statement
-    ;
-
-index_or_not
-    :
-    | index_statement
-    ;
-
-data_or_not
-    :
-    | data_statement
-    ;
-
-interfaces_or_not
-    :
-    | interfaces_statement
     ;
 
 with_features
@@ -993,13 +996,13 @@ has_fields
     : "has" NEWLINE INDENT has_fields_block DEDENT -> { fields: $4 }
     ;
 
-field_item
-    : field_item_body field_comment_or_not -> Object.assign({}, $1, $2)
-    ;
-
 has_fields_block
     : field_item NEWLINE -> { [$1.name]: $1 }
     | field_item NEWLINE has_fields_block -> Object.assign({}, { [$1.name]: $1 }, $3)
+    ;
+
+field_item
+    : field_item_body field_comment_or_not -> Object.assign({}, $1, $2)
     ;
 
 field_comment_or_not
@@ -1008,15 +1011,8 @@ field_comment_or_not
     ;    
 
 field_item_body
-    : modifiable_param
-    | identifier_or_string field_assoc type_info_or_not -> Object.assign({ name: $1 }, $2, $3)
+    : modifiable_param    
     ;
-
-field_assoc
-    : "->" identifier_or_string -> { association: { type: 'hasOne', entity: $2 } }  /* hasOne */
-    | "=>" identifier_or_string -> { association: { type: 'belongsTo', entity: $2 } } /* belongsTo */
-    | "->" "[" identifier_or_string "]" -> { association: { type: 'hasMany', entity: $3 } }  /* hasMany */
-    ; 
 
 type_base_or_not
     :
@@ -1052,18 +1048,23 @@ associations_block
     ;
 
 association_item
-    : "hasOne" identifier_or_string -> { type: 'hasOne', entity: $2 }
-    | "hasMany" identifier_or_string (association_through)? -> { type: 'hasMany', entity: $2, ...$3 }
-    | "refersTo" identifier_or_string (association_as)? -> { type: 'refersTo', entity: $2, ...$3 }
-    | "belongsTo" identifier_or_string (association_as)? -> { type: 'belongsTo', entity: $2, ...$3 }
+    : "hasOne" identifier_or_string (association_as)? (association_optional)? -> { type: 'hasOne', destEntity: $2, ...$3, ...$4 }
+    | "hasMany" identifier_or_string (association_through)? (association_as)? (association_optional)? -> { type: 'hasMany', destEntity: $2, ...$3, ...$4, ...$5 }
+    | "refersTo" identifier_or_string (association_as)? (association_optional)? -> { type: 'refersTo', destEntity: $2, ...$3, ...$4 }
+    | "belongsTo" identifier_or_string (association_as)? (association_optional)? -> { type: 'belongsTo', destEntity: $2, ...$3, ...$4 }
     ;
 
 association_through
-    : "through" identifier_or_string -> { through: $2 }
+    : "through" identifier_or_string -> { connectedBy: $2 }
+    | "connected" "by" identifier_or_string -> { connectedBy: $3 }
     ;
 
 association_as
-    : "as" identifier_or_string -> { from: $2 }
+    : "as" identifier_or_string -> { srcField: $2 }
+    ;
+
+association_optional
+    : "optional" -> { optional: true }
     ;
 
 /*

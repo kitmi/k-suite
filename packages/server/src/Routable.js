@@ -1,17 +1,15 @@
 "use strict";
 
 const path = require('path');
-const App = require('@k-suite/app');
-const Util = require('rk-utils');
-const _ = Util._;
+const { _, fs, glob, urlJoin, ensureLeftSlash, urlAppendQuery } = require('rk-utils');
 const Errors = require('./Errors');
 const Literal = require('./enum/Literal');
 const Koa = require('koa');
 
-class RoutableApp extends App {    
+const Routable = T => class extends T {    
     /**     
-     * @param {string} name - The name of the cli application.     
-     * @param {object} [options] - Application options     
+     * @param {string} name - The name of the routable instance.     
+     * @param {object} [options] - Routable options     
      * @property {object} [options.logger] - Logger options
      * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics        
      * @property {string} [options.env] - Environment, default to process.env.NODE_ENV
@@ -52,7 +50,7 @@ class RoutableApp extends App {
         this.on('configLoaded', () => {
             //load middlewares if exists in server or app path
             let middlewareDir = this.toAbsolutePath(Literal.MIDDLEWARES_PATH);
-            if (Util.fs.existsSync(middlewareDir)) {
+            if (fs.existsSync(middlewareDir)) {
                 this.loadMiddlewaresFrom(middlewareDir);
             }            
         });  
@@ -79,7 +77,7 @@ class RoutableApp extends App {
      * @param dir
      */
     loadMiddlewaresFrom(dir) {
-        let files = Util.glob.sync(path.join(dir, '*.js'), {nodir: true});
+        let files = glob.sync(path.join(dir, '*.js'), {nodir: true});
         files.forEach(file => this.registerMiddlewareFactory(path.basename(file, '.js'), require(file)));
     }
 
@@ -205,7 +203,7 @@ class RoutableApp extends App {
 
         router[method](route, ...handlers);
 
-        let endpoint = Util.urlJoin(this.route, route);
+        let endpoint = router.opts.prefix ? urlJoin(this.route, router.opts.prefix, route) : urlJoin(this.route, route);
 
         this.log('verbose', `Route "${method}:${endpoint}" is added from module [${this.name}].`);
 
@@ -236,14 +234,14 @@ class RoutableApp extends App {
                 query = pathOrQuery.pop();
             }
             pathOrQuery.unshift(relativePath);
-            url = Util.urlJoin(this.route, ...pathOrQuery);
+            url = urlJoin(this.route, ...pathOrQuery);
         } else {
-            url = Util.urlJoin(this.route, relativePath);
+            url = urlJoin(this.route, relativePath);
         }
 
-        url = Util.ensureLeftSlash(url);
+        url = ensureLeftSlash(url);
         if (query) {
-            url = Util.urlAppendQuery(url, query);
+            url = urlAppendQuery(url, query);
             url = url.replace('/?', '?');
         }
 
@@ -276,6 +274,10 @@ class RoutableApp extends App {
     _useMiddleware(router, middleware) {        
         router.use(middleware);
     }
+
+    _getFeatureFallbackPath() {
+        return super._getFeatureFallbackPath().concat([ this.toAbsolutePath(Literal.BACKEND_PATH, Literal.FEATURES_PATH) ]);
+    }
 };
 
-module.exports = RoutableApp;
+module.exports = Routable;

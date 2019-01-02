@@ -4,7 +4,7 @@ const EventEmitter = require('events');
 const path = require('path');
 
 const { _ } = require('rk-utils');
-const { generateDisplayName, deepCloneField, Clonable, formatFields, entityNaming } = require('./OolUtils');
+const { generateDisplayName, deepCloneField, Clonable, entityNaming } = require('./OolUtils');
 
 const Field = require('./Field');
 
@@ -135,9 +135,7 @@ class Entity extends Clonable {
 
         // process fields
         if (this.info.fields) {
-            _.each(this.info.fields, (fieldInfo, fieldName) => {
-                this.addField(fieldName, fieldInfo);
-            });
+            _.each(this.info.fields, (fieldInfo, fieldName) => this.addField(fieldName, fieldInfo));
         }
 
         /**
@@ -148,15 +146,9 @@ class Entity extends Clonable {
         if (this.info.key) {
             this.key = this.info.key;
 
-            /*
-            if (Array.isArray(this.key)) {
-                if (!_.every(this.key, kf => this.hasField(kf))) {
-                    throw new Error(`Not all key fields "${formatFields(this.key)}" exist in entity "${this.name}".`);    
-                }
-            } else if (!this.hasField(this.key)) {
-                throw new Error(`Key field "${formatFields(this.key)}" not exists in entity "${this.name}".`);
+            if (Array.isArray(this.key) && this.key.length === 1) {
+                this.key = this.key[0];
             }
-            */
         }
 
         /**
@@ -164,7 +156,7 @@ class Entity extends Clonable {
          */
         this._events.emit('beforeAddingInterfaces');        
         
-        if (this.info.interfaces) {
+        if (!_.isEmpty(this.info.interfaces)) {
             this.interfaces = _.cloneDeep(this.info.interfaces);
 
             _.forOwn(this.interfaces, (intf) => {
@@ -175,6 +167,11 @@ class Entity extends Clonable {
                 }
             });
         }
+
+        /**
+         * @fires OolongEntity#afterAddingInterfaces
+         */
+        this._events.emit('afterAddingInterfaces');        
 
         this.linked = true;
 
@@ -293,6 +290,26 @@ class Entity extends Clonable {
     }
 
     /**
+     * Add a association field.
+     * @param {string} name
+     * @param {OolongEntity} destEntity
+     * @param {OolongField} destField
+     */
+    addAssocField(name, destEntity, destField) {
+        let localField = this.fields[name];
+
+        if (localField) {
+            if (!localField.hasSameType(destField.toJSON())) {
+                throw new Error(`The type of source field "${this.name}.${name}" is different from the referenced field "${destEntity.name}.${destField.name}".`);
+            }
+
+            return;
+        }
+
+        this.addField(name, destField);
+    }
+
+    /**
      * Add a field into the entity
      * @param {string} name
      * @param {object} rawInfo
@@ -305,19 +322,23 @@ class Entity extends Clonable {
 
         assert: rawInfo.type;
 
-        if (rawInfo.type !== '$association') {
+        let field;
+
+        if (rawInfo instanceof Field) {
+            field = rawInfo.clone();
+        } else {
             let fullRawInfo = this.linker.trackBackType(this.oolModule, rawInfo);
 
-            let field = new Field(name, fullRawInfo);
+            field = new Field(name, fullRawInfo);
             field.link();
-            
-            this.fields[name] = field;
+        }        
+        
+        this.fields[name] = field;
 
-            if (!this.key) {
-                //make the first field as the default key
-                this.key = name;
-            }
-        } 
+        if (!this.key) {
+            //make the first field as the default key
+            this.key = name;
+        }
 
         return this;
     }
@@ -359,6 +380,13 @@ class Entity extends Clonable {
     setKey(name) {
         this.key = name;
         return this;
+    }
+
+    /**
+     * Returns the association info if there is connection to the given destination entity.
+     */
+    getReferenceTo(entityName, connectedBy) {
+        return this.info.associations && _.find(this.info.associations, assoc => assoc.destEntity === entityName && connectedBy === assoc.connectedBy);
     }
 
     /**

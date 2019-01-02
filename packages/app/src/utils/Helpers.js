@@ -24,22 +24,31 @@ exports.splitControllerAction = function (actionString) {
  * Try require a package module and show install tips if not found.
  * @param {string} packageName
  */
-exports.tryRequire = (packageName) => {
-    try {
-        return require(packageName);
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            let pkgPaths = packageName.split('/');
-            let npmPkgName = pkgPaths[0];
-            if (pkgPaths[0].startsWith('@') && pkgPaths.length > 1) {
-                npmPkgName += '/' + pkgPaths[1];
+exports.tryRequire = function (packageName) {
+
+    function tryRequireBy(packageName, mainModule, throwWhenNotFound) {
+        try {
+            return mainModule.require(packageName);
+        } catch (error) {
+            if (error.code === 'MODULE_NOT_FOUND') {
+                if (throwWhenNotFound) {
+                    let pkgPaths = packageName.split('/');
+                    let npmPkgName = pkgPaths[0];
+                    if (pkgPaths[0].startsWith('@') && pkgPaths.length > 1) {
+                        npmPkgName += '/' + pkgPaths[1];
+                    }
+
+                    throw new Error(`Module "${packageName}" not found. Try run "npm install ${npmPkgName}" to install the dependency.`);
+                }
+
+                return undefined;
             }
 
-            throw new Error(`Module "${packageName}" not found. Try run "npm install ${npmPkgName}" to install the dependency.`);
+            throw error;
         }
-
-        throw error;
     }
+
+    return tryRequireBy(packageName, module) || tryRequireBy(packageName, require.main, true);
 };
 
 /**

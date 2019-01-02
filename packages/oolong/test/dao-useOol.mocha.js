@@ -6,7 +6,7 @@ const winston = require('winston');
 const WORKING_FOLDER = path.resolve(__dirname, 'dao');
 const OOLONG_CLI = 'node ../../lib/cli/oolong.js';
 
-describe.skip('e2e:oolong:dao:useOol', function () {
+describe('e2e:oolong:dao:useOol', function () {
     let logger = winston.createLogger({
         "level": "debug",
         "transports": [
@@ -20,34 +20,33 @@ describe.skip('e2e:oolong:dao:useOol', function () {
 
     before(function () {        
         process.chdir(WORKING_FOLDER);
-        //fs.removeSync(path.join(WORKING_FOLDER, 'models'));
+        fs.removeSync(path.join(WORKING_FOLDER, 'models'));
 
         cfg = fs.readJsonSync('./oolong-ool.json', 'utf8');
     });
 
     after(function () {
-        //fs.removeSync(path.join(WORKING_FOLDER, 'oolong-cli.log'));
-        //fs.removeSync(path.join(WORKING_FOLDER, 'models'));
+        fs.removeSync(path.join(WORKING_FOLDER, 'oolong-cli.log'));
+        fs.removeSync(path.join(WORKING_FOLDER, 'models'));
     });
 
     it('build', function () {
-        let output = runCmdSync(OOLONG_CLI + ' build -c oolong.json');
+        let output = runCmdSync(OOLONG_CLI + ' build -c oolong-ool.json');
         
         output.should.match(/Generated entity model/);
     });
 
     it('migrate', function () {
-        let output = runCmdSync(OOLONG_CLI + ' migrate -c oolong.json -r');
+        let output = runCmdSync(OOLONG_CLI + ' migrate -c oolong-ool.json -r');
         
-        output.should.match(/Database scripts for "test-db" run successfully/);
+        output.should.match(/Database scripts ".+?" run successfully/);
     });    
 
     it('get model', async function () {
         const Db = require(path.resolve('./models/Test'));
         should.exists(Db);
-        Db.should.have.keys('driver', 'dataSource', 'schemaName');
+        Db.should.have.keys('driver', 'schemaName');
         Db.driver.should.be.equal('mysql');
-        Db.dataSource.should.be.equal('fooBar');
         Db.schemaName.should.be.equal('test');
 
         let db = new Db(cfg.mysql.fooBar.connection);
@@ -62,7 +61,7 @@ describe.skip('e2e:oolong:dao:useOol', function () {
         await db.close_();
     });
 
-    it('find all from empty db', async function () {
+    it('find all from db', async function () {
         const Db = require(path.resolve('./models/Test'));        
         let db = new Db(cfg.mysql.fooBar.connection);
 
@@ -70,7 +69,10 @@ describe.skip('e2e:oolong:dao:useOol', function () {
 
         let result = await User.findAll_();        
         Array.isArray(result).should.be.ok();
-        result.length.should.be.exactly(0);
+        result.length.should.be.exactly(1);
+
+        let user = result[0];
+        user.email.should.be.equal('admin@email.com');
 
         await db.close_();
     });

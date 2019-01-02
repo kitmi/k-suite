@@ -15,14 +15,6 @@ class Schema extends Clonable {
     entities = {};
 
     /**
-     * Relations in this schema
-     * @member {array}
-     * @example
-     *  [ { left, right, optional, size, relationship, type, multi } ]
-     */
-    relations = [];
-
-    /**
      * Datasets, dataset = entity + relations + projection
      * @member {object}
      */
@@ -114,27 +106,6 @@ class Schema extends Clonable {
     }
 
     /**
-     * Add relation into this schema
-     * @param {object} relation
-     * @returns {Schema}
-     */
-    addRelation(relation) {
-        if (!this.hasEntity(relation.left.name)) {
-            this.addEntity(relation.left);
-        }
-
-        if (!this.hasEntity(relation.right.name)) {
-            this.addEntity(relation.right);
-        }
-
-        let r = Object.assign({}, relation, { left: relation.left.name, right: relation.right.name });
-
-        this.relations.push(r);
-
-        return this;
-    }
-
-    /**
      * Check whether a entity with given name is in the schema
      * @param {string} entityName
      * @returns {boolean}
@@ -219,10 +190,8 @@ class Schema extends Clonable {
         let schema = new Schema(this.linker, this.name, this.oolModule, this.info);
         
         deepCloneField(this, schema, 'displayName');
-        deepCloneField(this, schema, 'comment');
-        deepCloneField(this, schema, 'relations');
-        deepCloneField(this, schema, 'entities');
-        deepCloneField(this, schema, 'relations');
+        deepCloneField(this, schema, 'comment');        
+        deepCloneField(this, schema, 'entities');        
         deepCloneField(this, schema, 'datasets');
         deepCloneField(this, schema, 'views');        
 
@@ -240,8 +209,7 @@ class Schema extends Clonable {
             name: this.name,
             displayName: this.displayName,
             comment: this.comment,        
-            entities: _.mapValues(this.entities, entity => entity.toJSON()),
-            relations: this.relations,
+            entities: _.mapValues(this.entities, entity => entity.toJSON()),            
             datasets: _.mapValues(this.datasets, dataset => dataset.toJSON()), 
             views: _.mapValues(this.views, view => view.toJSON()) 
         };

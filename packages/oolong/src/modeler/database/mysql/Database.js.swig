@@ -5,7 +5,7 @@ const Connector = require('../../../lib/runtime/drivers/mysql/Connector');
 
 class {{ className }} {
     constructor(connection, options) {        
-        this.connector = new Connector(this.constructor.dataSource, { connection, ...options });
+        this.connector = new Connector(connection, options);
     }
 
     model(entityName) {
@@ -16,12 +16,12 @@ class {{ className }} {
     }
 
     async close_() {
-        return this.connector.end_();
+        await this.connector.end_();
+        delete this.connector;
     }
 }
 
 {{ className }}.driver = 'mysql';
-{{ className }}.dataSource = '{{ dataSource }}';
 {{ className }}.schemaName = '{{ schemaName }}';
 
 module.exports = {{ className }};

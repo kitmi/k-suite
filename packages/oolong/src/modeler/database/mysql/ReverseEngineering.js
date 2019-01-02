@@ -5,9 +5,9 @@ const OolCodeGen = require('../../../lang/OolCodeGen');
 const OolUtils = require('../../../lang/OolUtils');
 
 class MySQLReverseEngineering {
-    constructor(context) {
-        this.connector = context.connector;
+    constructor(context, connector) {
         this.logger = context.logger;
+        this.connector = connector;        
 
         this.reverseRules = this.connector.options.reverseRules || {};       
         this.saveDatabaseMeta = this.connector.options.saveDatabaseMeta || false;

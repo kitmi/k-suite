@@ -58,6 +58,10 @@ class Field extends Clonable {
         this.linked = true;
     }
 
+    hasSameType(targetField) {
+        return _.isEqual(this.toJSON(), targetField);
+    }
+
     /**
      * Clone the field     
      * @returns {Field}
@@ -77,7 +81,7 @@ class Field extends Clonable {
      * @returns {object}
      */
     toJSON() {
-        return _.omit(_.toPlainObject(this), [ 'linked', 'info' ]);
+        return _.omit(_.toPlainObject(this), [ 'name', 'linked', 'info' ]);
     }
 }
 

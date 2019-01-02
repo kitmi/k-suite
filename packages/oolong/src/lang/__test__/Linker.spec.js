@@ -19,7 +19,7 @@ describe('unit:lang:Linker', function () {
     });
 
     beforeEach(function () {
-        linker = new Linker({ logger, dslSourcePath: SOURCE_PATH });
+        linker = new Linker({ logger, dslSourcePath: SOURCE_PATH/*, saveIntermediate: true */ });
     });
 
     describe('load module', function () {
@@ -135,7 +135,20 @@ describe('unit:lang:Linker', function () {
 
     describe('link json sources', function () {
         it('linker.options.useJsonSource=true', function () {
-            
+            let linker2 = new Linker({ useJsonSource: true, dslSourcePath: SOURCE_PATH });
+
+            linker2.link('product.ool.json', 'product');
+            linker2.schemas.should.have.key('product')
+            let linked = linker2.schemas['product'].toJSON();
+            linked.displayName.should.equal('Product');
+            linked.entities.should.have.key('product');
+
+            let product = linked.entities['product'];
+            product.should.have.key('name', 'displayName', 'fields', 'key');
+            product.name.should.equal('product');
+            product.displayName.should.equal('Product');
+            product.fields.should.have.key('id', 'name', 'email', 'desc');
+            product.key.should.equal('id');
         });
     });
 });

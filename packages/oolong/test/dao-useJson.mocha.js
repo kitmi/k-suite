@@ -44,15 +44,14 @@ describe('e2e:oolong:dao:useJson', function () {
     it('migrate', function () {
         let output = runCmdSync(OOLONG_CLI + ' migrate -c oolong.json -r');
         
-        output.should.match(/Database scripts for "test-db" run successfully/);
+        output.should.match(/Database scripts ".+?" run successfully/);
     });    
 
     it('get model', async function () {
         const Db = require(path.resolve('./models/Test'));
         should.exists(Db);
-        Db.should.have.keys('driver', 'dataSource', 'schemaName');
+        Db.should.have.keys('driver', 'schemaName');
         Db.driver.should.be.equal('mysql');
-        Db.dataSource.should.be.equal('fooBar');
         Db.schemaName.should.be.equal('test');
 
         let db = new Db(cfg.mysql.fooBar.connection);

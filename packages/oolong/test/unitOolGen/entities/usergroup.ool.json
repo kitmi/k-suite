@@ -4,14 +4,6 @@
     "usergroup": {
       "comment": "",
       "features": [],
-      "fields": {
-        "groupid": {
-          "type": "$association"
-        },
-        "userid": {
-          "type": "$association"
-        }
-      },
       "associations": [
         {
           "type": "refersTo",

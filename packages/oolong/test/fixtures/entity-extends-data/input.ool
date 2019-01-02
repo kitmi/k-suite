@@ -22,8 +22,10 @@ entity user
     status : userStatus default('inactive')
     password |> hashPassword(@latest.passwordSalt)
     passwordSalt : text fixedLength(8) auto 
-    profile -> personalProfile
-    securityGroups -> [ securityGroup ]
+
+  associations  
+    hasMany personalProfile 
+    hasMany securityGroup
 
   index
     email unique
@@ -34,14 +36,16 @@ entity personalProfile extends profile
   with
     updateTimestamp
   has    
-    owner => user
     firstName : name optional
     middleName : name optional
     surName : name optional
-    gender -> gender optional
-    title -> personTitle optional
     dateOfBirth : datetime optional
   key owner
+  associations
+    belongsTo user as owner
+    refersTo gender 
+    refersTo personTitle
+
 
 entity gender extends dictionary
   data {

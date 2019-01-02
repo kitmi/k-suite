@@ -1,7 +1,7 @@
 "use strict";
 
 const path = require('path');
-const { _, fs, eachAsync_ } = require('rk-utils');
+const { _, fs, eachAsync_, pascalCase } = require('rk-utils');
 
 /**
  * MySQL migration.
@@ -12,19 +12,21 @@ class MySQLMigration {
      * @param {object} context
      * @param {Connector} connector
      */
-    constructor(context, connector) {
+    constructor(context, schemaName, connector) {
         this.logger = context.logger;
+        this.modelPath = context.modelPath;
         this.scriptSourcePath = context.scriptSourcePath;
+        this.schemaName = schemaName;
         this.connector = connector;
+
+        this.dbScriptPath = path.join(this.scriptSourcePath, this.connector.driver, this.connector.database);
     }
 
     async reset_() {
         return this.connector.execute_(`DROP DATABASE IF EXISTS ??`, [ this.connector.database ]);
     }
 
-    async create_() {
-        let dbScriptDir = path.join(this.scriptSourcePath, this.connector.driver, this.connector.database);
-        
+    async create_() {        
         let sqlFiles = [ 'entities.sql', 'relations.sql', 'procedures.sql' ];
         
         let result = await this.connector.execute_('CREATE DATABASE IF NOT EXISTS ??', 
@@ -38,17 +40,15 @@ class MySQLMigration {
             this.logger.log('warn', `Database "${this.connector.database}" exists.`);
         }                        
 
-        await this.connector.execute_('USE ??', [ this.connector.database ]);
-
         return eachAsync_(sqlFiles, async (file) => {
-            let sqlFile = path.join(dbScriptDir, file);
+            let sqlFile = path.join(this.dbScriptPath, file);
             if (!fs.existsSync(sqlFile)) {
                 throw new Error(`Database script "${file}" not found. Try run "oolong build" first.`);
             }
 
             let sql = _.trim(fs.readFileSync(sqlFile, { encoding: 'utf8' }));
             if (sql) {
-                result = _.castArray(await this.connector.execute_(sql));
+                result = _.castArray(await this.connector.execute_(sql, null, { multipleStatements: 1 }));
 
                 let warningRows = _.reduce(result, (sum, row) => {
                     sum += row.warningStatus;
@@ -58,54 +58,41 @@ class MySQLMigration {
                 if (warningRows > 0) {
                     this.logger.log('warn', `${warningRows} warning(s) reported while running "${file}".`);
                 } else {
-                    this.logger.log('info', `Database scripts for "${this.connector.database}" run successfully.`);
+                    this.logger.log('info', `Database scripts "${sqlFile}" run successfully.`);
                 }
             }
         });
     }
 
-    async loadData(dataFile) {
+    async load_(dataFile) {
         let ext = path.extname(dataFile);
-        let content = fs.readFileSync(dataFile, {encoding: 'utf8'});
-
-        let db = this.appModule.db(this.dbService.serviceId);
 
         if (ext === '.json') {
-            let data = JSON.parse(content);
+            let data = fs.readJsonSync(dataFile, {encoding: 'utf8'});
+
+            let className = pascalCase(this.schemaName);
+            let Db = require(path.join(this.modelPath, className));
+            let db = new Db(this.connector.connectionString, this.connector.options);
 
             try {
-                await Util.eachAsync_(data, async (records, entityName) => {
+                await eachAsync_(data, async (records, entityName) => {
                     let Model = db.model(entityName);                        
                     let items = Array.isArray(records) ? records : [ records ];
-    
-                    return Util.eachAsync_(items, async item => {
-                        try {
-                            let model = new Model(item);
-                            let result = await model.save_();
-                            if (!result || !result.data) {
-                                throw new Error(`Unknown error occurred during saving a new "${entityName}" entity.`);
-                            }
 
-                            this.logger.log('verbose', `Added a new "${entityName}" entity.`, result.data);
-                        } catch (error) {
-                            if (error.errors && error.errors.length === 1 && error.errors[0].code === 'ER_DUP_ENTRY') {
-                                this.logger.log('warn', error.message);       
-                            } else {
-                                throw error;
-                            }                            
-                        }
+                    return eachAsync_(items, async item => {
+                        let model = await Model.create_(item);
+                        this.logger.log('verbose', `Created a(n) ${entityName} entity: ${JSON.stringify(model.$pkValues)}`);
                     });
                 });
+            } catch (error) {
+                throw error;
             } finally {
-                db.release();
+                await db.close_();
             }
         } else if (ext === '.sql') {
-            try {                
-                let [ result ] = await db.query_(content);
-                this.logger.log('verbose', `Executed a new SQL file.`, result);
-            } finally {
-                db.release();
-            }
+            let sql = fs.readFileSync(dataFile, {encoding: 'utf8'});
+            let result = await this.connector.execute_(sql, null, { multipleStatements: 1 });
+            this.logger.log('verbose', `Executed SQL file: ${dataFile}`, result);
         } else {
             throw new Error('Unsupported data file format.');
         }

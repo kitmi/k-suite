@@ -4,17 +4,18 @@ const path = require('path');
 const Util = require('rk-utils');
 const _ = Util._;
 const Promise = Util.Promise;
-
-const RoutableApp = require('./RoutableApp');
+const ServiceContainer = require('@k-suite/app/lib/ServiceContainer');
+const Runable = require('@k-suite/app/lib/Runable');
+const Routable = require('./Routable');
 const Literal = require('./enum/Literal');
 const mount = require('koa-mount');
 
 /**
- * Web server class
+ * Web server class.
  * @class
- * @extends RoutableApp
+ * @extends Routable(App)
  */
-class WebServer extends RoutableApp {
+class WebServer extends Routable(Runable(ServiceContainer)) {
     /**          
      * @param {string} [name='server'] - The name of the server.     
      * @param {object} [options] - The app module's extra options defined in its parent's configuration.
@@ -79,7 +80,7 @@ class WebServer extends RoutableApp {
     /**
      * Mount an app at specified route.
      * @param {string} mountedRoute 
-     * @param {WebApp} app 
+     * @param {WebModule} app 
      */
     mountApp(mountedRoute, app) {
         if (!this.appModules) {

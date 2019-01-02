@@ -5,8 +5,8 @@ const path = require('path');
 const Util = require('rk-utils');
 const { _, fs, eachAsync_ } = Util;
 
-const Linker = require('./lang/Linker');
-const Connector = require('./runtime/Connector');
+const Linker = require('./Linker');
+const Connector = require('../runtime/Connector');
 
 /**
  * Oolong DSL api
@@ -21,10 +21,34 @@ const Connector = require('./runtime/Connector');
         return;
     }
 
-    let { dataSource, connOptions } = deployment;
-    let [ driver, connectorName ] = dataSource.split('.');
+    let { dataSource, connectionString, options } = deployment;
+    let [ driver ] = dataSource.split('.');
 
-    return Connector.createConnector(driver, connectorName, { logger: context.logger, logSQLStatement: true, ...connOptions });       
+    return Connector.createConnector(driver, connectionString, { logger: context.logger, ...options });       
+ }
+
+ async function importDataFiles(migrator, folderName) {
+    let dataSetPath = path.join(migrator.dbScriptPath, 'data', folderName);
+    let dataListFile = path.join(dataSetPath, 'index.list');
+
+    if (!fs.existsSync(dataListFile)) {
+        return;
+    }
+
+    let dataList = fs.readFileSync(dataListFile).toString().match(/^.+$/gm);
+
+    return eachAsync_(dataList, async line => {
+        line = line.trim();
+
+        if (line.length > 0) {
+            let dataFile = path.join(dataSetPath, line);
+            if (!fs.existsSync(dataFile)) {
+                return Promise.reject(`Data file "${dataFile}" not found.`);
+            }
+
+            await migrator.load_(dataFile);
+        }
+    });
  }
 
 /**
@@ -49,23 +73,21 @@ exports.build_ = async (context) => {
 
     return eachAsync_(linker.schemas, async (schema, schemaName) => {        
         let connector = createConnector(context, schemaName);
-
-        if (!connector) return; 
+        assert: connector;
 
         try {
-            let DbModeler = require(`./modeler/database/${connector.driver}/Modeler`);
+            let DbModeler = require(`../modeler/database/${connector.driver}/Modeler`);
             let dbModeler = new DbModeler(context, connector);
             let refinedSchema = dbModeler.modeling(schema);
 
-            const DaoModeler = require('./modeler/Dao');
+            const DaoModeler = require('../modeler/Dao');
             let daoModeler = new DaoModeler(context, connector);
 
             await daoModeler.modeling_(refinedSchema);
         } catch (error) {
             throw error;
-            //context.logger.log('error', error);
         } finally {
-            if (connector) await connector.end_();
+            await connector.end_();
         } 
     });            
 };
@@ -74,6 +96,7 @@ exports.build_ = async (context) => {
  * Deploy database scripts into database.
  * @param {object} context
  * @property {Logger} context.logger - Logger object
+ * @property {string} context.modelPath
  * @property {string} context.dslSourcePath 
  * @property {string} context.scriptSourcePath 
  * @property {object} context.schemaDeployment   
@@ -83,21 +106,23 @@ exports.build_ = async (context) => {
 exports.migrate_ = async (context, reset = false) => {
     context.logger.log('verbose', 'Start deploying models ...');
 
-    return eachAsync_(context.schemaDeployment, async (info, schemaName) => {
+    return eachAsync_(context.schemaDeployment, async (deployment, schemaName) => {
         let connector = createConnector(context, schemaName);
+        assert: connector;
 
         try {
-            let Migration = require(`./migration/${connector.driver}`);
-            let migration = new Migration(context, connector);
+            let Migration = require(`../migration/${connector.driver}`);
+            let migration = new Migration(context, schemaName, connector);
 
             if (reset) {
                 await migration.reset_();
             }
 
             await migration.create_();
+
+            await importDataFiles(migration, '_init');            
         } catch (error) {
             throw error;
-            //context.logger.log('error', error);
         } finally {
             await connector.end_();
         } 
@@ -124,7 +149,7 @@ exports.import = async (context, db, dataSetDir) => {
     }
 
     let dataList = fs.readFileSync(dataListFile).toString().match(/^.+$/gm);
-    let Deployer = require(`./deployer/db/${dbType}.js`);
+    let Deployer = require(`../deployer/db/${dbType}.js`);
     let service = context.currentApp.getService(db);
     let deployer = new Deployer(context, service);
 
@@ -147,12 +172,25 @@ exports.import = async (context, db, dataSetDir) => {
  * @param {object} context
  * @property {Connector} context.connector
  * @property {Logger} context.logger 
- * @param {string} outputPath - Absolute output path.
+ * @property {string} context.dslReverseOutputDir 
+ * @property {string} context.driver
+ * @property {object} context.connOptions 
  * @returns {Promise}
  */
-exports.reverse_ = async (context, outputPath) => {       
-    let ReserveEngineering = require(`./modeler/database/${context.connector.driver}/ReverseEngineering`);
-    let modeler = new ReserveEngineering(context);
+exports.reverse_ = async (context) => {   
+    let ReserveEngineering = require(`../modeler/database/${context.driver}/ReverseEngineering`);
+    
+    let { connection: connectionString, ...options } = context.connOptions;  
+    let connector = Connector.createConnector(context.driver, connectionString, { logger: context.logger, ...options });     
+    assert: connector;  
 
-    return modeler.reverse_(outputPath);
+    try {
+        let modeler = new ReserveEngineering(context, connector);
+
+        await modeler.reverse_(context.dslReverseOutputDir);
+    } catch (error) {
+        throw error;
+    } finally {
+        await connector.end_();
+    } 
 };

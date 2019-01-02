@@ -5,7 +5,7 @@ const { _ } = Util;
 const { generateDisplayName } = require('./OolUtils');
 const { isNothing, isQuotedWith } = require('../utils/lang');
 
-const KW_NAMESPACE = 'use';
+const KW_NAMESPACE = 'import';
 const KW_SCHEMA = 'schema';
 const KW_ENTITIES = 'entities';
 const KW_ENTITY_AS_ALIAS = 'as';

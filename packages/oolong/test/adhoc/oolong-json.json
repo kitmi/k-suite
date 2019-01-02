@@ -8,11 +8,11 @@
         }
     },
     "oolong": {
-        "dslSourceDir": "modelTest",
+        "dslSourceDir": "dslJson",
         "modelOutputDir": "models",
         "scriptSourceDir": "scripts",
         "scriptOutputDir": "scripts",
-        "dslOutputDir": "oolong",
+        "dslReverseOutputDir": "oolong",
         "useJsonSource": true,
         "schemaDeployment": { 
             "test": {

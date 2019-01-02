@@ -10,12 +10,11 @@
     "doc": "jsdoc -c jsdoc.json -t ./node_modules/ink-docstrap/template -R README.md -d './docs' -r --verbose ./src",
     "test:all": "mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000",
     "test:spec": "mocha --recursive src/**/*.spec.js --timeout 5000",
-    "test": "npm run build:test && npm run test:all",
+    "test": "npm run build && npm run test:all",
     "cover": "nyc --reporter=html --reporter=text mocha test/*.mocha.js --recursive src/**/*.spec.js --timeout 5000 && rm -rf ./.nyc_output",
     "bulid:clean": "rm -rf lib",
     "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files && del lib/**/__test__",
     "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && del lib/**/__test__",
-    "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files && del lib/**/__test__",
     "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
   },
   "author": "Rockie Guo <rockie@kitmi.com.au>",

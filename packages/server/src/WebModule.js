@@ -4,15 +4,16 @@ const Util = require('rk-utils');
 const Promise = Util.Promise;
 const _ = Util._;
 const path = require('path');
-const RoutableApp = require('./RoutableApp');
+const ServiceContainer = require('@k-suite/app/lib/ServiceContainer');
+const Routable = require('./Routable');
 const Literal = require('./enum/Literal');
 
 /**
- * Web application module class
+ * Web application module class.
  * @class
- * @extends RoutableApp
+ * @extends Routable(ServiceContainer)
  */
-class WebApp extends RoutableApp {
+class WebModule extends Routable(ServiceContainer) {
     /**     
      * @param {WebServer} server
      * @param {string} name - The name of the app module.
@@ -83,4 +84,4 @@ class WebApp extends RoutableApp {
     }
 }
 
-module.exports = WebApp;
+module.exports = WebModule;

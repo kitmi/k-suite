@@ -1,11 +1,9 @@
-const { _ } = require('rk-utils');
+const { _, eachAsync_ } = require('rk-utils');
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
-const mysql = require('mysql2/promise');
+const mysql = tryRequire('mysql2/promise');
 const Connector = require('../../Connector');
 const { OolongUsageError, DsOperationError } = require('../../Errors');
 const { isQuoted, isPrimitive } = require('../../../utils/lang');
-
-const poolByConn = {};
 
 /**
  * MySQL data storage connector.
@@ -29,52 +27,82 @@ class MySQLConnector extends Connector {
      * @param {string} name 
      * @param {object} options 
      */
-    constructor(name, options) {        
-        super('mysql', name, options);
+    constructor(connectionString, options) {        
+        super('mysql', connectionString, options);
+
+        this._pools = {};
+        this._acitveConnections = new Map();
+    }
+
+    stringFromConnection(conn) {
+        post: !conn || it, 'Connection object not found in acitve connections map.'; 
+        return this._acitveConnections.get(conn);
+    }    
+
+    /**
+     * Close all connection initiated by this connector.
+     */
+    async end_() {
+        for (let conn of this._acitveConnections.keys()) {
+            await this.disconnect_(conn);
+        };
+
+        return eachAsync_(this._pools, async (pool, cs) => {
+            await pool.end();
+            this.log('debug', 'Closed pool: ' + cs);
+        });
     }
 
     /**
-     * Create a database connection.     
+     * Create a database connection based on the default connection string of the connector and given options.     
      * @param {Object} [options] - Extra options for the connection, optional.
-     * @property {bool} [options.createDatabase=false] - Connect without specifying database, used only in createDatabase.
+     * @property {bool} [options.multipleStatements=false] - Allow running multiple statements at a time.
+     * @property {bool} [options.createDatabase=false] - Flag to used when creating a database.
      * @returns {Promise.<MySQLConnection>}
      */
     async connect_(options) {
-        let pool = poolByConn[this.connectionString];
+        let csKey = this.connectionString;
+
+        if (options) {
+            let connProps = {};
+
+            if (options.createDatabase) {
+                //remove the database from connection
+                connProps.database = '';
+            }
+            
+            connProps.options = _.pick(options, ['multipleStatements']);     
+
+            csKey = this.getNewConnectionString(connProps);
+        }        
+
+        let pool = this._pools[csKey];
 
         if (!pool) {            
-            pool = poolByConn[this.connectionString] = mysql.createPool(this.connectionString);
-            this.log('debug', 'Created pool: ' + this.connectionString);
-        }   
+            pool = mysql.createPool(csKey);
+            this._pools[csKey] = pool;
+
+            this.log('debug', 'Created pool: ' + csKey);
+        }        
+
+        let conn = await pool.getConnection();
+        this._acitveConnections.set(conn, csKey);
+
+        this.log('debug', 'Create connection: ' + csKey);
         
-        this.log('debug', 'Create connection: ' + this.connectionString);
-
-        Object.defineProperty(this, 'connectionString', { writable: false });
-
-        return pool.getConnection();
+        return conn;
     }
 
     /**
      * Close a database connection.
      * @param {MySQLConnection} conn - MySQL connection.
      */
-    async disconnect_(conn) {
-        this.log('debug', 'Close connection: ' + this.connectionString);
+    async disconnect_(conn) {        
+        let cs = this.stringFromConnection(conn);
+        this._acitveConnections.delete(conn);
+
+        this.log('debug', 'Close connection: ' + (cs || '*unknown*'));        
         return conn.release();     
-    }
-
-    /**
-     * Terminate the connector.
-     */
-    async end_() {
-        const cs = this.connectionString;
-
-        if (poolByConn[cs]) {                 
-            await poolByConn[cs].end();
-            delete poolByConn[cs];
-
-            this.log('debug', 'Removed pool: ' + cs);
-        }
     }
 
     /**
@@ -129,22 +157,12 @@ class MySQLConnector extends Connector {
      * @param {String} sql The SQL statement
      */
     async execute_(sql, params, options) {        
-        if (options && options.createDatabase) {
-            let connector = new MySQLConnector(this.name, { connection: this.connectionString, ...this.options });
-            connector.updateConnectionComponents({ database: '' });
-            
-            let result = await connector.execute_(sql, params);            
-            
-            await connector.end_();
-            return result;
-        }
-
-        let conn;
+        let conn, formatedSQL;
 
         try {
             conn = await this._getConnection_(options);
 
-            let formatedSQL = conn.format(sql, params);
+            formatedSQL = params ? conn.format(sql, params) : sql;
 
             if (this.options.logSQLStatement) {
                 this.log('verbose', formatedSQL);
@@ -153,7 +171,7 @@ class MySQLConnector extends Connector {
             let [ result ] = await conn.query(formatedSQL);                
             return result;
         } catch (err) {      
-            throw new DsOperationError(err.message, err);
+            throw new DsOperationError(err.message, { error: err, connection: this.stringFromConnection(conn), sql: formatedSQL });
         } finally {
             conn && await this._releaseConnection_(conn, options);
         }

@@ -4,16 +4,10 @@
     "profile": {
       "comment": "",
       "features": [],
-      "fields": {
-        "gender": {
-          "type": "$association"
-        },
+      "fields": {        
         "id": {
           "type": "text",
           "maxLength": 32
-        },
-        "user": {
-          "type": "$association"
         }
       },
       "associations": [

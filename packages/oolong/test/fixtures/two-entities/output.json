@@ -130,22 +130,18 @@
                     "default": [
                         "inactive"
                     ]
-                },
-                "profile": {
-                    "name": "profile",
-                    "association": {
-                        "type": "hasOne",
-                        "entity": "personalProfile"
-                    }
-                },
-                "securityGroups": {
-                    "name": "securityGroups",
-                    "association": {
-                        "type": "hasMany",
-                        "entity": "securityGroup"
-                    }
                 }
             },
+            "associations": [
+                {
+                    "type": "hasMany",
+                    "destEntity": "personalProfile"
+                },
+                {
+                    "type": "hasMany",
+                    "destEntity": "securityGroup"
+                }
+            ],
             "indexes": [
                 {
                     "fields": "email",
@@ -163,13 +159,6 @@
                 "updateTimestamp"
             ],
             "fields": {
-                "owner": {
-                    "name": "owner",
-                    "association": {
-                        "type": "belongsTo",
-                        "entity": "user"
-                    }
-                },
                 "firstName": {
                     "name": "firstName",
                     "type": "name",
@@ -185,28 +174,27 @@
                     "type": "name",
                     "optional": true
                 },
-                "gender": {
-                    "name": "gender",
-                    "association": {
-                        "type": "hasOne",
-                        "entity": "gender"
-                    },
-                    "optional": true
-                },
-                "title": {
-                    "name": "title",
-                    "association": {
-                        "type": "hasOne",
-                        "entity": "personTitle"
-                    },
-                    "optional": true
-                },
                 "dateOfBirth": {
                     "name": "dateOfBirth",
                     "type": "datetime",
                     "optional": true
                 }
-            }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "user",
+                    "srcField": "owner"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "gender"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "personTitle"
+                }
+            ]
         }
     }
 }

@@ -1,14 +1,28 @@
 {
-  "namespace": [
-    "entities/**"
-  ],
-  "schema": {
-    "test": {
-      "entities": [        
-        {
-          "entity": "user"
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/test/dao/oolong/entities/gender.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/test/dao/oolong/entities/group.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/test/dao/oolong/entities/profile.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/test/dao/oolong/entities/user.ool"
+    ],
+    "schema": {
+        "test": {
+            "entities": [
+                {
+                    "entity": "gender"
+                },
+                {
+                    "entity": "group"
+                },
+                {
+                    "entity": "profile"
+                },
+                {
+                    "entity": "user"
+                }
+            ]
         }
-      ]
-    }
-  }
+    },
+    "id": "./test.ool",
+    "name": "test"
 }

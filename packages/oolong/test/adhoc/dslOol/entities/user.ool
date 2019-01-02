@@ -1,0 +1,44 @@
+import '<oolong>/types'
+
+type
+  password : text maxLength(200)  
+  userStatus : enum values("inactive", "active", "disabled", "forbidden", "deleted")
+
+entity user
+  -- "User Credential"
+  with
+    autoId({"startFrom":100000})
+    createTimestamp
+    updateTimestamp
+    logicalDeletion({"status":"deleted"})
+    stateTracking("status")
+    atLeastOneNotNull(["email","mobile"])
+
+  has
+    email -- "User Email"
+    mobile : phone ~isMobilePhone(@latest.locale |>stringDasherize) |>normalizeMobile -- "User Mobile"
+    password |>hashPassword(@latest.passwordSalt) -- "User Password"
+    passwordSalt : text fixedLength(8) auto -- "User Password Salt"
+    locale : text default("en_AU") -- "User Locale"
+    isEmailVerified : boolean default(false)
+    isMobileVerified : boolean default(false)
+    status : userStatus default("inactive") -- "User Status"
+    tag : array optional
+
+  associations
+    hasMany 'profile'
+
+  index
+    email is unique
+    mobile is unique
+
+  data [
+    {
+      email: 'admin@email.com',
+      mobile: '0412345678',
+      password: '123456',
+      isEmailVerified: true,
+      isMobileVerified: true,
+      status: 'active'
+    }
+  ]

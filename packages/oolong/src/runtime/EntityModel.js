@@ -25,6 +25,13 @@ class EntityModel {
     }    
 
     /**
+     * Get an object of the primary key values.
+     */
+    get $pkValues() {
+        return _.pick(this, _.castArray(this.constructor.meta.keyField));
+    }
+
+    /**
      * Populate data from database.
      * @param {*} data 
      * @return {EntityModel}
@@ -312,19 +319,6 @@ class EntityModel {
                 }
             );
         }
-    }    
-
-    /**
-     * Extract fields from given data record.
-     * @param {object} data 
-     * @returns {object}    
-     */
-    static _filterFields(data) {
-        let fields = Object.keys(this.meta.fields);        
-
-        //todo: embedded entity support
-
-        return _.pick(data, fields);
     }    
 
     /**

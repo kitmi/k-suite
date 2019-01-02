@@ -11,7 +11,7 @@ let onOutput = (info) => {
     console.log(info.toString());
 };
 
-runCmdLive_('node', [ '../../lib/cli/oolong.js', 'build', '-c', 'oolong.json' ], onOutput, onOutput).then(code => {
+runCmdLive_('node', [ '../../lib/cli/oolong.js', 'build', '-c', 'oolong-ool.json' ], onOutput, onOutput).then(code => {
     console.log('exit code:', code);
     fs.removeSync(path.join(WORKING_FOLDER, 'oolong-cli.log'));
 }); 

@@ -2,10 +2,6 @@
 
 const { _ } = require('rk-utils');
 
-//const Entity = require('./Entity');
-//const Schema = require('./schema.js');
-//const Field = require('./field.js');
-
 class Clonable {
     linked = false;
 
@@ -25,6 +21,37 @@ const isDotSeparateName = (name) => (name.indexOf('.') > 0);
 const extractDotSeparateName = (name) => name.split('.');
 
 const extractReferenceBaseName = (name) => extractDotSeparateName(name).pop();
+
+const prefixNaming = (prefix, name) => {
+    let leftParts = _.kebabCase(prefix).split('-');
+    let rightParts = _.kebabCase(name).split('-');
+    
+    let reservedLeft, reservedRight;
+
+    if (leftParts.length > rightParts.length) {
+        reservedLeft = leftParts.splice(0, leftParts.length - rightParts.length);
+        reservedRight = [];
+    } else {
+        reservedLeft = [];
+        reservedRight = rightParts.splice(leftParts.length, rightParts.length - leftParts.length);
+    }
+
+    const combine = () => _.camelCase(reservedLeft.concat(leftParts).concat(reservedRight).join('-'));
+
+    if (_.isEqual(leftParts, rightParts)) {
+        return combine();
+    }
+    
+    while (leftParts.length > 0) {
+        reservedLeft.push(leftParts.shift());
+        reservedRight.unshift(rightParts.pop());
+        if (_.isEqual(leftParts, rightParts)) {
+            break;
+        }
+    } 
+
+    return combine();
+};
 
 const getReferenceNameIfItIs = (obj) => {
     if (_.isPlainObject(obj) && obj.oolType === 'ObjectReference') {
@@ -127,6 +154,7 @@ exports.getReferenceNameIfItIs = getReferenceNameIfItIs;
 exports.schemaNaming = name => _.camelCase(name);
 exports.entityNaming = name => _.camelCase(name);
 exports.fieldNaming = name => _.camelCase(name);
+exports.prefixNaming = prefixNaming;
 exports.generateDisplayName = name => _.startCase(name);
 exports.formatFields = field => Array.isArray(field) ? field.join(', ') : field;
 exports.Clonable = Clonable;

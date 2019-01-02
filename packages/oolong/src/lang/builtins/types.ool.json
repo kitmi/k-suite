@@ -1,0 +1,86 @@
+{
+    "type": {
+        "email": {
+            "type": "text",
+            "maxLength": [
+                200
+            ],
+            "modifiers": [
+                {
+                    "oolType": "Validator",
+                    "name": "isEmail"
+                }
+            ]
+        },
+        "name": {
+            "type": "text",
+            "maxLength": [
+                40
+            ]
+        },
+        "url": {
+            "type": "text",
+            "maxLength": [
+                2000
+            ],
+            "modifiers": [
+                {
+                    "oolType": "Validator",
+                    "name": "isURL"
+                }
+            ]
+        },
+        "path": {
+            "type": "text",
+            "maxLength": [
+                2000
+            ],
+            "modifiers": [
+                {
+                    "oolType": "Validator",
+                    "name": "isURL",
+                    "args": [
+                        {
+                            "allow_protocol_relative_urls": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "uuid": {
+            "type": "text",
+            "maxLength": [
+                36
+            ],
+            "fixedLength": true,
+            "modifiers": [
+                {
+                    "oolType": "Validator",
+                    "name": "isUUID"
+                },
+                {
+                    "oolType": "Activator",
+                    "name": "generator",
+                    "args": [
+                        "uuid"
+                    ]
+                }
+            ]
+        },
+        "ip": {
+            "type": "text",
+            "maxLength": [
+                40
+            ],
+            "modifiers": [
+                {
+                    "oolType": "Validator",
+                    "name": "isIP"
+                }
+            ]
+        }
+    },
+    "namespace": [],
+    "id": "types.ool",
+    "name": "types"
+}

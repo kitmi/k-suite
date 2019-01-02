@@ -108,6 +108,8 @@ class Linker {
      * @param {object} [data]
      */
     log(level, message, data) {
+        if (!this.logger) return;
+
         if (data) {
             this.logger.log(level, message, data);
         } else {
@@ -445,7 +447,7 @@ class Linker {
         ool.id = this.getModuleIdByPath(oolFile);        
         ool.name = baseName;       
         
-        if (!this.useJsonSource && this.saveIntermediate) {        
+        if (!this.useJsonSource && this.saveIntermediate) {                 
             fs.writeFileSync(jsFile, JSON.stringify(ool, null, 4));
         }
 

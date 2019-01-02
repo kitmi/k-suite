@@ -1,5 +1,4 @@
-use
-  'entities/**'
+import 'entities/**'
 
 schema 'test'
   entities
@@ -7,4 +6,3 @@ schema 'test'
     group
     profile
     user
-    usergroup

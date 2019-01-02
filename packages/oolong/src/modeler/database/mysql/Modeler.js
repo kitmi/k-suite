@@ -63,7 +63,8 @@ class MySQLModeler {
      */
     constructor(context, connector, dbOptions) {
         this.logger = context.logger;
-        this.buildPath = context.scriptOutputPath;
+        this.linker = context.linker;
+        this.outputPath = context.scriptOutputPath;
         this.connector = connector;
 
         this._events = new EventEmitter();
@@ -74,6 +75,7 @@ class MySQLModeler {
         } : {};
 
         this._references = {};
+        this._relationEntities = {};
     }
 
     modeling(schema) {
@@ -81,13 +83,15 @@ class MySQLModeler {
 
         let modelingSchema = schema.clone();
 
-        if (modelingSchema.relations) {
-            this.logger.log('debug', 'Building relations...');
+        this.logger.log('debug', 'Building relations...');
 
-            _.each(modelingSchema.relations, (relation) => {
-                this._buildRelation(modelingSchema, relation);
-            });
-        }        
+        let existingEntities = Object.values(modelingSchema.entities);
+
+        _.each(existingEntities, (entity) => {
+            if (!_.isEmpty(entity.info.associations)) {
+                entity.info.associations.forEach(assoc => this._processAssociation(modelingSchema, entity, assoc));
+            }
+        });
 
         this._events.emit('afterRelationshipBuilding');        
 
@@ -170,18 +174,18 @@ class MySQLModeler {
 
         _.forOwn(this._references, (refs, srcEntityName) => {
             _.each(refs, ref => {
-                relationSQL += MySQLModeler.addForeignKeyStatement(srcEntityName, schema.entities[srcEntityName], ref) + '\n';
+                relationSQL += this._addForeignKeyStatement(srcEntityName, ref) + '\n';
             });
         });
 
-        this._writeFile(path.join(this.buildPath, dbFilePath), tableSQL);
-        this._writeFile(path.join(this.buildPath, fkFilePath), relationSQL);
+        this._writeFile(path.join(this.outputPath, dbFilePath), tableSQL);
+        this._writeFile(path.join(this.outputPath, fkFilePath), relationSQL);
 
         if (!_.isEmpty(data)) {
-            this._writeFile(path.join(this.buildPath, initFilePath), JSON.stringify(data, null, 4));
+            this._writeFile(path.join(this.outputPath, initFilePath), JSON.stringify(data, null, 4));
 
-            if (!fs.existsSync(path.join(this.buildPath, initIdxFilePath))) {
-                this._writeFile(path.join(this.buildPath, initIdxFilePath), '0-init.json\n');
+            if (!fs.existsSync(path.join(this.outputPath, initIdxFilePath))) {
+                this._writeFile(path.join(this.outputPath, initIdxFilePath), '0-init.json\n');
             }
         }
 
@@ -212,25 +216,86 @@ class MySQLModeler {
         */
 
         let spFilePath = path.join(sqlFilesDir, 'procedures.sql');
-        this._writeFile(path.join(this.buildPath, spFilePath), funcSQL);
+        this._writeFile(path.join(this.outputPath, spFilePath), funcSQL);
 
         return modelingSchema;
     }    
+
+    _processAssociation(schema, entity, assoc) {
+        let destEntityName = assoc.destEntity;
+        //todo: cross db reference
+        let destEntity = schema.entities[destEntityName];
+        if (!destEntity) {
+            throw new Error(`Entity "${entity.name}" references to an unexisting entity "${destEntityName}".`);
+        }
+
+        let destKeyField = destEntity.getKeyField();
+        if (Array.isArray(destKeyField)) {
+            throw new Error(`Destination entity "${destEntityName}" with combination primary key is not supported.`);
+        }
+
+        switch (assoc.type) {
+            case 'hasOne':
+                throw new Error('todo');
+            break;
+
+            case 'hasMany':                
+                let backRef = destEntity.getReferenceTo(entity.name, assoc.connectedBy);
+                if (backRef) {
+                    if (backRef.type === 'hasMany') {
+                        let connEntityName = OolUtils.entityNaming(assoc.connectedBy);
+
+                        if (!connEntityName) {
+                            throw new Error(`"connectedBy" required for m:n relation. Source: ${entity.name}, destination: ${destEntityName}`);
+                        } 
+
+                        let connEntity = schema.entities[connEntityName];
+                        if (!connEntity) {
+                            connEntity = this._addRelationEntity(schema, connEntityName, entity, destEntity);
+                        } else {
+                            this._updateRelationEntity(connEntity, entity, destEntity);
+                        }
+                    } else if (backRef.type === 'belongsTo') {
+                        if (assoc.connectedBy) {
+                            throw new Error('todo: belongsTo connectedBy');
+                        } else {
+                            //leave it to the referenced entity                            
+                        }
+                    } else {
+                        assert: backRef.type === 'hasOne';
+
+                        throw new Error('todo: Many to one');
+                    } 
+                }
+
+            break;
+
+            case 'refersTo':
+            case 'belongsTo':
+                let localField = assoc.srcField || destEntityName;
+                let fieldProps = { ..._.omit(destKeyField, ['optional']), ..._.pick(assoc, ['optional']) };
+
+                entity.addAssocField(localField, destEntity, fieldProps);
+
+                this._addReference(entity.name, localField, destEntityName, destKeyField.name);
+            break;
+        }
+    }
 
     _addReference(left, leftField, right, rightField) {
         let refs4LeftEntity = this._references[left];
         if (!refs4LeftEntity) {
             refs4LeftEntity = [];
             this._references[left] = refs4LeftEntity;
-        }
-
-        let found = _.find(refs4LeftEntity,
-            item => (item.leftField === leftField && item.right === right && item.rightField === rightField)
-        );
-
-        if (found) {
-            throw new Error(`The same reference already exist! From [${left}.${leftField}] to [${right}.${rightField}].`);
-        }
+        } else {
+            let found = _.find(refs4LeftEntity,
+                item => (item.leftField === leftField && item.right === right && item.rightField === rightField)
+            );
+    
+            if (found) {
+                return this;
+            }
+        }        
 
         refs4LeftEntity.push({leftField, right, rightField});
 
@@ -453,6 +518,53 @@ class MySQLModeler {
 
         this.logger.log('info', 'Generated db script: ' + filePath);
     }
+
+    _addRelationEntity(schema, relationEntityName, entity1, entity2) {
+        let keyEntity1 = entity1.getKeyField();
+        if (Array.isArray(keyEntity1)) {
+            throw new Error(`Combination primary key is not supported. Entity: ${entity1.name}`);
+        }        
+
+        let keyEntity2 = entity2.getKeyField();
+
+        let entityInfo = {
+            features: [ 'createTimestamp' ],
+            fields: {
+                [entity1.name]: keyEntity1.info,
+                [entity2.name]: keyEntity2.info
+            },
+            key: [ entity1.name, entity2.name ]
+        };
+
+        let entity = new Entity(this.linker, relationEntityName, schema.oolModule, entityInfo);
+        entity.link();
+
+        schema.addEntity(entity);
+
+        this._addReference(relationEntityName, entity1.name, entity1.name, keyEntity1.name);
+        this._addReference(relationEntityName, entity2.name, entity2.name, keyEntity2.name);
+        this._relationEntities[relationEntityName] = true;
+
+        return entity;
+    }
+
+    _updateRelationEntity(relationEntity, entity1, entity2) {
+        let relationEntityName = relationEntity.name;
+
+        let keyEntity1 = entity1.getKeyField();
+        if (Array.isArray(keyEntity1)) {
+            throw new Error(`Combination primary key is not supported. Entity: ${entity1.name}`);
+        }        
+
+        let keyEntity2 = entity2.getKeyField();
+
+        relationEntity.addAssocField(entity1.name, entity1, _.omit(keyEntity1, ['optional']));
+        relationEntity.addAssocField(entity2.name, entity2, _.omit(keyEntity2, ['optional']));
+
+        this._addReference(relationEntityName, entity1.name, entity1.name, keyEntity1.name);
+        this._addReference(relationEntityName, entity2.name, entity2.name, keyEntity2.name);
+        this._relationEntities[relationEntityName] = true;
+    }
     
     static oolOpToSql(op) {
         switch (op) {
@@ -619,14 +731,14 @@ class MySQLModeler {
         return sql;
     }
     
-    static addForeignKeyStatement(entityName, entity, relation) {
+    _addForeignKeyStatement(entityName, relation) {
         let sql = 'ALTER TABLE `' + entityName +
             '` ADD FOREIGN KEY (`' + relation.leftField + '`) ' +
             'REFERENCES `' + relation.right + '` (`' + relation.rightField + '`) ';
 
         sql += '';
 
-        if (entity.isRelationshipEntity) {
+        if (this._relationEntities[entityName]) {
             sql += 'ON DELETE CASCADE ON UPDATE CASCADE';
         } else {
             sql += 'ON DELETE NO ACTION ON UPDATE NO ACTION';

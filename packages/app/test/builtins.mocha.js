@@ -57,7 +57,7 @@ describe('builtin features', function () {
             cliApp.showUsage();
         });
 
-        stdout.should.equal('This is the program banner v1.0\nUsage: cli-worker <target file> [options]\n\nOptions:\n  -e, --env, --environment\n    Target environment\n    default: development\n\n  -v, --version\n    Show version number\n    default: false\n\n  -?, --help\n    Show usage message\n    default: false\n\n\n');                
+        stdout.should.equal('This is the program banner v1.0\n\nUsage: cli-worker <target file> [options]\n\nOptions:\n  -e, --env, --environment\n    Target environment\n    default: development\n\n  -v, --version\n    Show version number\n    default: false\n\n  -?, --help\n    Show usage message\n    default: false\n\n\n');                
     });
 
     it('logger services', async function () {
