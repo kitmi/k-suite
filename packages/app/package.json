@@ -1,6 +1,6 @@
 {
   "name": "@k-suite/app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "General Application Template",
   "main": "index.js",
   "publishConfig": {

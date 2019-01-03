@@ -1,6 +1,6 @@
 {
   "name": "@k-suite/oolong",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1",
   "description": "Meta programming DSL specially for automating database structure creation and data access.",
   "main": "lib/index.js",
   "publishConfig": {
@@ -69,9 +69,9 @@
   },
   "dependencies": {
     "@k-suite/algorithms": "^0.1.0",
-    "@k-suite/app": "^1.0.1",
+    "@k-suite/app": "^1.0.2",
     "@k-suite/rules-engine": "^0.1.0",
-    "@k-suite/server": "^1.1.1",
+    "@k-suite/server": "^1.1.2",
     "http-status-codes": "^1.3.0",
     "immutable": "^4.0.0-rc.12",
     "inquirer": "^6.2.0",
