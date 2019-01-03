@@ -76,6 +76,7 @@ class MySQLModeler {
 
         this._references = {};
         this._relationEntities = {};
+        this._processedRef = new Set();
     }
 
     modeling(schema) {
@@ -249,12 +250,23 @@ class MySQLModeler {
                             throw new Error(`"connectedBy" required for m:n relation. Source: ${entity.name}, destination: ${destEntityName}`);
                         } 
 
+                        let tag1 = `${entity.name}:m-${destEntityName}:n by ${connEntityName}`;
+                        let tag2 = `${destEntityName}:m-${entity.name}:n by ${connEntityName}`;
+
+                        if (this._processedRef.has(tag1) || this._processedRef.has(tag2)) {
+                            //already processed, skip
+                            return;
+                        }
+
                         let connEntity = schema.entities[connEntityName];
                         if (!connEntity) {
                             connEntity = this._addRelationEntity(schema, connEntityName, entity, destEntity);
-                        } else {
-                            this._updateRelationEntity(connEntity, entity, destEntity);
-                        }
+                        } 
+                            
+                        this._updateRelationEntity(connEntity, entity, destEntity);
+
+                        this._processedRef.add(tag1);
+                        this._processedRef.add(tag2);                        
                     } else if (backRef.type === 'belongsTo') {
                         if (assoc.connectedBy) {
                             throw new Error('todo: belongsTo connectedBy');
@@ -520,19 +532,8 @@ class MySQLModeler {
     }
 
     _addRelationEntity(schema, relationEntityName, entity1, entity2) {
-        let keyEntity1 = entity1.getKeyField();
-        if (Array.isArray(keyEntity1)) {
-            throw new Error(`Combination primary key is not supported. Entity: ${entity1.name}`);
-        }        
-
-        let keyEntity2 = entity2.getKeyField();
-
         let entityInfo = {
             features: [ 'createTimestamp' ],
-            fields: {
-                [entity1.name]: keyEntity1.info,
-                [entity2.name]: keyEntity2.info
-            },
             key: [ entity1.name, entity2.name ]
         };
 
@@ -540,10 +541,6 @@ class MySQLModeler {
         entity.link();
 
         schema.addEntity(entity);
-
-        this._addReference(relationEntityName, entity1.name, entity1.name, keyEntity1.name);
-        this._addReference(relationEntityName, entity2.name, entity2.name, keyEntity2.name);
-        this._relationEntities[relationEntityName] = true;
 
         return entity;
     }
@@ -557,6 +554,9 @@ class MySQLModeler {
         }        
 
         let keyEntity2 = entity2.getKeyField();
+        if (Array.isArray(keyEntity2)) {
+            throw new Error(`Combination primary key is not supported. Entity: ${entity2.name}`);
+        }
 
         relationEntity.addAssocField(entity1.name, entity1, _.omit(keyEntity1, ['optional']));
         relationEntity.addAssocField(entity2.name, entity2, _.omit(keyEntity2, ['optional']));

@@ -1,10 +1,8 @@
 const { _ } = require('rk-utils');
 
-//const EntityModel = require('@k-suite/oolong/lib/runtime/drivers/mysql/EntityModel');
-const EntityModel = require('../../../../lib/runtime/drivers/mysql/EntityModel');
-const { isNothing } = require('../../../../lib/utils/lang');
-//const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('@k-suite/oolong/lib/runtime');
-const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('../../../../lib/runtime');
+const EntityModel = require('@k-suite/oolong/lib/runtime/drivers/mysql/EntityModel');
+const { isNothing } = require('@k-suite/oolong/lib/utils/lang');
+const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('@k-suite/oolong/lib/runtime');
 {{ imports|safe }}
 
 class {{ className }} extends EntityModel {

@@ -1108,6 +1108,7 @@ data_statement
     : "data" inline_object NEWLINE -> { data: $2 }
     | "data" inline_array NEWLINE -> { data: $2 }
     ;
+
 /*
 interfaces_statement
     : "interface" NEWLINE INDENT interfaces_statement_block DEDENT -> { interfaces: $4 }
@@ -1125,7 +1126,6 @@ interface_definition
 interface_definition_body
     : accept_or_not implementation return_or_not -> Object.assign({}, $1, { implementation: $2 }, $3)
     ;
-*/    
 
 accept_or_not
     :
@@ -1142,7 +1142,6 @@ accept_block
     | modifiable_param NEWLINE accept_block -> [ $1 ].concat($3)
     ;
 
-/*
 implementation
     : operation -> [ $1 ]
     | operation implementation -> [ $1 ].concat($2)

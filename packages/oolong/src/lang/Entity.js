@@ -299,11 +299,12 @@ class Entity extends Clonable {
         let localField = this.fields[name];
 
         if (localField) {
+            /*
             if (!localField.hasSameType(destField.toJSON())) {
                 throw new Error(`The type of source field "${this.name}.${name}" is different from the referenced field "${destEntity.name}.${destField.name}".`);
-            }
-
-            return;
+            }*/
+            throw new Error(`Field "${name}" already exists in entity "${this.name}".`);
+            //return;
         }
 
         this.addField(name, destField);

@@ -42,3 +42,18 @@ entity user
       status: 'active'
     }
   ]
+
+  interface
+    validateUserCredential
+      accept
+        identity : text maxLength(200)
+        password
+
+      findOne user
+        when @identity ~isEmail selectedBy { email: @identity }
+        when @identity ~matches(/^(\+?\d{6,})$/) selectedBy { mobile: @identity }
+        otherwise return { error: { message: 'invalid_identity' } }
+
+      return @user unless
+        when @user not exists => { error: { message: 'user_not_found' } }
+        when @password |> hashPassword(@user.passwordSalt) != @user.password => { error: { message: 'invalid_password' } }
