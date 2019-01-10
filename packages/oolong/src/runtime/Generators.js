@@ -3,7 +3,7 @@
 
 const path = require('path');
 const Util = require('rk-utils');
-const Types = require('../lang/types');
+const Types = require('./types');
 
 const basePath = path.resolve(__dirname, 'auto');
 

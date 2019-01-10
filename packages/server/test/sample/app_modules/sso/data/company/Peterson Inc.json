@@ -1,0 +1,124 @@
+{
+    "company_extract": {
+        "company_name": "Peterson Inc",
+        "ACN": "556823440",
+        "ABN": "39038330209"
+    },
+    "current_detail": {
+        "registered_states": "Victoria",
+        "registration_date": "31-10-1990",
+        "next_review_date": "08-12-2013",
+        "name_start_date": "28-04-1979",
+        "status": "Not registered yet",
+        "type": "Special Purpose Companies \u2013 SMSF Trustee",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "historical_detail": {
+        "registered_states": "South Austrlia",
+        "registration_date": "16-09-2006",
+        "next_review_date": "17-02-2012",
+        "name_start_date": "14-12-1979",
+        "status": "Not registered yet",
+        "type": "Proprietary Companies \u2013 Limited by Shares",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "current_address": {
+        "registered_office_address": "26116 Romero Land Suite 104\nBriantown, AK 86031",
+        "registered_start_date": "07-12-1975",
+        "principal_office_address": "13030 Andrew Parkways Apt. 062\nSouth Taylorland, OK 02149",
+        "principal_start_date": "03-02-1983"
+    },
+    "historical_address": {
+        "registered_office_address": "USNS Lee\nFPO AP 15459",
+        "registered_start_date": "17-07-1985",
+        "registered_cease_date": "14-09-2010",
+        "principal_office_address": "700 Perkins Forks Apt. 286\nClaudiaberg, LA 31136",
+        "principal_start_date": "01-01-1975",
+        "principal_cease_date": "08-05-2007"
+    },
+    "contract_address": {
+        "address": "2091 Lopez Forest Apt. 574\nTaylorfurt, TN 66560",
+        "startDate": "07-12-2017"
+    },
+    "roles": {
+        "directors": {
+            "name": "Justin Herrera",
+            "address": "453 Samantha Expressway\nThomasview, OH 87812",
+            "born_date": "1976-02-07",
+            "appointment_date": "1975-03-08",
+            "cease_date": null
+        },
+        "pre_directors": {
+            "name": "Phillip Armstrong",
+            "address": "7384 Griffin Crossroad\nCoreyfort, WV 02073",
+            "born_date": "1971-12-06",
+            "appointment_date": "2004-10-07",
+            "cease_date": "2002-05-20"
+        },
+        "secretaries": {
+            "name": "Maria Singh",
+            "address": "12834 Walker Streets Apt. 728\nPrestontown, WV 25304",
+            "born_date": "1986-01-18",
+            "appointment_date": "2010-04-11",
+            "cease_date": null
+        },
+        "external_admin": {
+            "name": "Mark Jensen",
+            "address": "4462 Phillips Rest Apt. 035\nRyanton, FL 35310",
+            "born_date": "1974-09-02",
+            "appointment_date": "2009-10-13",
+            "cease_date": null
+        },
+        "pre_external_admin": {
+            "name": "Travis Williams",
+            "address": "779 Ryan Parkway\nLisaview, IN 36720",
+            "born_date": "2007-11-01",
+            "appointment_date": "1987-03-13",
+            "cease_date": "1997-07-17"
+        },
+        "appointed_auditor": {
+            "name": "Andre Smith",
+            "address": "33905 Montoya Junction Apt. 372\nSusanmouth, CA 73682",
+            "born_date": "2006-04-17",
+            "appointment_date": "2011-05-22",
+            "cease_date": null
+        },
+        "pre_appointed_auditor": {
+            "name": "Stephen Jones",
+            "address": "9204 Anderson Crossing Apt. 585\nSouth David, TX 45035",
+            "born_date": "1985-07-30",
+            "appointment_date": "1996-07-29",
+            "cease_date": "1981-07-02"
+        },
+        "ultimate_holding_company": {
+            "company_name": "Rivers-Taylor",
+            "ACN": "321467226",
+            "ABN": "35329674983"
+        },
+        "pre_ultimate_holding_company": {
+            "company_name": "Alvarez-Ruiz",
+            "ACN": "306897566",
+            "ABN": "77549520580"
+        },
+        "share_holders": {
+            "share_class": "ORD",
+            "description": "Or who sometimes best. Admit safe seem.\nVoice high training system political born name. Budget church beyond machine Mrs animal full. Now whether knowledge wife receive.",
+            "number_issured": 2,
+            "total_amount_paid": 0,
+            "total_amount_unpaid": 2,
+            "member_list": [{
+                "member": {
+                    "company_name": "Garcia Inc",
+                    "ACN": "985523440",
+                    "ABN": "77095179032"
+                },
+                "member_class": "ORD",
+                "number_held": 2,
+                "beneficially_held": false,
+                "percentage": 1.0,
+                "paid": "Fully",
+                "docNo": null
+            }]
+        }
+    }
+}

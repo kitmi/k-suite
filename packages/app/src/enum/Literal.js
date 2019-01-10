@@ -18,12 +18,7 @@ module.exports = {
     /**
      * Config files path
      */
-    DEFAULT_CONFIG_PATH: 'conf',    
-
-    /**
-     * Middleware files path
-     */
-    MIDDLEWARES_PATH: 'middlewares',
+    DEFAULT_CONFIG_PATH: 'conf',        
 
     /**
      * Feature files path

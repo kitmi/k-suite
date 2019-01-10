@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/cli-app Module: Feature_CmdLineOptions</title>
+	<title>@k-suite/app Module: Helpers</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
 <div class="navbar navbar-default navbar-fixed-top navbar-inverse">
 <div class="container">
 	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">@k-suite/cli-app</a>
+		<a class="navbar-brand" href="index.html">@k-suite/app</a>
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -33,21 +33,28 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-Feature.html">Feature</a></li><li><a href="module-Feature_Bootstrap.html">Feature_Bootstrap</a></li><li><a href="module-Feature_CmdLineOptions.html">Feature_CmdLineOptions</a></li><li><a href="module-Feature_DevConfigByGitUser.html">Feature_DevConfigByGitUser</a></li><li><a href="module-Feature_FeatureRegistry.html">Feature_FeatureRegistry</a></li><li><a href="module-Feature_Loggers.html">Feature_Loggers</a></li><li><a href="module-Feature_ObjectStore.html">Feature_ObjectStore</a></li><li><a href="module-Feature_Settings.html">Feature_Settings</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Feature_Version.html">Feature_Version</a></li><li><a href="module-Literal.html">Literal</a></li>
+					<li><a href="module-Feature.html">Feature</a></li><li><a href="module-Feature_Bootstrap.html">Feature_Bootstrap</a></li><li><a href="module-Feature_CommandLineOptions.html">Feature_CommandLineOptions</a></li><li><a href="module-Feature_CustomConfig.html">Feature_CustomConfig</a></li><li><a href="module-Feature_DevConfigByGitUser.html">Feature_DevConfigByGitUser</a></li><li><a href="module-Feature_FeatureRegistry.html">Feature_FeatureRegistry</a></li><li><a href="module-Feature_Loggers.html">Feature_Loggers</a></li><li><a href="module-Feature_ObjectStore.html">Feature_ObjectStore</a></li><li><a href="module-Feature_Settings.html">Feature_Settings</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Feature_Version.html">Feature_Version</a></li><li><a href="module-Helpers.html">Helpers</a></li><li><a href="module-Literal.html">Literal</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="App.html">App</a></li>
+					<li><a href="App.html">App</a></li><li><a href="Runable.html">Runable</a></li><li><a href="Runable_.html">Runable(T)</a></li><li><a href="ServiceContainer.html">ServiceContainer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-Helpers.withExtraInfo.html">Helpers.withExtraInfo</a></li><li><a href="module-Helpers.withName.html">Helpers.withName</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="CliApp.html#event:configLoaded">CliApp#event:configLoaded</a></li><li><a href="CliApp.html#event:ready">CliApp#event:ready</a></li><li><a href="CliApp.html#event:stopping">CliApp#event:stopping</a></li>
+					<li><a href="App.html#event:configLoaded">App#event:configLoaded</a></li><li><a href="App.html#event:ready">App#event:ready</a></li><li><a href="App.html#event:stopping">App#event:stopping</a></li><li><a href="ServiceContainer.html#event:configLoaded">ServiceContainer#event:configLoaded</a></li><li><a href="ServiceContainer.html#event:ready">ServiceContainer#event:ready</a></li><li><a href="ServiceContainer.html#event:stopping">ServiceContainer#event:stopping</a></li>
 				</ul>
 			</li>
 			
@@ -79,7 +86,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: Feature_CmdLineOptions</h1>
+	<h1 class="page-title">Module: Helpers</h1>
 <section>
 
 <header>
@@ -91,7 +98,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Parse command line arguments using minimist and store the parsed object into app.argv, and add app.showUsage() helper function</p></div>
+            <div class="description"><p>Common helpers for service container.</p></div>
         
 
         
@@ -127,7 +134,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/cmdLineOptions.js
+		utils/Helpers.js
 	</dd>
 	
 
@@ -150,89 +157,19 @@
     
 
     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
+        <h3 class="subsection-title">Mixins</h3>
 
         <dl>
-            
-<hr>
-<dt class="name" id=".type">
-    <h4 id=".type"><span class="type-signature">&lt;static> </span>type<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>This feature is loaded at configuration stage</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		features/cmdLineOptions.js
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="module-Helpers.withExtraInfo.html">withExtraInfo</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-Helpers.withName.html">withName</a></dt>
+            <dd></dd>
         </dl>
+    
+
+    
+
     
 
     
@@ -242,7 +179,187 @@
             
 <hr>
 <dt>
-    <h4 class="name" id=".load_"><span class="type-signature">&lt;static> </span>load_(app, usageOptions)</h4>
+    <h4 class="name" id=".dependsOn"><span class="type-signature">&lt;static> </span>dependsOn(features, app, fromFeature)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>features</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Dependencies of other features.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ServiceContainer.html">ServiceContainer</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Origin service container app.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fromFeature</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Dependent feature.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		utils/Helpers.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".tryRequire"><span class="type-signature">&lt;static> </span>tryRequire(packageName)</h4>
     
     
 </dt>
@@ -250,7 +367,7 @@
 
     
     <div class="description">
-        <p>Load the feature</p>
+        <p>Try require a package module and show install tips if not found.</p>
     </div>
     
 
@@ -285,13 +402,13 @@
 
         <tr>
             
-                <td class="name"><code>app</code></td>
+                <td class="name"><code>packageName</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="CliApp.html">CliApp</a></span>
+<span class="param-type">string</span>
 
 
 
@@ -302,31 +419,7 @@
 
             
 
-            <td class="description last"><p>The cli app module object</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>usageOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Options for the feature</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -337,165 +430,6 @@
 
     
 <dl class="details">
-    
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>usageOptions.banner</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Banner message or banner generator function</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>usageOptions.program</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Executable name</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>usageOptions.arguments</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Command line arguments, identified by the position of appearance</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>usageOptions.options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Command line options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
     
 
 	
@@ -527,7 +461,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		features/cmdLineOptions.js
+		utils/Helpers.js
 	</dd>
 	
 
@@ -550,26 +484,6 @@
     
 
     
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;*></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>

@@ -13,27 +13,54 @@
     };
 
     //top level keywords
-    const KEYWORDS_BY_LEVEL = [ 
-        new Set(['import', 'type', 'const', 'schema', 'entity', 'dataset', 'view']), // level 0
-        { // level 1
-            'schema': new Set(['entities', 'views']),
-            'entity': new Set(['with', 'has', 'associations', 'key', 'index', 'data', 'interface']),
-            'dataset': new Set(['contains', 'with'])
-        },
-        {
-            'entity.associations': new Set(['hasOne', 'hasMany', 'refersTo', 'belongsTo', 'connected', 'by', 'through', 'as', 'optional']),
-            'entity.index': new Set(['is', 'unique'])
-        }            
-    ];
+    const TOP_LEVEL_KEYWORDS = new Set(['import', 'type', 'const', 'schema', 'entity', 'dataset', 'view']);
+
+    const SUB_KEYWORDS = { 
+        // level 1
+        'schema': new Set(['entities', 'views']),
+        'entity': new Set(['with', 'has', 'associations', 'key', 'index', 'data', 'interface']),
+        'dataset': new Set(['contains', 'with']),
+    
+        // level 2
+        'entity.associations': new Set(['hasOne', 'hasMany', 'refersTo', 'belongsTo', 'connected', 'by', 'through', 'as', 'optional']),
+        'entity.index': new Set(['is', 'unique']),
+        'entity.interface': new Set(['accept', 'find', 'findOne', 'return']),
+
+        // level 3
+        'entity.interface.find': new Set(['one', 'by', 'cases', 'selected', 'selectedBy', "which", "has", "where", "is", "when", "to", "be", "with", "otherwise", "else"]),           
+        'entity.interface.return': new Set(["unless", "when"]),           
+
+        // level 4
+        'entity.interface.find.when': new Set(['selecting', 'those', 'by', 'selected', 'selectedBy', "which", "has", "where", "is", "when", "to", "be", "with"]),           
+        'entity.interface.find.else': new Set(['return', 'throw']),
+
+        'entity.interface.return.when': new Set(['exists', 'null'])                                  
+    };
+
+    const NEXT_STATE = {
+        'entity.interface.accept': 'entity.interface.accept',
+        'entity.interface.find': 'entity.interface.find',
+        'entity.interface.findOne': 'entity.interface.find',
+        'entity.interface.return': 'entity.interface.return',
+        'entity.interface.return.when': 'entity.interface.return.when',
+        'entity.interface.find.when': 'entity.interface.find.when',
+        'entity.interface.find.otherwise': 'entity.interface.find.else',
+        'entity.interface.find.else': 'entity.interface.find.else'
+    };
     
     //statements can be in one line
     const ONE_LINE_KEYWORDS = [ 
         new Set(['import', 'type', 'const', 'entity']), // level
-        new Set(['entity.key'])
+        new Set(['entity.key', 'entity.data', 'entity.interface.find.when', 'entity.interface.find.else', 'entity.interface.return.when'])
     ];
 
+    const SUPPORT_WORD_OPERATOR = new Set([
+        'entity.interface.find.when',
+        'entity.interface.return.when'        
+    ]);
+
     //indented child starting state
-    const CHILD_KEYWORD_START_STATE = new Set([ 'EMPTY', 'DEDENTED' ]);
+    const CHILD_KEYWORD_START_STATE = new Set([ 'EMPTY', 'DEDENTED' ]);    
     
     const BUILTIN_TYPES = new Set([ 'any', 'array', 'binary', 'blob', 'bool', 'boolean', 'buffer', 'datetime', 'decimal', 'enum', 'float', 'int', 'integer', 'number', 'object', 'string', 'text', 'timestamp' ]);
 
@@ -58,7 +85,7 @@
         }
 
         get hasIndent() {
-            return this.indents > 0;
+            return this.indents.length > 0;
         }
 
         doIndent() {
@@ -105,11 +132,11 @@
             return value;
         }
 
-        enterObject() {
+        enterObject() {            
             return this.enterState('object');
         }
 
-        exitObject() {
+        exitObject() {            
             return this.exitState('object');
         }
 
@@ -126,11 +153,13 @@
         }
 
         enterState(state) {
+            console.log('> enter state:', state, '\n');
             this.stack.push(state);
             return this;
         }
 
         exitState(state) {
+            console.log('< exit state:', state, '\n');
             let last = this.stack.pop();
             if (state !== last) {
                 throw new Error(`Unmatched "${state}" state!`);
@@ -380,10 +409,10 @@ regexp_flag             "i"|"g"|"m"|"y"
 symbol_operators        {syntax_operators}|{relation_operators}|{math_operators}
 word_operators          {logical_operators}|{math_operators2}|{relation_operators2}
 bracket_operators       "("|")"|"["|"]"|"{"|"}"
-syntax_operators        "~"|","|":"|"|>"|"--"|"->"|"=>"|"<->"|"<-"
+syntax_operators        "|~"|","|":"|"|>"|"|="|"--"|"=>"|"~"
 comment_operators       "//"
-relation_operators      "!="|">="|"<="|">"|"<"|"="
-logical_operators       "not"|"and"|"or"|"xor"
+relation_operators      "!="|">="|"<="|">"|"<"|"=="
+logical_operators       "not"|"and"|"or"
 math_operators          "+"|"-"|"*"|"/"
 math_operators2         "mod"|"div"
 relation_operators2     "in"|"is"|"like"
@@ -418,7 +447,7 @@ escapeseq               \\.
 // OBJECT_VALUE inside a array, value part
 // ARRAY inside a array
 // FUNCTION
-%s INITIAL EMPTY DEDENTED INLINE
+%s INITIAL EMPTY DEDENTED INLINE REPARSE
 
 %%
 
@@ -599,12 +628,12 @@ escapeseq               \\.
                                     state.comment = false;
                                 }
 
-                                state.dump('<INLINE>{newline}');
+                                state.dump('<INLINE>{newline}');                                
                                 state.indent = 0;
 
                                 if (state.hasIndent && ONE_LINE_KEYWORDS[1].has(state.lastState)) {
                                     state.exitState(state.lastState);
-                                }     
+                                }                                  
 
                                 return 'NEWLINE';
                             }
@@ -670,10 +699,22 @@ escapeseq               \\.
                                 yytext = (yytext === 'true' || yytext === 'on' || yytext === 'yes');
                                 return 'BOOL';
                            %}
+<INLINE>{word_operators}    %{
+                                state.dump(this.topState(1) + ' -> <INLINE>{word_operators}', yytext);                                     
 
-<INLINE>{identifier}        %{        
+                                if (SUPPORT_WORD_OPERATOR.has(state.lastState)) {
+                                    return yytext;
+                                } else {
+                                    this.unput(yytext);
+                                    this.begin('REPARSE');
+                                }                                
+                            %}
+<REPARSE,INLINE>{identifier}        %{        
+                                if (this.topState(0) !== 'INLINE') {
+                                    this.begin('INLINE');
+                                }
                                 if (!state.lastState) {
-                                    if (KEYWORDS_BY_LEVEL[0].has(yytext)) {
+                                    if (TOP_LEVEL_KEYWORDS.has(yytext)) {
                                         state.enterState(yytext);
                                         return yytext;
                                     }
@@ -685,7 +726,7 @@ escapeseq               \\.
 
                                 switch (state.lastState) {
                                     case 'schema':
-                                        if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['schema'].has(yytext)) {
+                                        if (state.hasIndent && SUB_KEYWORDS['schema'].has(yytext)) {
                                             state.enterState('schema.' + yytext);
                                             return yytext;
                                         }
@@ -704,7 +745,7 @@ escapeseq               \\.
                                         break;
 
                                     case 'entity':
-                                        if (state.hasIndent && CHILD_KEYWORD_START_STATE.has(this.topState(1)) && KEYWORDS_BY_LEVEL[1]['entity'].has(yytext)) {
+                                        if (state.hasIndent && SUB_KEYWORDS['entity'].has(yytext)) {
                                             state.enterState('entity.' + yytext);                                                                        
                                             return yytext;
                                         } else if (!state.hasIndent && yytext === 'extends') {
@@ -712,36 +753,33 @@ escapeseq               \\.
                                         } 
                                         break;
 
-                                    case 'entity.index':
-                                        if (KEYWORDS_BY_LEVEL[2]['entity.index'].has(yytext)) {
+                                    default:
+                                        if (SUB_KEYWORDS[state.lastState] && SUB_KEYWORDS[state.lastState].has(yytext)) {
+                                            let keywordChain = state.lastState + '.' + yytext;
+                                            let nextState = NEXT_STATE[keywordChain];
+                                            if (nextState) {
+                                                state.enterState(nextState);                                                                        
+                                            }
                                             return yytext;
                                         }
-                                        break;
-
-                                    case 'entity.associations':
-                                        if (KEYWORDS_BY_LEVEL[2]['entity.associations'].has(yytext)) {
-                                            return yytext;
-                                        }
-                                        break;                                      
+                                        break;                                    
                                 }                                         
 
                                 return 'NAME';
                             %}
 <INLINE>{symbol_operators}  return yytext;
-<INLINE>{word_operators}    return yytext;
 
 /lex
 
-%right "<-"
 %left "=>"
 %left "or"
-%left "xor"
 %left "and"
-%nonassoc "in" "is" "like"
+%nonassoc "in" "is" "like" "~"
 %left "not"
-%left "!=" ">=" "<=" ">" "<" "="
+%left "!=" ">=" "<=" ">" "<" "=="
 %left "+" "-"
 %left "*" "/" "mod" "div"
+%left "|>" "|~" "|="
 
 %ebnf
 
@@ -848,7 +886,7 @@ type_statement_item
         activator: assign value to the subject
         activator should only appear before validator and processor
     */
-    : identifier type_base type_info_or_not type_modifiers_or_not
+    : identifier_or_string type_base type_info_or_not type_modifiers_or_not
         {            
             if (BUILTIN_TYPES.has($1)) throw new Error('Cannot use built-in type "' + $1 + '" as a custom type name. Line: ' + @1.first_line);
             // default as text
@@ -937,12 +975,12 @@ type_modifiers
     ;
 
 type_modifier
-    : "~" identifier -> state.normalizeValidator($2)
-    | "~" narrow_function_call -> state.normalizeValidator($2.name, $2.args)
+    : "|~" identifier -> state.normalizeValidator($2)
+    | "|~" general_function_call -> state.normalizeValidator($2.name, $2.args)
     | "|>" identifier -> state.normalizeProcessor($2)
-    | "|>" narrow_function_call -> state.normalizeProcessor($2.name, $2.args)
-    | "=" identifier -> state.normalizeActivator($2)
-    | "=" narrow_function_call -> state.normalizeActivator($2.name, $2.args)
+    | "|>" general_function_call -> state.normalizeProcessor($2.name, $2.args)
+    | "|=" identifier -> state.normalizeActivator($2)
+    | "|=" general_function_call -> state.normalizeActivator($2.name, $2.args)
     ;
 
 entity_statement
@@ -1011,31 +1049,12 @@ field_comment_or_not
     ;    
 
 field_item_body
-    : modifiable_param    
+    : modifiable_field    
     ;
 
 type_base_or_not
     :
     | type_base
-    ;    
-
-field_modifiers_or_not
-    : 
-    | field_modifiers -> { modifiers: $1 }
-    ;     
-
-field_modifiers
-    : field_modifier -> [ $1 ]
-    | field_modifier field_modifiers -> [ $1 ].concat($2)
-    ;
-
-field_modifier
-    : "~" identifier -> state.normalizeValidator($2)
-    | "~" general_function_call -> state.normalizeValidator($2.name, $2.args)
-    | "|>" identifier -> state.normalizeProcessor($2)
-    | "|>" general_function_call -> state.normalizeProcessor($2.name, $2.args)
-    | "=" identifier -> state.normalizeActivator($2)
-    | "=" general_function_call -> state.normalizeActivator($2.name, $2.args)
     ;    
 
 associations_statement
@@ -1109,7 +1128,6 @@ data_statement
     | "data" inline_array NEWLINE -> { data: $2 }
     ;
 
-/*
 interfaces_statement
     : "interface" NEWLINE INDENT interfaces_statement_block DEDENT -> { interfaces: $4 }
     ;
@@ -1148,27 +1166,48 @@ implementation
     ;
 
 operation
-    : find_one_operation
+    : find_one_operation /*
     | find_list_operation
     | update_operation
     | create_operation
     | delete_operation
     | coding_block
-    | assign_operation   
+    | assign_operation   */
+    ;
+
+find_one_keywords
+    : "findOne"
+    | "find" article_keyword
     ;
 
 find_one_operation
-    : "find" article_keyword identifier_or_string selection_keyword condition_as_result_expression -> { oolType: 'findOne', model: $3, condition: $5 }
+    : find_one_keywords identifier_or_string selection_inline_keywords modifiable_value -> { oolType: 'findOne', model: $2, condition: $4 }
+    | find_one_keywords identifier_or_string case_statement -> { oolType: 'findOne', model: $2, condition: $3 }
     ;
+
+cases_keywords
+    : ":"
+    | "by" "cases"    
+    | "by" "cases" "as" "below"
+    ;   
 
 case_statement
-    : "below" "cases" NEWLINE INDENT case_condition_block otherwise_or_not DEDENT
+    : cases_keywords NEWLINE INDENT case_condition_block DEDENT -> { oolType: 'cases', items: $4 }
+    | cases_keywords NEWLINE INDENT case_condition_block otherwise_statement DEDENT -> { oolType: 'cases', items: $4, else: $5 } 
     ;
 
-otherwise_or_not
-    :
-    | otherwise_keywords condition_as_result_expression
-    | otherwise_keywords stop_controll_flow_expression
+case_condition_item
+    : "when" conditional_expression "=>" condition_as_result_expression NEWLINE -> { oolType: 'ConditionalStatement', test: $2, then: $4 }
+    ; 
+
+case_condition_block
+    : case_condition_item -> [ $1 ]
+    | case_condition_item case_condition_block -> [ $1 ].concat($2)
+    ;
+
+otherwise_statement
+    : otherwise_keywords condition_as_result_expression NEWLINE -> $2
+    | otherwise_keywords stop_controll_flow_expression NEWLINE -> $2
     ;
 
 otherwise_keywords
@@ -1182,8 +1221,34 @@ stop_controll_flow_expression
     ;
 
 condition_as_result_expression
-    : 
-    | 
+    : selection_as_result_keyword modifiable_value -> $2
+    ;
+
+return_expression
+    : "return" modifiable_value -> { oolType: 'ReturnExpression', value: $2 }
+    ;
+
+throw_error_expression
+    : "throw" STRING -> { oolType: 'ThrowExpression', message: $2 }
+    | "throw" identifier -> { oolType: 'ThrowExpression', errorType: $2 }
+    | "throw" identifier "(" gfc_param_list0  ")" -> { oolType: 'ThrowExpression', errorType: $2, args: $4 }
+    ;
+
+return_or_not
+    :
+    | return_expression NEWLINE
+        { $$ = { return: $1 }; }
+    | return_expression "unless" NEWLINE INDENT return_condition_block DEDENT
+        { $$ = { return: Object.assign($1, { exceptions: $5 }) }; }
+    ;
+
+return_condition_item
+    : "when" conditional_expression "=>" modifiable_value NEWLINE -> { oolType: 'ConditionalStatement', test: $2, then: $4 }    
+    ;
+
+return_condition_block
+    : return_condition_item -> [ $1 ]
+    | return_condition_item return_condition_block -> [ $1 ].concat($2)
     ;
 
 update_operation
@@ -1210,7 +1275,6 @@ assign_operation
     : "set" identifier_or_member_access "<-" value variable_modifier_or_not NEWLINE
         { $$ = { oolType: 'assignment', left: $2, right: Object.assign({ argument: $4 }, $5) }; }
     ;
-*/
 
 dataset_statement
     : "dataset" identifier_or_string NEWLINE INDENT dataset_statement_block DEDENT -> state.defineDataset($2, $5)
@@ -1272,13 +1336,27 @@ article_keyword
     | "one"
     ;    
 
-selection_keyword
+selection_as_result_keyword    
+    : "selecting" "those" selection_attributive_keywords
+    | selection_keywords
+    ;
+
+selection_attributive_keywords
     : "which" "has"
     | "where" "is"
     | "when" "to" "be"
-    | "selected" "by"
     | "with"
+    ;
+
+selection_keywords
+    : "selectedBy"
+    | "selected" "by"    
     ;    
+
+selection_inline_keywords
+    : selection_keywords
+    | selection_attributive_keywords
+    ;
 
 view_selection_block
     : conditional_expression NEWLINE -> [ $1 ]
@@ -1327,9 +1405,21 @@ limit_or_not
     | "limit" value NEWLINE -> { limit: $2 }
     ;
 
-modifiable_param
-    : identifier_or_string type_base_or_not type_info_or_not field_modifiers_or_not -> Object.assign({ name: $1, type: $1 }, $2, $3, $4)   
+/* A field of entity with a series of modifiers, subject should be identifier or quoted string. */
+modifiable_field
+    : identifier_or_string type_base_or_not type_info_or_not type_modifiers_or_not -> Object.assign({ name: $1, type: $1 }, $2, $3, $4)   
     ;
+
+/* An argument with a series of modifiers to be used in a function call. */
+modifiable_value
+    : gfc_param0
+    | gfc_param0 type_modifiers -> state.normalizePipedValue($1, { modifiers: $2 })
+    ;
+
+/* A parameter declared with a series of modifiers to be used in a function signature. */
+modifiable_param
+    : modifiable_field
+    ; 
 
 feature_inject
     : identifier
@@ -1361,23 +1451,19 @@ general_function_call
     ;        
 
 gfc_param_list
-    : gfc_param -> [ $1 ]
-    | gfc_param gfc_param_list0 -> [ $1 ].concat($2)
+    : modifiable_value -> [ $1 ]
+    | modifiable_value gfc_param_list0 -> [ $1 ].concat($2)
     ;
 
 gfc_param_list0
-    : "," gfc_param -> [ $2 ]
-    | "," gfc_param gfc_param_list0 -> [ $2 ].concat($3)
+    : "," modifiable_value -> [ $2 ]
+    | "," modifiable_value gfc_param_list0 -> [ $2 ].concat($3)
     ;    
-
-gfc_param
-    : gfc_param0
-    | gfc_param0 field_modifiers -> state.normalizePipedValue($1, { modifiers: $2 })
-    ;
 
 gfc_param0
     : nfc_param
     | REFERENCE
+    | general_function_call
     ;    
 
 identifier_string_or_dotname
@@ -1422,8 +1508,8 @@ inline_object
     ;
 
 kv_pair_item
-    : identifier_or_string ":" value -> {[$1]: $3}
-    | INTEGER ":" value -> {[$1]: $3}
+    : identifier_or_string ":" modifiable_value -> {[$1]: $3}
+    | INTEGER ":" modifiable_value -> {[$1]: $3}
     ;
 
 kv_pairs
@@ -1438,18 +1524,8 @@ kv_pairs0
 
 inline_array
     : "[" "]" -> []
-    | "[" value_list "]" -> $2
+    | "[" gfc_param_list "]" -> $2
     ;
-
-value_list
-    : value -> [ $1 ]
-    | value value_list0 -> [ $1 ].concat($2)
-    ;
-
-value_list0
-    : ',' value -> [ $2 ]
-    | ',' value value_list0 -> [ $2 ].concat($3)
-    ;    
 
 array_of_identifier_or_string
     : "[" identifier_or_string_list "]" -> $2
@@ -1463,7 +1539,7 @@ identifier_or_string_list
 identifier_or_string_list0
     : ',' identifier_or_string -> [ $2 ]
     | ',' identifier_or_string identifier_or_string_list0 -> [ $2 ].concat($3)
-    ;        
+    ;            
 
 value
     : nfc_param
@@ -1473,6 +1549,7 @@ value
 conditional_expression
     : simple_expression
     | logical_expression
+    | boolean_expression
     ;
 
 simple_expression
@@ -1482,42 +1559,39 @@ simple_expression
     ;
 
 unary_expression
-    : value "exists"
-        { $$ = { oolType: 'UnaryExpression', operator: 'exists', argument: $1 }; }
-    | value "not" "exists"
-        { $$ = { oolType: 'UnaryExpression', operator: 'not-exists', argument: $1 }; }
-    | value "is" "null"
-        { $$ = { oolType: 'UnaryExpression', operator: 'is-null', argument: $1 }; }
-    | value "is" "not" "null"
-        { $$ = { oolType: 'UnaryExpression', operator: 'is-not-null', argument: $1 }; }
-    | not "(" simple_expression ")"
-        { $$ = { oolType: 'UnaryExpression', operator: 'not', argument: $3, prefix: true }; }
+    : modifiable_value "exists" -> { oolType: 'UnaryExpression', operator: 'exists', argument: $1 }
+    | modifiable_value "not" "exists" -> { oolType: 'UnaryExpression', operator: 'not-exists', argument: $1 }
+    | modifiable_value "is" "null" -> { oolType: 'UnaryExpression', operator: 'is-null', argument: $1 }
+    | modifiable_value "is" "not" "null" -> { oolType: 'UnaryExpression', operator: 'is-not-null', argument: $1 }
+    | "not" "(" simple_expression ")" -> { oolType: 'UnaryExpression', operator: 'not', argument: $3, prefix: true }
     ;
 
+boolean_expression
+    : modifiable_value "~" identifier -> { oolType: 'ValidateExpression', caller: $1, callee: state.normalizeValidator($3) }
+    | modifiable_value "~" REGEXP -> { oolType: 'ValidateExpression', caller: $1, callee: state.normalizeValidator($3) }
+    | modifiable_value "~" general_function_call -> { oolType: 'ValidateExpression', caller: $1, callee: state.normalizeValidator($3.name, $3.args) }
+    ;    
+
 binary_expression
-    : value ">" value
-        { $$ = { oolType: 'BinaryExpression', operator: '>', left: $1, right: $3 }; }
-    | value "<" value
-        { $$ = { oolType: 'BinaryExpression', operator: '<', left: $1, right: $3 }; }
-    | value ">=" value
-        { $$ = { oolType: 'BinaryExpression', operator: '>=', left: $1, right: $3 }; }
-    | value "<=" value
-        { $$ = { oolType: 'BinaryExpression', operator: '<=', left: $1, right: $3 }; }
-    | value "=" value
-        { $$ = { oolType: 'BinaryExpression', operator: '=', left: $1, right: $3 }; }
-    | value "!=" value
-        { $$ = { oolType: 'BinaryExpression', operator: '!=', left: $1, right: $3 }; }
-    | value "in" value
-        { $$ = { oolType: 'BinaryExpression', operator: 'in', left: $1, right: $3 }; }
+    : modifiable_value ">" modifiable_value -> { oolType: 'BinaryExpression', operator: '>', left: $1, right: $3 }
+    | modifiable_value "<" modifiable_value  -> { oolType: 'BinaryExpression', operator: '<', left: $1, right: $3 }
+    | modifiable_value ">=" modifiable_value -> { oolType: 'BinaryExpression', operator: '>=', left: $1, right: $3 }
+    | modifiable_value "<=" modifiable_value -> { oolType: 'BinaryExpression', operator: '<=', left: $1, right: $3 }
+    | modifiable_value "==" modifiable_value -> { oolType: 'BinaryExpression', operator: '==', left: $1, right: $3 }
+    | modifiable_value "!=" modifiable_value -> { oolType: 'BinaryExpression', operator: '!=', left: $1, right: $3 }
+    | modifiable_value "in" modifiable_value -> { oolType: 'BinaryExpression', operator: 'in', left: $1, right: $3 }
+    /*| value "is" value
+        { $$ = { oolType: 'BinaryExpression', operator: 'is', left: $1, right: $3 }; }    
+    | value "like" value
+        { $$ = { oolType: 'BinaryExpression', operator: 'like', left: $1, right: $3 }; } */     
     ;        
 
 logical_expression
-    : simple_expression logical_expression_right -> Object.assign({ left: $1 }, $2)
-    | "(" logical_expression ")" -> $2
+    : simple_expression logical_expression_right -> Object.assign({ left: $1 }, $2)    
     ;
 
 logical_expression_right
-    : logical_operators simple_expression -> Object.assign({ oolType: 'BinaryExpression' }, $1, { right: $2 })
+    : logical_operators simple_expression -> Object.assign({ oolType: 'LogicalExpression' }, $1, { right: $2 })
     ;
 
 logical_operators

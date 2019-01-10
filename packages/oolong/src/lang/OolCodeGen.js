@@ -19,7 +19,7 @@ const KW_ASSOCIATIONS = 'associations';
 const KW_KEY = 'key';
 const KW_INDEXES = 'index';
 
-const Types = require('./types');
+const Types = require('../runtime/types');
 const OolTypes = require('./OolTypes');
 
 class OolCodeGen {

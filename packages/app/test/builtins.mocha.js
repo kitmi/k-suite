@@ -7,7 +7,7 @@
 const Util = require('rk-utils');
 const sh = require('shelljs');
 const path = require('path');
-const CliApp = require('..');
+const CliApp = require('../');
 
 const WORKING_DIR = 'test/fixtures/builtin-test';
 const APP_NAME = 'test';

@@ -89,10 +89,6 @@ function load_(app, baseRoute, options) {
                     `routing[${baseRoute}].rule.rules[${subRoute}]`);
             }
 
-            if (typeof middlewares === 'string') {
-                middlewares = { action: middlewares };
-            } 
-
             app.addRoute(router, method, subRoute, middlewares);
         });
     });

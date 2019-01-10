@@ -1,0 +1,99 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/lib/lang/builtins/types.ool"
+    ],
+    "entity": {
+        "profile": {
+            "comment": "Profile",
+            "fields": {
+                "firstName": {
+                    "name": "firstName",
+                    "type": "name",
+                    "optional": true
+                },
+                "middleName": {
+                    "name": "middleName",
+                    "type": "name",
+                    "optional": true
+                },
+                "surName": {
+                    "name": "surName",
+                    "type": "name",
+                    "optional": true
+                },
+                "dob": {
+                    "name": "dob",
+                    "type": "datetime",
+                    "optional": true,
+                    "comment": "Date of birth"
+                },
+                "avatar": {
+                    "name": "avatar",
+                    "type": "url",
+                    "optional": true
+                },
+                "email": {
+                    "name": "email",
+                    "type": "email",
+                    "optional": true
+                },
+                "mobile": {
+                    "name": "mobile",
+                    "type": "phone",
+                    "optional": true
+                },
+                "provider": {
+                    "name": "provider",
+                    "type": "name",
+                    "optional": true
+                },
+                "providerId": {
+                    "name": "providerId",
+                    "type": "text",
+                    "maxLength": [
+                        100
+                    ],
+                    "optional": true
+                }
+            },
+            "associations": [
+                {
+                    "type": "belongsTo",
+                    "destEntity": "user",
+                    "srcField": "owner"
+                },
+                {
+                    "type": "refersTo",
+                    "destEntity": "gender",
+                    "srcField": "gender"
+                }
+            ],
+            "key": "owner"
+        },
+        "gender": {
+            "comment": "Gender",
+            "fields": {
+                "code": {
+                    "name": "code",
+                    "type": "text",
+                    "maxLength": [
+                        1
+                    ],
+                    "comment": "Gender Code"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "maxLength": [
+                        20
+                    ],
+                    "optional": true,
+                    "comment": "Gender Name"
+                }
+            },
+            "key": "code"
+        }
+    },
+    "id": "./entities/profile.ool",
+    "name": "profile"
+}

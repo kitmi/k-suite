@@ -1,0 +1,30 @@
+import '<oolong>/types'
+
+entity profile
+  -- "Profile"
+
+  has
+    firstName : name optional
+    middleName : name optional
+    surName : name optional
+    dob : datetime optional -- 'Date of birth'
+    avatar : url optional    
+    email : email optional
+    mobile : phone optional
+    provider : name optional
+    providerId : text maxLength(100) optional
+
+  associations
+    belongsTo 'user' as 'owner'
+    refersTo 'gender' as 'gender'
+
+  key owner
+
+entity gender
+  -- "Gender"
+
+  has
+    code : text maxLength(1) -- "Gender Code"
+    name : text maxLength(20) optional -- "Gender Name"
+
+  key code

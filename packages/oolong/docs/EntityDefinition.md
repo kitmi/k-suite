@@ -43,11 +43,11 @@
 ### field modifiers
 
 * validator
-    * syntax: ~
+    * syntax: |~
 * processor
     * syntax: |>
 * activator
-    * syntax: =
+    * syntax: |=
 
 ## relationship (associations)
 

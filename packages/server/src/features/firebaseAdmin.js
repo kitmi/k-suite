@@ -5,7 +5,7 @@
  * @module Feature_Firebase
  */
 
-const Feature = require('@k-suite/app/lib/enum/Feature');
+const { Feature } = require('..').enum;
 const { tryRequire } = require('@k-suite/app/lib/utils/Helpers');
 const { InvalidConfiguration } = require('../Errors');
 const { fs } = require('rk-utils');

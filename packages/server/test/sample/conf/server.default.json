@@ -1,0 +1,33 @@
+{    
+    "loggers": {
+        "accessLog": {
+            "transports": [
+                {
+                    "type": "fast-file-rotate",
+                    "options": {
+                        "level": "verbose",                        
+                        "fileName": "access-%DATE%.log",
+                        "dateFormat": "YYYY-MM-DD"
+                    }
+                }
+            ]
+        }
+    },
+    "timezone": "Australia/Sydney",  
+    "koa": {       
+        "keys": [ "a", "b"],
+        "httpPort": 3333          
+    },
+    "middlewares": {        
+        "accessLog": { "logger": "accessLog" },
+        "compress": {},
+        "etag": {}
+    },
+    "appRouting": {                
+        "/": {
+            "name": "sso",
+            "options": {
+            }
+        }
+    }
+}

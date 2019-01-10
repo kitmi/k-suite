@@ -49,7 +49,6 @@ module.exports = {
     
         let options = Object.assign({ 
             env: server.env, 
-            verbose: server.options.verbose, 
             logWithAppName: server.options.logWithAppName 
         }, config.options);
 

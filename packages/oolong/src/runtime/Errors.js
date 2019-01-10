@@ -1,8 +1,21 @@
 "use strict";
 
 const { withName, withExtraInfo } = require('@k-suite/app/lib/utils/Helpers');
-const { withHttpStatus } = require('@k-suite/server/lib/Errors');
 const HttpCode = require('http-status-codes');
+
+/**
+ * Adds a status property to the class.
+ * @mixin
+ * @param {*} Base 
+ * @param {*} STATUS 
+ */
+const withHttpStatus = (Base, STATUS) => class extends Base {
+    /**
+     * Http status code.
+     * @member {number}
+     */
+    status = STATUS;
+};
 
 /**
  * Errors caused by failing to pass input validation

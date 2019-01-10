@@ -100,6 +100,7 @@ class DaoModeler {
             };
 
             let { ast: astClassMain, fieldReferences } = this._processFieldModifiers(entity, sharedContext);
+            astClassMain = [ astClassMain ];
 
             //prepare meta data
             let uniqueKeys = [ _.castArray(entity.key) ];
@@ -123,14 +124,14 @@ class DaoModeler {
                 fieldDependencies: fieldReferences
             };
 
-            //build customized interfaces
-            /** 
+            //build customized interfaces            
             if (entity.interfaces) {
                 let astInterfaces = this._buildInterfaces(entity, modelMeta, sharedContext);
-                let astClass = astClassMain[astClassMain.length - 1];
-                JsLang.astPushInBody(astClass, astInterfaces);
+                //console.log(astInterfaces);
+                //let astClass = astClassMain[astClassMain.length - 1];
+                //JsLang.astPushInBody(astClass, astInterfaces);
+                astClassMain = astClassMain.concat(astInterfaces);
             }
-            */
 
             let importLines = [];
 
@@ -142,6 +143,7 @@ class DaoModeler {
             }
 
             if (!_.isEmpty(sharedContext.newFunctorFiles)) {
+                console.log(sharedContext.newFunctorFiles);
                 _.each(sharedContext.newFunctorFiles, entry => {
                     this._generateFunctionTemplateFile(schema, entry);
                 });
@@ -156,7 +158,7 @@ class DaoModeler {
                 imports: importLines.join('\n'),
                 className: capitalized,
                 entityMeta: JSON.stringify(modelMeta, null, 4),
-                classBody: indentLines(JsLang.astToCode(astClassMain), 4)
+                classBody: indentLines(astClassMain.map(block => JsLang.astToCode(block)).join('\n\n'), 4) 
             };
 
             let classTemplate = path.resolve(__dirname, 'database', this.connector.driver, 'EntityModel.js.swig');
@@ -421,7 +423,7 @@ class DaoModeler {
         this.logger.log('info', `Generated ${ functorType } file: ${filePath}`);
     }
 
-    _buildInterfaces(entity, dbService, modelMetaInit, sharedContext) {
+    _buildInterfaces(entity, modelMetaInit, sharedContext) {
         let ast = [];
 
         _.forOwn(entity.interfaces, (method, name) => {
@@ -469,11 +471,17 @@ class DaoModeler {
 
                 this.logger.verbose('Code point "' + dep + '":\n' + JSON.stringify(sourceMap, null, 2));
 
-                if (sourceMap.type === OolToAst.AST_BLK_MODIFIER_CALL) {
-                    let fieldName = getFieldName(sourceMap.target);
-                    let astCache = JsLang.astAssign(JsLang.astVarRef(sourceMap.target), astBlock, `Modifying ${fieldName}`);
-                    astBody = astBody.concat(_.castArray(astCache));
-                    return;
+                let targetFieldName = sourceMap.target; //getFieldName(sourceMap.target);      
+
+                if (sourceMap.type === OolToAst.AST_BLK_VALIDATOR_CALL) {                    
+                    astBlock = Snippets._validateCheck(targetFieldName, astBlock);
+
+                } else if (sourceMap.type === OolToAst.AST_BLK_PROCESSOR_CALL) {
+                    astBlock = JsLang.astAssign(JsLang.astVarRef(sourceMap.target, true), astBlock, `Processing "${targetFieldName}"`);                    
+                    
+                } else if (sourceMap.type === OolToAst.AST_BLK_ACTIVATOR_CALL) {
+                    astBlock = JsLang.astAssign(JsLang.astVarRef(sourceMap.target, true), astBlock, `Activating "${targetFieldName}"`);                    
+                    
                 }
 
                 astBody = astBody.concat(_.castArray(astBlock));
@@ -490,7 +498,7 @@ class DaoModeler {
 
         acceptParams.forEach((param, i) => {
             OolToAst.compileParam(i, param, compileContext);
-            paramMeta[param.name] = _.omit(param, OolUtil.FUNCTORS_LIST.concat(['subClass']));
+            paramMeta[param.name] = param;
         });
 
         return paramMeta;

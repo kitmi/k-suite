@@ -9,7 +9,9 @@ const WORKING_DIR = path.resolve(__dirname, 'temp');
 
 let webServer = new WebServer('test server', { 
     workingPath: WORKING_DIR,
-    verbose: true,
+    logger: {
+        level: 'verbose'
+    },
     logWithAppName: true
 });
 

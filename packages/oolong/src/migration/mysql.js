@@ -23,7 +23,7 @@ class MySQLMigration {
     }
 
     async reset_() {
-        return this.connector.execute_(`DROP DATABASE IF EXISTS ??`, [ this.connector.database ]);
+        return this.connector.execute_(`DROP DATABASE IF EXISTS ??`, [ this.connector.database ], { createDatabase: true });
     }
 
     async create_() {        

@@ -1,0 +1,138 @@
+{
+    "company_extract": {
+        "company_name": "Kelly-Briggs",
+        "ACN": "774645655",
+        "ABN": "35269754093"
+    },
+    "current_detail": {
+        "registered_states": "Queensland",
+        "registration_date": "17-09-1984",
+        "next_review_date": "03-08-1986",
+        "name_start_date": "02-01-1987",
+        "status": "Not registered yet",
+        "type": "Public Companies",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "historical_detail": {
+        "registered_states": "Queensland",
+        "registration_date": "24-02-2006",
+        "next_review_date": "22-08-2018",
+        "name_start_date": "17-11-1975",
+        "status": "Not registered yet",
+        "type": "Public Companies",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "current_address": {
+        "registered_office_address": "10395 Catherine Hollow\nSouth Jason, GA 76373",
+        "registered_start_date": "24-07-1996",
+        "principal_office_address": "305 Brenda Freeway\nBoothshire, NJ 66701",
+        "principal_start_date": "13-03-1982"
+    },
+    "historical_address": {
+        "registered_office_address": "975 Bennett Ridges\nNew Christopher, ME 95801",
+        "registered_start_date": "12-01-1976",
+        "registered_cease_date": "17-12-2013",
+        "principal_office_address": "37746 Dan Ports\nReeseside, MA 47887",
+        "principal_start_date": "24-02-1982",
+        "principal_cease_date": "03-05-2003"
+    },
+    "contract_address": {
+        "address": "14187 Newton Ridges\nWest Jodiborough, MO 90165",
+        "startDate": "12-06-1980"
+    },
+    "roles": {
+        "directors": {
+            "name": "Natalie Chung",
+            "address": "4982 West Spurs\nRichardton, IL 58856",
+            "born_date": "1975-07-11",
+            "appointment_date": "1994-08-15",
+            "cease_date": null
+        },
+        "pre_directors": {
+            "name": "Michelle Francis",
+            "address": "39989 Robert Stravenue Suite 203\nEast Matthewchester, ID 47827",
+            "born_date": "1988-11-17",
+            "appointment_date": "1978-04-30",
+            "cease_date": "2002-02-01"
+        },
+        "secretaries": {
+            "name": "Megan Mcgee",
+            "address": "5684 Clark Common Suite 565\nNew Meghan, AZ 50940",
+            "born_date": "2003-07-14",
+            "appointment_date": "1979-08-17",
+            "cease_date": null
+        },
+        "external_admin": {
+            "name": "Matthew Griffin",
+            "address": "Unit 9146 Box 2549\nDPO AP 84854",
+            "born_date": "1989-12-13",
+            "appointment_date": "2005-06-29",
+            "cease_date": null
+        },
+        "pre_external_admin": {
+            "name": "Megan Wilson",
+            "address": "322 Mcintyre Centers Suite 790\nNorth Denniston, NJ 33376",
+            "born_date": "1988-01-10",
+            "appointment_date": "2008-03-14",
+            "cease_date": "1995-09-06"
+        },
+        "appointed_auditor": {
+            "name": "Donald Christian",
+            "address": "76819 Stephanie Curve\nCallahanton, CT 92477",
+            "born_date": "1979-08-25",
+            "appointment_date": "2005-12-12",
+            "cease_date": null
+        },
+        "pre_appointed_auditor": {
+            "name": "Mrs. Carolyn Ortiz",
+            "address": "621 Jones Lodge Suite 974\nThomaston, ID 77094",
+            "born_date": "1976-12-08",
+            "appointment_date": "1984-06-17",
+            "cease_date": "1986-04-26"
+        },
+        "ultimate_holding_company": {
+            "company_name": "Williams PLC",
+            "ACN": "803238498",
+            "ABN": "32256064091"
+        },
+        "pre_ultimate_holding_company": {
+            "company_name": "Golden-Walls",
+            "ACN": "123153843",
+            "ABN": "46828575662"
+        },
+        "share_holders": {
+            "share_class": "ORD",
+            "description": "Art have capital student blue foot him admit. Myself evening front executive sure financial. Reveal heavy leave cultural institution expert.",
+            "number_issured": 4,
+            "total_amount_paid": 4,
+            "total_amount_unpaid": 0,
+            "member_list": [{
+                "member": {
+                    "name": "Shawn Murray",
+                    "address": "577 Jesse Union\nUnderwoodshire, DC 46418",
+                    "born_date": "2012-05-30",
+                    "appointment_date": "1996-01-15",
+                    "cease_date": null
+                },
+                "member_class": "ORD",
+                "number_held": 3,
+                "beneficially_held": false,
+                "percentage": 0.75,
+                "paid": "Fully",
+                "docNo": null
+            }, {
+                "member": {
+                    "company_name": "Garcia Inc",
+                    "ACN": "985523440",
+                    "ABN": "78741805018"
+                },
+                "member_class": "ORD",
+                "number_held": 1,
+                "beneficially_held": true,
+                "percentage": 0.25,
+                "paid": "Fully",
+                "docNo": null
+            }]
+        }
+    }
+}

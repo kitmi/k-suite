@@ -1,14 +1,15 @@
 "use strict";
 
-const Types = require('../lang/types'); 
+const Types = require('./types'); 
 const Errors = require('./Errors');
 const Convertors = require('./Convertors');
 const Processors = require('./Processors');
 const Validators = require('./Validators');
 const Generators = require('./Generators');
+const Connector = require('./Connector');
 
 module.exports = { 
-    Types, Errors, Convertors, Processors, Validators, Generators,
+    Types, Errors, Convertors, Processors, Validators, Generators, Connector,
 
     sanitize: function (value, info, i18n) {
         pre: {

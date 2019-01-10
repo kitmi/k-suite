@@ -1,0 +1,136 @@
+{
+    "company_extract": {
+        "company_name": "Garcia Inc",
+        "ACN": "985523440",
+        "ABN": "17090577264"
+    },
+    "current_detail": {
+        "registered_states": "Queensland",
+        "registration_date": "10-01-2014",
+        "next_review_date": "28-09-1981",
+        "name_start_date": "25-01-1988",
+        "status": "Registered",
+        "type": "Proprietary Companies \u2013 Limited by Shares",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "historical_detail": {
+        "registered_states": "New South Wales",
+        "registration_date": "15-11-2004",
+        "next_review_date": "31-12-1975",
+        "name_start_date": "26-09-1991",
+        "status": "Not registered yet",
+        "type": "Public Companies",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "current_address": {
+        "registered_office_address": "44231 Ashley Well Apt. 633\nPort Robert, VA 72165",
+        "registered_start_date": "07-01-2010",
+        "principal_office_address": "38534 Smith Harbor\nGomezstad, KS 58059",
+        "principal_start_date": "21-12-1970"
+    },
+    "historical_address": {
+        "registered_office_address": "6634 Natalie Road Apt. 723\nCruzshire, NY 07508",
+        "registered_start_date": "15-10-1984",
+        "registered_cease_date": "09-04-2009",
+        "principal_office_address": "324 Gonzalez Motorway\nWilliamsmouth, CO 62232",
+        "principal_start_date": "23-05-1992",
+        "principal_cease_date": "03-04-1970"
+    },
+    "contract_address": {
+        "address": "57947 Bowen Ford Suite 263\nPort Timothyton, MO 70357",
+        "startDate": "27-11-2012"
+    },
+    "roles": {
+        "directors": {
+            "name": "Yvette Archer",
+            "address": "111 Allen Mission\nLewisfurt, IN 03060",
+            "born_date": "2015-03-23",
+            "appointment_date": "2006-10-06",
+            "cease_date": null
+        },
+        "pre_directors": {
+            "name": "Thomas Mayer",
+            "address": "7303 Underwood Extensions Suite 119\nSouth Williefort, MN 69828",
+            "born_date": "1971-05-03",
+            "appointment_date": "1999-11-16",
+            "cease_date": "2004-07-25"
+        },
+        "secretaries": {
+            "name": "Christopher Harmon",
+            "address": "3254 Tyler Fall\nPort Pamela, MT 32141",
+            "born_date": "1971-09-06",
+            "appointment_date": "1991-04-19",
+            "cease_date": null
+        },
+        "external_admin": {
+            "name": "Shannon Robinson",
+            "address": "023 Angela Estate Apt. 931\nYuborough, KY 63173",
+            "born_date": "1997-07-23",
+            "appointment_date": "1985-12-17",
+            "cease_date": null
+        },
+        "pre_external_admin": {
+            "name": "Allison Wilson",
+            "address": "4848 Walton Shoals Suite 402\nWest Michelle, KY 76806",
+            "born_date": "1984-12-09",
+            "appointment_date": "2008-09-12",
+            "cease_date": "2005-07-07"
+        },
+        "appointed_auditor": {
+            "name": "Linda Moran",
+            "address": "75744 Hamilton Camp Suite 121\nCisnerosbury, MA 16493",
+            "born_date": "2009-10-13",
+            "appointment_date": "2013-01-30",
+            "cease_date": null
+        },
+        "pre_appointed_auditor": {
+            "name": "Sierra Gamble",
+            "address": "33013 Jessica Street\nDianeburgh, UT 36442",
+            "born_date": "1984-04-20",
+            "appointment_date": "1995-10-17",
+            "cease_date": "2005-07-24"
+        },
+        "ultimate_holding_company": {
+            "company_name": "Simpson, Morales and Johnson",
+            "ACN": "351793769",
+            "ABN": "47152951298"
+        },
+        "pre_ultimate_holding_company": {
+            "company_name": "Gonzalez Ltd",
+            "ACN": "554866244",
+            "ABN": "73941643473"
+        },
+        "share_holders": {
+            "share_class": "ORD",
+            "description": "Positive father bank country pull prepare require music. Picture treat pay positive term growth.\nCongress need it number. Interest her heart out. Product stand create billion especially follow her.",
+            "number_issured": 5,
+            "total_amount_paid": 2,
+            "total_amount_unpaid": 3,
+            "member_list": [{
+                "member": {
+                    "company_name": "Taylor-Collins",
+                    "ACN": "574043076",
+                    "ABN": "58461092746"
+                },
+                "member_class": "ORD",
+                "number_held": 3,
+                "beneficially_held": true,
+                "percentage": 0.6,
+                "paid": "Fully",
+                "docNo": null
+            }, {
+                "member": {
+                    "company_name": "Castillo Inc",
+                    "ACN": "339401785",
+                    "ABN": "90316714494"
+                },
+                "member_class": "ORD",
+                "number_held": 2,
+                "beneficially_held": true,
+                "percentage": 0.4,
+                "paid": "Fully",
+                "docNo": null
+            }]
+        }
+    }
+}

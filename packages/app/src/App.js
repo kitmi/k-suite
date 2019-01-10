@@ -6,7 +6,8 @@ const Runable = require('./Runable');
 /**
  * Cli app.
  * @class
- * @extends Runable(ServiceContainer)     
+ * @mixes {Runable}
+ * @extends {ServiceContainer}     
  */
 class App extends Runable(ServiceContainer) {
     constructor(name, options) {

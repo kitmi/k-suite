@@ -1,0 +1,138 @@
+{
+    "company_extract": {
+        "company_name": "Castillo Inc",
+        "ACN": "339401785",
+        "ABN": "26367138771"
+    },
+    "current_detail": {
+        "registered_states": "New South Wales",
+        "registration_date": "07-02-1970",
+        "next_review_date": "19-06-2014",
+        "name_start_date": "09-08-2015",
+        "status": "Registered",
+        "type": "Proprietary Companies \u2013 Limited by Shares",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "historical_detail": {
+        "registered_states": "West Austrlia",
+        "registration_date": "28-01-1971",
+        "next_review_date": "21-06-2002",
+        "name_start_date": "17-10-2009",
+        "status": "Registered",
+        "type": "Public Companies",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "current_address": {
+        "registered_office_address": "505 James Street Apt. 734\nPort Cole, IA 64986",
+        "registered_start_date": "08-01-1995",
+        "principal_office_address": "8825 Joseph Circles Suite 608\nWest Dorothyland, NM 12813",
+        "principal_start_date": "04-06-1984"
+    },
+    "historical_address": {
+        "registered_office_address": "3313 Aaron Extensions\nBakerfort, MS 35179",
+        "registered_start_date": "23-11-1970",
+        "registered_cease_date": "27-08-1986",
+        "principal_office_address": "694 Leslie Center Suite 032\nEast Steven, ND 42573",
+        "principal_start_date": "14-07-2018",
+        "principal_cease_date": "30-04-1984"
+    },
+    "contract_address": {
+        "address": "22184 Long Path Apt. 814\nEdwardschester, FL 32278",
+        "startDate": "22-12-1978"
+    },
+    "roles": {
+        "directors": {
+            "name": "Jacob Wright",
+            "address": "5380 Robinson Ville\nCampbellbury, MA 16171",
+            "born_date": "2006-08-03",
+            "appointment_date": "1988-08-06",
+            "cease_date": null
+        },
+        "pre_directors": {
+            "name": "Benjamin Clark",
+            "address": "USS Pena\nFPO AE 27421",
+            "born_date": "1998-12-08",
+            "appointment_date": "2007-02-25",
+            "cease_date": "1988-05-12"
+        },
+        "secretaries": {
+            "name": "Krystal Craig",
+            "address": "9942 Daniel Camp Apt. 647\nLake Christopherview, NY 47158",
+            "born_date": "1993-11-06",
+            "appointment_date": "1986-03-25",
+            "cease_date": null
+        },
+        "external_admin": {
+            "name": "Judy Macdonald",
+            "address": "3454 Wong Common Suite 833\nSouth David, MI 28010",
+            "born_date": "1999-11-14",
+            "appointment_date": "1974-02-22",
+            "cease_date": null
+        },
+        "pre_external_admin": {
+            "name": "Miss Lisa Johnson",
+            "address": "56918 Robinson Plaza\nJonathanstad, MS 27783",
+            "born_date": "1984-07-27",
+            "appointment_date": "1998-12-04",
+            "cease_date": "1982-04-05"
+        },
+        "appointed_auditor": {
+            "name": "Ivan Bruce",
+            "address": "246 Chambers Stream\nEast Robertfurt, AK 09522",
+            "born_date": "2013-02-10",
+            "appointment_date": "1995-06-17",
+            "cease_date": null
+        },
+        "pre_appointed_auditor": {
+            "name": "Johnathan Gardner",
+            "address": "207 Jeremy Cliff Suite 932\nSusanfort, CO 74543",
+            "born_date": "2000-09-02",
+            "appointment_date": "1984-01-25",
+            "cease_date": "1991-01-05"
+        },
+        "ultimate_holding_company": {
+            "company_name": "Smith-Horn",
+            "ACN": "054514702",
+            "ABN": "12189818310"
+        },
+        "pre_ultimate_holding_company": {
+            "company_name": "Turner PLC",
+            "ACN": "418893389",
+            "ABN": "52453140114"
+        },
+        "share_holders": {
+            "share_class": "ORD",
+            "description": "How simply growth three field around wrong. Peace meet professor decade.\nTeach food management myself us itself center lead. Defense either fall employee light. Within bring born tend former.",
+            "number_issured": 5,
+            "total_amount_paid": 2,
+            "total_amount_unpaid": 3,
+            "member_list": [{
+                "member": {
+                    "company_name": "Peterson Inc",
+                    "ACN": "556823440",
+                    "ABN": "39038330209"
+                },
+                "member_class": "ORD",
+                "number_held": 3,
+                "beneficially_held": false,
+                "percentage": 0.6,
+                "paid": "Fully",
+                "docNo": null
+            }, {
+                "member": {
+                    "name": "Jeremy Campbell",
+                    "address": "9584 Molly Rest Suite 232\nEast Michaelside, NC 67870",
+                    "born_date": "1981-01-01",
+                    "appointment_date": "1973-06-04",
+                    "cease_date": null
+                },
+                "member_class": "ORD",
+                "number_held": 2,
+                "beneficially_held": false,
+                "percentage": 0.4,
+                "paid": "Fully",
+                "docNo": null
+            }]
+        }
+    }
+}

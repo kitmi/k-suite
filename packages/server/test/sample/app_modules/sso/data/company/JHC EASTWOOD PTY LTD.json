@@ -1,0 +1,148 @@
+{
+    "company_extract": {
+        "company_name": "JHC EASTWOOD PTY LTD",
+        "ACN": "627455967",
+        "ABN": "30627455967"
+    },
+    "current_detail": {
+        "registered_states": "New South Wales",
+        "registration_date": "11/07/2018",
+        "next_review_date": "11/07/2019",
+        "name_start_date": "11/07/2018",
+        "status": "Registered",
+        "type": "Australian Proprietary Company",
+        "class": "Limited By Shares",
+        "subclass": "Proprietary Company",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "historical_detail": {
+        "registered_states": "Victoria",
+        "registration_date": "17-01-1981",
+        "next_review_date": "20-07-1979",
+        "name_start_date": "14-02-1975",
+        "status": "Not registered yet",
+        "type": "Proprietary Companies \u2013 Limited by Guarantee",
+        "regulator": "Australian Securities & Investments Commission"
+    },
+    "current_address": {
+        "registered_office_address": "Shop 211,  52 Rowe Street,  EASTWOOD NSW 2122",
+        "registered_start_date": "11/07/2018",
+        "principal_office_address": "Shop 211,  52 Rowe Street,  EASTWOOD NSW 2122",
+        "principal_start_date": "11/07/2018"
+    },
+    "historical_address": {
+        "registered_office_address": "488 Nolan Field Apt. 537\nSuttontown, DE 42113",
+        "registered_start_date": "06-05-2016",
+        "registered_cease_date": "28-02-1981",
+        "principal_office_address": "589 Garza Wells Apt. 820\nDudleyhaven, AL 28565",
+        "principal_start_date": "06-11-2014",
+        "principal_cease_date": "12-02-2006"
+    },
+    "contract_address": {
+        "address": "4190 Todd Parkway Apt. 328\nRandallbury, AR 14392",
+        "startDate": "24-02-2010"
+    },
+    "roles": {
+        "directors": {
+            "name": "DINGMING GUO",
+            "address": "4 Balfour Road,  NARWEE NSW 2209",
+            "born": "31/03/1982, , CHINA",
+            "appointment_date": "11/07/2018",
+            "cease_date": null
+        },
+        "directors": {
+            "name": "JIAN FENG DENNIS YU",
+            "address": "Unit 11,  41 Doomben Avenue,  EASTWOOD NSW 2122",
+            "born": "23/09/1991, NEW LAMBTON HEIGHTS, NSW",
+            "appointment_date": "11/07/2018",
+            "cease_date": null
+        },
+        "pre_directors": {
+            "name": "Selena Hawkins",
+            "address": "7393 Christopher View\nEast William, AL 01934",
+            "born_date": "2008-07-30",
+            "appointment_date": "2008-05-28",
+            "cease_date": "2000-05-22"
+        },
+        "secretaries": {
+            "name": "JIAN FENG DENNIS YU2",
+            "address": "Unit 11,  41 Doomben Avenue,  EASTWOOD NSW 2122",
+            "born": "23/09/1991, NEW LAMBTON HEIGHTS, NSW",
+            "appointment_date": "11/07/2018",
+            "cease_date": null
+        },
+        "external_admin": {
+            "name": "Brandon White",
+            "address": "73884 Anne Haven Apt. 266\nJohnland, AL 39222",
+            "born_date": "1993-04-27",
+            "appointment_date": "2015-04-05",
+            "cease_date": null
+        },
+        "pre_external_admin": {
+            "name": "Nancy Harris",
+            "address": "987 Elizabeth Village\nCombsfort, DC 90057",
+            "born_date": "1996-09-12",
+            "appointment_date": "1990-11-11",
+            "cease_date": "1979-08-23"
+        },
+        "appointed_auditor": {
+            "name": "Robin Webb",
+            "address": "552 Wendy Plains Apt. 632\nMahoneybury, OK 67800",
+            "born_date": "2001-05-05",
+            "appointment_date": "1997-07-07",
+            "cease_date": null
+        },
+        "pre_appointed_auditor": {
+            "name": "Mrs. Belinda Campbell",
+            "address": "7977 Harper Pine Suite 309\nNew Thomas, NH 16265",
+            "born_date": "1973-11-12",
+            "appointment_date": "1993-09-15",
+            "cease_date": "1992-05-16"
+        },
+        "ultimate_holding_company": {
+            "company_name": "Miller-Curry",
+            "ACN": "328401173",
+            "ABN": "37642732652"
+        },
+        "pre_ultimate_holding_company": {
+            "company_name": "Oneill LLC",
+            "ACN": "487796383",
+            "ABN": "66582169202"
+        },
+        "share_holders": {
+            "share_class": "ORD",
+            "description": "ORDINARY",
+            "number_issured": 100,
+            "total_amount_paid": 100,
+            "total_amount_unpaid": 0,
+            "member_list": [
+                {
+                    "member": {
+                        "company_name": "AUSTRAWELL PTY LTD",
+                        "ACN": "165289681",
+                        "address": "Shop 10,  127-137 Forest Road,  HURSTVILLE NSW 2220"
+                    },
+                    "member_class": "ORD",
+                    "number_held": 80,
+                    "beneficially_held": true,
+                    "percentage": 0,
+                    "paid": "Fully",
+                    "docNo": null
+                },
+                {
+                    "member": {
+                        "company_name": "VANSONY PTY. LTD.",
+                        "ACN": "053003133",
+                        "address": "20 Thomas Street,  STRATHFIELD NSW 2135"
+                    },
+                    "member_class": "ORD",
+                    "number_held": 20,
+                    "beneficially_held": true,
+                    "percentage": 0,
+                    "paid": "Fully",
+                    "docNo": null
+                }
+            ]
+        }
+    }
+}

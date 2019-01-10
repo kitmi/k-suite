@@ -1,0 +1,23 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/sso/server/oolong/entities/profile.ool",
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/server/test/sample/app_modules/sso/server/oolong/entities/user.ool"
+    ],
+    "schema": {
+        "sso": {
+            "entities": [
+                {
+                    "entity": "user"
+                },
+                {
+                    "entity": "profile"
+                },
+                {
+                    "entity": "gender"
+                }
+            ]
+        }
+    },
+    "id": "./sso.ool",
+    "name": "sso"
+}

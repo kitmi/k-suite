@@ -1,10 +1,8 @@
 "use strict";
 
-const Util = require('rk-utils');
-const Promise = Util.Promise;
-const _ = Util._;
+const { _, ensureLeftSlash, trimRightSlash } = require('rk-utils');
 const path = require('path');
-const ServiceContainer = require('@k-suite/app/lib/ServiceContainer');
+const { ServiceContainer } = require('@k-suite/app');
 const Routable = require('./Routable');
 const Literal = require('./enum/Literal');
 
@@ -19,14 +17,8 @@ class WebModule extends Routable(ServiceContainer) {
      * @param {string} name - The name of the app module.
      * @param {string} route - The base route of the app module.
      * @param {string} appPath - The path to load the app's module files
-     * @param {object} [options] - The app module's extra options defined in its parent's configuration.
-     * @property {object} [options.logger] - Logger options
-     * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics
-     * @property {bool} [options.logWithAppName=false] - Flag to include app name in log message
-     * @property {string} [options.env] - Environment, default to process.env.NODE_ENV     
-     * @property {string} [options.configPath] - App's config path, default to "conf" under modulePath           
-     * @property {string} [options.backendPath='server'] - Relative path of back-end server source files
-     * @property {string} [options.clientPath='client'] - Relative path of front-end client source files     
+     * @param {object} [options] - The app module's extra options defined in its parent's configuration.          
+     * @property {bool} [options.logWithAppName=false] - Flag to include app name in log message.
      */
     constructor(server, name, route, appPath, options) {    
         super(name, Object.assign({
@@ -44,7 +36,7 @@ class WebModule extends Routable(ServiceContainer) {
          * Mounting route.
          * @member {string}
          */
-        this.route = Util.ensureLeftSlash(Util.trimRightSlash(route));        
+        this.route = ensureLeftSlash(trimRightSlash(route));        
     }  
 
     /**
@@ -61,7 +53,7 @@ class WebModule extends Routable(ServiceContainer) {
      * @param {string} level - Log level
      * @param {string} message - Log message
      * @param {...object} rest - Extra meta data
-     * @returns {RoutableApp}
+     * @returns {Routable}
      */
     log(level, message, ...rest) {
         if (this.options.logWithAppName) {

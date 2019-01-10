@@ -1,11 +1,8 @@
 "use strict";
 
 const path = require('path');
-const Util = require('rk-utils');
-const _ = Util._;
-const Promise = Util.Promise;
-const ServiceContainer = require('@k-suite/app/lib/ServiceContainer');
-const Runable = require('@k-suite/app/lib/Runable');
+const { _, eachAsync_ } = require('rk-utils');
+const { Runable, ServiceContainer } = require('@k-suite/app');
 const Routable = require('./Routable');
 const Literal = require('./enum/Literal');
 const mount = require('koa-mount');
@@ -58,7 +55,7 @@ class WebServer extends Routable(Runable(ServiceContainer)) {
 
     async stop_() {
         if (this.started && this.appModules) {
-            await Util.eachAsync_(this.appModules, app => app.stop_());
+            await eachAsync_(this.appModules, app => app.stop_());
             delete this.appModules;
         }        
 

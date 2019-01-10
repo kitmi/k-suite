@@ -297,7 +297,7 @@ exports.reverse = async (core) => {
     //todo: relocation, and deep copy connection options
     let conn = core.option('conn');
     let [ driver ] = extractDriverAndConnectorName(conn);
-    let connOptions = Util.getValueByPath(oolongConfig, conn);
+    let connOptions = Util.getValueByPath(oolongConfig, 'dataSource.' + conn);
     assert: connOptions;    
 
     if (typeof connOptions.reverseRules === 'string') {

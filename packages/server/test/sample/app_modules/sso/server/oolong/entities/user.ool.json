@@ -1,0 +1,189 @@
+{
+    "namespace": [
+        "/Users/rockieguo/Documents/GitHub/k-suite/packages/oolong/lib/lang/builtins/types.ool"
+    ],
+    "type": {
+        "password": {
+            "type": "text",
+            "maxLength": [
+                200
+            ]
+        },
+        "userStatus": {
+            "type": "enum",
+            "values": [
+                "inactive",
+                "active",
+                "disabled",
+                "forbidden",
+                "deleted"
+            ]
+        }
+    },
+    "entity": {
+        "user": {
+            "comment": "User Credential",
+            "features": [
+                {
+                    "name": "autoId",
+                    "args": [
+                        {
+                            "startFrom": 100000
+                        }
+                    ]
+                },
+                "createTimestamp",
+                "updateTimestamp",
+                {
+                    "name": "logicalDeletion",
+                    "args": [
+                        {
+                            "status": "deleted"
+                        }
+                    ]
+                },
+                {
+                    "name": "stateTracking",
+                    "args": [
+                        "status"
+                    ]
+                },
+                {
+                    "name": "atLeastOneNotNull",
+                    "args": [
+                        [
+                            "email",
+                            "mobile"
+                        ]
+                    ]
+                }
+            ],
+            "fields": {
+                "email": {
+                    "name": "email",
+                    "type": "email",
+                    "comment": "User Email"
+                },
+                "mobile": {
+                    "name": "mobile",
+                    "type": "phone",
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isMobilePhone",
+                            "args": [
+                                {
+                                    "oolType": "PipedValue",
+                                    "value": {
+                                        "oolType": "ObjectReference",
+                                        "name": "latest.locale"
+                                    },
+                                    "modifiers": [
+                                        {
+                                            "oolType": "Processor",
+                                            "name": "stringDasherize"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "oolType": "Processor",
+                            "name": "normalizeMobile"
+                        }
+                    ],
+                    "comment": "User Mobile"
+                },
+                "password": {
+                    "name": "password",
+                    "type": "password",
+                    "modifiers": [
+                        {
+                            "oolType": "Processor",
+                            "name": "hashPassword",
+                            "args": [
+                                {
+                                    "oolType": "ObjectReference",
+                                    "name": "latest.passwordSalt"
+                                }
+                            ]
+                        }
+                    ],
+                    "comment": "User Password"
+                },
+                "passwordSalt": {
+                    "name": "passwordSalt",
+                    "type": "text",
+                    "fixedLength": [
+                        8
+                    ],
+                    "auto": true,
+                    "comment": "User Password Salt"
+                },
+                "locale": {
+                    "name": "locale",
+                    "type": "text",
+                    "default": [
+                        "en_AU"
+                    ],
+                    "comment": "User Locale"
+                },
+                "isEmailVerified": {
+                    "name": "isEmailVerified",
+                    "type": "boolean",
+                    "default": [
+                        false
+                    ]
+                },
+                "isMobileVerified": {
+                    "name": "isMobileVerified",
+                    "type": "boolean",
+                    "default": [
+                        false
+                    ]
+                },
+                "status": {
+                    "name": "status",
+                    "type": "userStatus",
+                    "default": [
+                        "inactive"
+                    ],
+                    "comment": "User Status"
+                },
+                "tag": {
+                    "name": "tag",
+                    "type": "array",
+                    "optional": true
+                }
+            },
+            "associations": [
+                {
+                    "type": "hasMany",
+                    "destEntity": "profile"
+                }
+            ],
+            "indexes": [
+                {
+                    "fields": "email",
+                    "unique": true
+                },
+                {
+                    "fields": "mobile",
+                    "unique": true
+                }
+            ],
+            "data": [
+                {
+                    "email": "admin@levo.legal",
+                    "mobile": "0412345678",
+                    "password": "123456",
+                    "isEmailVerified": true,
+                    "isMobileVerified": true,
+                    "status": "active"
+                }
+            ]
+        }
+    },
+    "id": "./entities/user.ool",
+    "name": "user"
+}

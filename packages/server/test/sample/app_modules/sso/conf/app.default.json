@@ -1,0 +1,70 @@
+{
+    "dataSource": {
+        "mysql": {
+            "sso": {
+                "connection": "mysql://root:root@localhost/sso-test",
+                "logSQLStatement": true
+            }
+        }
+    },
+    "passport": {
+        "useSession": true,
+        "auth": {
+            "successReturnToOrRedirect": "/account"
+        },
+        "strategies": [ "local" ]
+    },
+    "middlewareFactory": {
+        "swigRenderer": {
+            "views": {
+                "extension": "swig" 
+            }
+        }
+    },
+    "oolong": {
+        "modelDir": "server/models",
+        "dslSourceDir": "server/oolong",
+        "dslReverseOutputDir": "server/oolong",
+        "modelOutputDir": "server/models",
+        "scriptSourceDir": "server/scripts",
+        "scriptOutputDir": "server/scripts",        
+        "useJsonSource": false,
+        "saveIntermediate": true,
+        "schemaDeployment": { 
+            "sso": {
+                "dataSource": "mysql.sso"
+            }
+        }
+    },
+    "middlewares": {
+        "favicon": {},
+        "templatedError": {
+            "engine": "swig"
+        },
+        "serveStatic": {},        
+        "session": {
+            "store": {
+                "type": "memory"
+            }
+        },
+        "bodyParser": {},
+        "csrf": {},
+        "flashMessage": {},
+        "methodOverride": {}
+    },
+    "routing": {    
+        "/account": {
+            "rule": {
+                "middlewares": {        
+                    "passportCheck": {},            
+                    "swigRenderer": {}
+                },
+                "rules": {
+                    "/": "account.index"
+                }
+            }
+        },             
+        "get:/login": [ "swigRenderer", "auth.index" ],
+        "post:/login": [ ["passportAuth", { "strategy": "local" } ] ]
+    }
+}

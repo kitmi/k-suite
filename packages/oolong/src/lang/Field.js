@@ -2,7 +2,7 @@
 
 const { _ } = require('rk-utils');
 const { generateDisplayName, deepCloneField, Clonable, fieldNaming } = require('./OolUtils');
-const Types = require('./types');
+const Types = require('../runtime/types');
 const RESERVED_KEYS = new Set(['name', 'type', 'modifiers', 'subClass', 'values']);
 
 /**

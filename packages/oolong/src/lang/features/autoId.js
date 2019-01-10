@@ -2,7 +2,7 @@
 
 const Util = require('rk-utils');
 const _ = Util._;
-const Types = require('../types');
+const Types = require('../../runtime/types');
 const FEATURE_NAME = 'autoId';
 
 /**

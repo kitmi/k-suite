@@ -1,10 +1,12 @@
 {
-    "mysql": {
-        "fooBar": {
-            "connection": "mysql://root:root@localhost/test-db",
-            "logSQLStatement": true,
-            "reverseRules": "reverseRules.js",
-            "saveDatabaseMeta": true
+    "dataSource": {
+        "mysql": {
+            "fooBar": {
+                "connection": "mysql://root:root@localhost/test-db",
+                "logSQLStatement": true,
+                "reverseRules": "reverseRules.js",
+                "saveDatabaseMeta": true
+            }
         }
     },
     "oolong": {

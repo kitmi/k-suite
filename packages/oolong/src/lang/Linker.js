@@ -6,7 +6,7 @@ const { _, fs, glob } = require('rk-utils');
 const Oolong = require('./grammar/oolong');
 const OolongParser = Oolong.parser;
 const OolTypes = require('./OolTypes');
-const Types = require('./types');
+const Types = require('../runtime/types');
 
 const Entity = require('./Entity');
 const Schema = require('./Schema');

@@ -1,0 +1,345 @@
+{
+    "name": "sso",
+    "displayName": "Sso",
+    "entities": {
+        "user": {
+            "name": "user",
+            "displayName": "User Credential",
+            "comment": "User Credential",
+            "features": {
+                "autoId": {
+                    "field": "id"
+                },
+                "createTimestamp": {
+                    "field": "createdAt"
+                },
+                "updateTimestamp": {
+                    "field": "updatedAt"
+                },
+                "logicalDeletion": {
+                    "field": "status",
+                    "value": "deleted"
+                },
+                "stateTracking": [
+                    {
+                        "field": "status"
+                    }
+                ],
+                "atLeastOneNotNull": [
+                    [
+                        "email",
+                        "mobile"
+                    ]
+                ]
+            },
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "startFrom": 100000,
+                    "displayName": "Id"
+                },
+                "email": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isEmail"
+                        }
+                    ],
+                    "comment": "User Email",
+                    "subClass": [
+                        "email"
+                    ],
+                    "displayName": "User Email",
+                    "optional": true
+                },
+                "mobile": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isMobilePhone",
+                            "args": [
+                                {
+                                    "oolType": "PipedValue",
+                                    "value": {
+                                        "oolType": "ObjectReference",
+                                        "name": "latest.locale"
+                                    },
+                                    "modifiers": [
+                                        {
+                                            "oolType": "Processor",
+                                            "name": "stringDasherize"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "oolType": "Processor",
+                            "name": "normalizeMobile"
+                        }
+                    ],
+                    "comment": "User Mobile",
+                    "subClass": [
+                        "phone"
+                    ],
+                    "displayName": "User Mobile",
+                    "optional": true
+                },
+                "password": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "modifiers": [
+                        {
+                            "oolType": "Processor",
+                            "name": "hashPassword",
+                            "args": [
+                                {
+                                    "oolType": "ObjectReference",
+                                    "name": "latest.passwordSalt"
+                                }
+                            ]
+                        }
+                    ],
+                    "comment": "User Password",
+                    "subClass": [
+                        "password"
+                    ],
+                    "displayName": "User Password"
+                },
+                "passwordSalt": {
+                    "type": "text",
+                    "fixedLength": 8,
+                    "auto": true,
+                    "comment": "User Password Salt",
+                    "displayName": "User Password Salt"
+                },
+                "locale": {
+                    "type": "text",
+                    "default": "en_AU",
+                    "comment": "User Locale",
+                    "displayName": "User Locale"
+                },
+                "isEmailVerified": {
+                    "type": "boolean",
+                    "default": false,
+                    "displayName": "Is Email Verified"
+                },
+                "isMobileVerified": {
+                    "type": "boolean",
+                    "default": false,
+                    "displayName": "Is Mobile Verified"
+                },
+                "status": {
+                    "type": "enum",
+                    "values": [
+                        "inactive",
+                        "active",
+                        "disabled",
+                        "forbidden",
+                        "deleted"
+                    ],
+                    "default": "inactive",
+                    "comment": "User Status",
+                    "subClass": [
+                        "userStatus"
+                    ],
+                    "displayName": "User Status"
+                },
+                "tag": {
+                    "type": "array",
+                    "optional": true,
+                    "displayName": "Tag"
+                },
+                "createdAt": {
+                    "type": "datetime",
+                    "auto": true,
+                    "readOnly": true,
+                    "writeOnce": true,
+                    "displayName": "Created At"
+                },
+                "updatedAt": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "forceUpdate": true,
+                    "optional": true,
+                    "displayName": "Updated At"
+                },
+                "statusInactiveTimestamp": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "optional": true,
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Status Inactive Timestamp"
+                },
+                "statusActiveTimestamp": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "optional": true,
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Status Active Timestamp"
+                },
+                "statusDisabledTimestamp": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "optional": true,
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Status Disabled Timestamp"
+                },
+                "statusForbiddenTimestamp": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "optional": true,
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Status Forbidden Timestamp"
+                },
+                "statusDeletedTimestamp": {
+                    "type": "datetime",
+                    "readOnly": true,
+                    "optional": true,
+                    "auto": true,
+                    "writeOnce": true,
+                    "displayName": "Status Deleted Timestamp"
+                }
+            },
+            "key": "id"
+        },
+        "profile": {
+            "name": "profile",
+            "displayName": "Profile",
+            "comment": "Profile",
+            "fields": {
+                "firstName": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "optional": true,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "First Name"
+                },
+                "middleName": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "optional": true,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Middle Name"
+                },
+                "surName": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "optional": true,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Sur Name"
+                },
+                "dob": {
+                    "type": "datetime",
+                    "optional": true,
+                    "comment": "Date of birth",
+                    "displayName": "Date of birth"
+                },
+                "avatar": {
+                    "type": "text",
+                    "maxLength": 2000,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isURL"
+                        }
+                    ],
+                    "optional": true,
+                    "subClass": [
+                        "url"
+                    ],
+                    "displayName": "Avatar"
+                },
+                "email": {
+                    "type": "text",
+                    "maxLength": 200,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "isEmail"
+                        }
+                    ],
+                    "optional": true,
+                    "subClass": [
+                        "email"
+                    ],
+                    "displayName": "Email"
+                },
+                "mobile": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "modifiers": [
+                        {
+                            "oolType": "Validator",
+                            "name": "matches",
+                            "args": [
+                                "/^((\\+|00)\\d+)?\\d+(-\\d+)?$/"
+                            ]
+                        }
+                    ],
+                    "optional": true,
+                    "subClass": [
+                        "phone"
+                    ],
+                    "displayName": "Mobile"
+                },
+                "provider": {
+                    "type": "text",
+                    "maxLength": 40,
+                    "optional": true,
+                    "subClass": [
+                        "name"
+                    ],
+                    "displayName": "Provider"
+                },
+                "providerId": {
+                    "type": "text",
+                    "maxLength": 100,
+                    "optional": true,
+                    "displayName": "Provider Id"
+                }
+            },
+            "key": "owner"
+        },
+        "gender": {
+            "name": "gender",
+            "displayName": "Gender",
+            "comment": "Gender",
+            "fields": {
+                "code": {
+                    "type": "text",
+                    "maxLength": 1,
+                    "comment": "Gender Code",
+                    "displayName": "Gender Code"
+                },
+                "name": {
+                    "type": "text",
+                    "maxLength": 20,
+                    "optional": true,
+                    "comment": "Gender Name",
+                    "displayName": "Gender Name"
+                }
+            },
+            "key": "code"
+        }
+    },
+    "datasets": {},
+    "views": {}
+}

@@ -6,7 +6,7 @@ const Linker = require('../../../lib/lang/Linker');
 
 const SOURCE_PATH = path.resolve(__dirname, '../../../test/unitLinker');
 
-describe('unit:lang:Linker', function () {    
+describe.only('unit:lang:Linker', function () {    
     let linker;
 
     let logger = winston.createLogger({
@@ -29,12 +29,14 @@ describe('unit:lang:Linker', function () {
             let expected =
             {
                 "namespace": [
-                    path.join(SOURCE_PATH, 'entities', 'product.ool')
+                    path.join(SOURCE_PATH, 'entities', 'product.ool'),
+                    path.join(SOURCE_PATH, 'entities', 'user.ool')
                 ],
                 "schema": {
                     "product": {
                         "entities": [
-                            { "entity": "product" }
+                            { "entity": "product" },
+                            { "entity": "user" }
                         ]
                     }
                 },
@@ -93,7 +95,7 @@ describe('unit:lang:Linker', function () {
         });
     });
 
-    describe('load element', function () {
+    describe.only('load element', function () {
         it('load product entity from schema', function () {
             let schemaMod = linker.loadModule('product.ool');
             let refId = 'entity:product<-' + schemaMod.id;

@@ -174,14 +174,153 @@
             ],
             "data": [
                 {
-                    "email": "admin@email.com",
+                    "email": "admin@levo.legal",
                     "mobile": "0412345678",
                     "password": "123456",
                     "isEmailVerified": true,
                     "isMobileVerified": true,
                     "status": "active"
                 }
-            ]
+            ],
+            "interfaces": {
+                "validateUserCredential": {
+                    "accept": [
+                        {
+                            "name": "identity",
+                            "type": "text",
+                            "maxLength": [
+                                200
+                            ]
+                        },
+                        {
+                            "name": "password",
+                            "type": "password"
+                        }
+                    ],
+                    "implementation": [
+                        {
+                            "oolType": "findOne",
+                            "model": "user",
+                            "condition": {
+                                "oolType": "cases",
+                                "items": [
+                                    {
+                                        "oolType": "ConditionalStatement",
+                                        "test": {
+                                            "oolType": "ValidateExpression",
+                                            "caller": {
+                                                "oolType": "ObjectReference",
+                                                "name": "identity"
+                                            },
+                                            "callee": {
+                                                "oolType": "Validator",
+                                                "name": "isEmail"
+                                            }
+                                        },
+                                        "then": {
+                                            "email": {
+                                                "oolType": "ObjectReference",
+                                                "name": "identity"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "oolType": "ConditionalStatement",
+                                        "test": {
+                                            "oolType": "ValidateExpression",
+                                            "caller": {
+                                                "oolType": "ObjectReference",
+                                                "name": "identity"
+                                            },
+                                            "callee": {
+                                                "oolType": "Validator",
+                                                "name": "matches",
+                                                "args": [
+                                                    "/^(\\+?\\d{6,})$/"
+                                                ]
+                                            }
+                                        },
+                                        "then": {
+                                            "mobile": {
+                                                "oolType": "ObjectReference",
+                                                "name": "identity"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "else": {
+                                    "oolType": "ReturnExpression",
+                                    "value": {
+                                        "error": {
+                                            "message": "invalid_identity"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "return": {
+                        "oolType": "ReturnExpression",
+                        "value": {
+                            "oolType": "ObjectReference",
+                            "name": "user"
+                        },
+                        "exceptions": [
+                            {
+                                "oolType": "ConditionalStatement",
+                                "test": {
+                                    "oolType": "UnaryExpression",
+                                    "operator": "not-exists",
+                                    "argument": {
+                                        "oolType": "ObjectReference",
+                                        "name": "user"
+                                    }
+                                },
+                                "then": {
+                                    "error": {
+                                        "message": "user_not_found"
+                                    }
+                                }
+                            },
+                            {
+                                "oolType": "ConditionalStatement",
+                                "test": {
+                                    "oolType": "BinaryExpression",
+                                    "operator": "!=",
+                                    "left": {
+                                        "oolType": "PipedValue",
+                                        "value": {
+                                            "oolType": "ObjectReference",
+                                            "name": "password"
+                                        },
+                                        "modifiers": [
+                                            {
+                                                "oolType": "Processor",
+                                                "name": "hashPassword",
+                                                "args": [
+                                                    {
+                                                        "oolType": "ObjectReference",
+                                                        "name": "user.passwordSalt"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "right": {
+                                        "oolType": "ObjectReference",
+                                        "name": "user.password"
+                                    }
+                                },
+                                "then": {
+                                    "error": {
+                                        "message": "invalid_password"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
         }
     },
     "id": "./entities/user.ool",

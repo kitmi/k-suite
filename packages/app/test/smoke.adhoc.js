@@ -1,10 +1,12 @@
 "use strict";
 
-const CliApp = require('..');
+const CliApp = require('../');
 
 let cliApp = new CliApp('test', { 
     workingPath: 'test/fixtures/builtin-test',
-    verbose: true 
+    logger: {
+        level: 'verbose'
+    }
 });
 
 cliApp.start_().then(() => {

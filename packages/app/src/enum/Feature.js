@@ -5,7 +5,7 @@
  * @module Feature
  * 
  * @example
- *   const Feature = require('@k-suite/cli-app/lib/enum/Feature');
+ *   const Feature = require('@k-suite/app/lib/enum/Feature');
  */
 
 /**
@@ -28,9 +28,13 @@ module.exports = {
      */
     SERVICE: 'Services',       
     /**
-     * Attaching middlewares
+     * Loading plugins, e.g. middlewares
      */
     PLUGIN: 'Plugins',
+    /**
+     * Final preparation before service container get into work
+     */
+    FINAL: 'Final',
 
     /**
      * Validate a feature object.

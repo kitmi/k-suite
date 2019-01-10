@@ -4,7 +4,7 @@ const Util = require('rk-utils');
 const { _ } = Util;
 
 const validator = require('validator');
-const { Builtin } = require('../lang/types');
+const { Builtin } = require('./types');
 
 function processInt(meta, raw) {
     let sanitized = raw;

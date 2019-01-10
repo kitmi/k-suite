@@ -33,11 +33,11 @@ const withHttpStatus = (Base, STATUS) => class extends Base {
 class InvalidConfiguration extends withExtraInfo(withName(withHttpStatus(Error, HttpCode.INTERNAL_SERVER_ERROR))) {
     /**
      * @param {string} message - Error message
-     * @param {AppModule} [appModule] - The related app module
+     * @param {App} [app] - The related app module
      * @param {string} [item] - The related config item   
      */ 
-    constructor(message, appModule, item) {        
-        super(message, { app: appModule.name, configNode: item });
+    constructor(message, app, item) {        
+        super(message, { app: app.name, configNode: item });
     }
 }
 

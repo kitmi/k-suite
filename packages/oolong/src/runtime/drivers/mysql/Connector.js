@@ -78,7 +78,7 @@ class MySQLConnector extends Connector {
 
         let pool = this._pools[csKey];
 
-        if (!pool) {            
+        if (!pool) {                        
             pool = mysql.createPool(csKey);
             this._pools[csKey] = pool;
 
@@ -171,7 +171,7 @@ class MySQLConnector extends Connector {
             let [ result ] = await conn.query(formatedSQL);                
             return result;
         } catch (err) {      
-            throw new DsOperationError(err.message, { error: err, connection: this.stringFromConnection(conn), sql: formatedSQL });
+            throw err;//new DsOperationError(err.message, { error: err, connection: this.stringFromConnection(conn), sql: formatedSQL });
         } finally {
             conn && await this._releaseConnection_(conn, options);
         }

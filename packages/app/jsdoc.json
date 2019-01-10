@@ -4,7 +4,7 @@
 	},
 	"plugins"   : ["plugins/markdown"],
 	"templates" : {
-		"systemName"            : "@k-suite/cli-app",
+		"systemName"            : "@k-suite/app",
 		"footer"                : "",
 		"copyright"             : "Copyright (c) 2013-2018 KIT Mobile Internet Pty Ltd",
 		"includeDate"           : false,

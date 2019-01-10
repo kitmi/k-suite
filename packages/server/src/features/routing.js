@@ -5,27 +5,26 @@
  * @module Feature_Routing
  */
 
-const Feature = require('@k-suite/app/lib/enum/Feature');
-const Util = require('rk-utils');
-const _ = Util._;
+const { Feature } = require('..').enum;
+const { _, eachAsync_ } = require('rk-utils');
 
 module.exports = {
 
     /**
-     * This feature is loaded at routing stage.
+     * This feature is loaded at final stage.
      * @member {string}
      */
-    type: Feature.PLUGIN,
+    type: Feature.FINAL,
 
     /**
      * Load the feature.
-     * @param {RoutableApp} app - The app module object
+     * @param {Routable} app - The app module object
      * @param {object} routes - Routes and configuration
      * @returns {Promise.<*>}
      */
-    load_: (app, routes) => Util.eachAsync_(routes, async (routersConfig, route) => {
+    load_: (app, routes) => eachAsync_(routes, async (routersConfig, route) => {
         if (_.isPlainObject(routersConfig)) {
-            return Util.eachAsync_(routersConfig, async (options, type) => {
+            return eachAsync_(routersConfig, async (options, type) => {
                 let loader_ = require('../routers/' + type);
                 
                 app.log('verbose', `A "${type}" router is created at "${route}" in app [${app.name}].`);
@@ -33,15 +32,23 @@ module.exports = {
                 return loader_(app, route, options);
             });
         } else {
-            // 'route': 'method:file.function'
+            // 'route': 'method:/path'            
+            let mainRoute = '/', baseRoute = route;
+            let pos = route.indexOf(':/');
+
+            if (pos !== -1) {
+                mainRoute = route.substring(0, pos + 2);
+                baseRoute = route.substring(pos + 1);
+            }
+
             let rules = {
-                '/': routersConfig
+                [mainRoute]: routersConfig
             };
 
             let loader_ = require('../routers/rule');
-            app.log('verbose', `A "rule" router is created at "${route}" in app [${app.name}].`);
+            app.log('verbose', `A "rule" router is created at "${baseRoute}" in app [${app.name}].`);
 
-            return loader_(app, route, { rules: rules });
+            return loader_(app, baseRoute, { rules: rules });
         }
     })
 };

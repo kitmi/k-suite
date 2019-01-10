@@ -19,9 +19,7 @@ const Literal = require('./enum/Literal');
 class ServiceContainer extends EventEmitter {
     /**     
      * @param {string} name - The name of the container instance.     
-     * @param {object} [options] - Container options     
-     * @property {object} [options.logger] - Logger options
-     * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics        
+     * @param {object} [options] - Container options          
      * @property {string} [options.env] - Environment, default to process.env.NODE_ENV
      * @property {string} [options.workingPath] - App's working path, default to process.cwd()
      * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath
@@ -113,7 +111,7 @@ class ServiceContainer extends EventEmitter {
         this.emit('configLoaded');
 
         if (_.isEmpty(this.config)) {
-            throw Error('Empty configuration. Nothing to do!');
+            throw Error('Empty configuration. Nothing to do! Config path: ' + this.configPath);
         }
 
         await this._loadFeatures_(); 
@@ -288,7 +286,8 @@ class ServiceContainer extends EventEmitter {
         let featureGroups = {            
             [Feature.INIT]: [],            
             [Feature.SERVICE]: [],            
-            [Feature.PLUGIN]: []
+            [Feature.PLUGIN]: [],
+            [Feature.FINAL]: []
         };
 
         // load features

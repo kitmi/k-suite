@@ -5,7 +5,7 @@
  */
 
 const Util = require('rk-utils');
-const CliApp = require('..');
+const CliApp = require('../lib');
 
 const WORKING_DIR = 'test/fixtures/features-test';
 

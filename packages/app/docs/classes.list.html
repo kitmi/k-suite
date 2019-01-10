@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@k-suite/cli-app Classes</title>
+	<title>@k-suite/app Classes</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
 <div class="navbar navbar-default navbar-fixed-top navbar-inverse">
 <div class="container">
 	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">@k-suite/cli-app</a>
+		<a class="navbar-brand" href="index.html">@k-suite/app</a>
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -33,21 +33,28 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-Feature.html">Feature</a></li><li><a href="module-Feature_Bootstrap.html">Feature_Bootstrap</a></li><li><a href="module-Feature_CmdLineOptions.html">Feature_CmdLineOptions</a></li><li><a href="module-Feature_DevConfigByGitUser.html">Feature_DevConfigByGitUser</a></li><li><a href="module-Feature_FeatureRegistry.html">Feature_FeatureRegistry</a></li><li><a href="module-Feature_Loggers.html">Feature_Loggers</a></li><li><a href="module-Feature_ObjectStore.html">Feature_ObjectStore</a></li><li><a href="module-Feature_Settings.html">Feature_Settings</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Feature_Version.html">Feature_Version</a></li><li><a href="module-Literal.html">Literal</a></li>
+					<li><a href="module-Feature.html">Feature</a></li><li><a href="module-Feature_Bootstrap.html">Feature_Bootstrap</a></li><li><a href="module-Feature_CommandLineOptions.html">Feature_CommandLineOptions</a></li><li><a href="module-Feature_CustomConfig.html">Feature_CustomConfig</a></li><li><a href="module-Feature_DevConfigByGitUser.html">Feature_DevConfigByGitUser</a></li><li><a href="module-Feature_FeatureRegistry.html">Feature_FeatureRegistry</a></li><li><a href="module-Feature_Loggers.html">Feature_Loggers</a></li><li><a href="module-Feature_ObjectStore.html">Feature_ObjectStore</a></li><li><a href="module-Feature_Settings.html">Feature_Settings</a></li><li><a href="module-Feature_Timezone.html">Feature_Timezone</a></li><li><a href="module-Feature_Version.html">Feature_Version</a></li><li><a href="module-Helpers.html">Helpers</a></li><li><a href="module-Literal.html">Literal</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="App.html">App</a></li>
+					<li><a href="App.html">App</a></li><li><a href="Runable.html">Runable</a></li><li><a href="Runable_.html">Runable(T)</a></li><li><a href="ServiceContainer.html">ServiceContainer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-Helpers.withExtraInfo.html">Helpers.withExtraInfo</a></li><li><a href="module-Helpers.withName.html">Helpers.withName</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="CliApp.html#event:configLoaded">CliApp#event:configLoaded</a></li><li><a href="CliApp.html#event:ready">CliApp#event:ready</a></li><li><a href="CliApp.html#event:stopping">CliApp#event:stopping</a></li>
+					<li><a href="App.html#event:configLoaded">App#event:configLoaded</a></li><li><a href="App.html#event:ready">App#event:ready</a></li><li><a href="App.html#event:stopping">App#event:stopping</a></li><li><a href="ServiceContainer.html#event:configLoaded">ServiceContainer#event:configLoaded</a></li><li><a href="ServiceContainer.html#event:ready">ServiceContainer#event:ready</a></li><li><a href="ServiceContainer.html#event:stopping">ServiceContainer#event:stopping</a></li>
 				</ul>
 			</li>
 			
@@ -151,9 +158,28 @@
         <dl>
             <dt><a href="App.html">App</a></dt>
             <dd></dd>
+        
+            <dt><a href="Runable.html">Runable</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Runable_.html">Runable</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ServiceContainer.html">ServiceContainer</a></dt>
+            <dd></dd>
         </dl>
     
 
+    
+        <h3 class="subsection-title">Mixins</h3>
+
+        <dl>
+            <dt><a href="module-Helpers.withExtraInfo.html">withExtraInfo</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-Helpers.withName.html">withName</a></dt>
+            <dd></dd>
+        </dl>
     
 
     
@@ -168,6 +194,282 @@
         <h3 class="subsection-title">Events</h3>
 
         <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:configLoaded">configLoaded</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Config loaded event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="ServiceContainer.html#event:configLoaded">ServiceContainer#event:configLoaded</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		ServiceContainer.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:ready">ready</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>App ready</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="ServiceContainer.html#event:ready">ServiceContainer#event:ready</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		ServiceContainer.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:stopping">stopping</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>App stopping</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="ServiceContainer.html#event:stopping">ServiceContainer#event:stopping</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		ServiceContainer.js
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
             
 <hr>
 <dt>
@@ -223,7 +525,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		App.js
+		ServiceContainer.js
 	</dd>
 	
 
@@ -306,7 +608,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		App.js
+		ServiceContainer.js
 	</dd>
 	
 
@@ -389,7 +691,7 @@
 	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
-		App.js
+		ServiceContainer.js
 	</dd>
 	
 

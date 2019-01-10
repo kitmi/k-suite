@@ -16,7 +16,9 @@
     "build": "npm run bulid:clean && NODE_ENV=development babel src -d lib --copy-files && del lib/**/__test__",
     "build:prod": "npm run bulid:clean && NODE_ENV=production babel src -d lib --copy-files && del lib/**/__test__",
     "build:test": "npm run bulid:clean && NODE_ENV=test babel src -d lib --copy-files && del lib/**/__test__",
-    "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files"
+    "build:watch": "NODE_ENV=development babel src -w -d lib --copy-files",
+    "sample": "npm run build && cd test/sample && node index",
+    "sample:oolong": "cd test/sample/app_modules/sso && npm run oolong:build && npm run oolong:migrate"
   },
   "keywords": [
     "web",
@@ -45,6 +47,7 @@
     "@babel/plugin-proposal-decorators": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
+    "@k-suite/oolong": "^0.0.1",
     "babel-plugin-contract": "^1.3.0",
     "babel-plugin-source-map-support": "^2.0.1",
     "del-cli": "^1.1.0",
@@ -54,6 +57,7 @@
     "jsdoc": "^3.5.5",
     "luxon": "^1.4.3",
     "mocha": "^5.2.0",
+    "mysql2": "^1.6.4",
     "nyc": "^13.0.1",
     "shelljs": "^0.8.2",
     "should": "^13.2.3",

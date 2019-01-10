@@ -10,7 +10,7 @@ const { _, fs } = Util;
 
 const OolUtils = require('../../../lang/OolUtils');
 const Entity = require('../../../lang/Entity');
-const Types = require('../../../lang/types');
+const Types = require('../../../runtime/types');
 
 const UNSUPPORTED_DEFAULT_VALUE = new Set(['BLOB', 'TEXT', 'JSON', 'GEOMETRY']);
 

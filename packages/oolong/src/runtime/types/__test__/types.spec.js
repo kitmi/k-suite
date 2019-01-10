@@ -1,6 +1,6 @@
 'use strict';
 
-const Types = require('..');
+const Types = require('../../../../lib/runtime/types');
 
 describe('unit:types:general', function () {    
 

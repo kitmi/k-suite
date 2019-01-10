@@ -1,5 +1,15 @@
 "use strict";
 
+/**
+ * Common helpers for service container.
+ * @module Helpers
+ */ 
+
+ /**
+  * @param {string|array.<string>} features - Dependencies of other features.
+  * @param {ServiceContainer} app - Origin service container app.
+  * @param {string} fromFeature - Dependent feature.
+  */
 exports.dependsOn = function (features, app, fromFeature) {
     let hasNotEnabled = _.find(_.castArray(features), feature => !app.enabled(feature));
 

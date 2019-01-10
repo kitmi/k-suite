@@ -1,12 +1,12 @@
-# cli-app
+# @k-suite/app
 
-CLI Worker Process Library
+Micro service app library
 
 ## example
 
 ### usage
 
-    const CliApp = require('@k-suite/cli-app');
+    const CliApp = require('@k-suite/app');
 
     let cliApp = new CliApp('test');
 

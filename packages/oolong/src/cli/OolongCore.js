@@ -197,7 +197,7 @@ class OolongCore {
                 throw new Error(`Configuration item "schemaDeployment.${schemaName}.dataSource" not found.`);
             }
     
-            let { connection, options } = Util.getValueByPath(this.oolongConfig, dataSource);
+            let { connection, options } = Util.getValueByPath(this.oolongConfig, 'dataSource.' + dataSource);
             if (!connection) {
                 throw new Error(`Connection string of data source "${dataSource}" not found.`);
             }

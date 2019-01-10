@@ -9,12 +9,7 @@ const Koa = require('koa');
 const Routable = T => class extends T {    
     /**     
      * @param {string} name - The name of the routable instance.     
-     * @param {object} [options] - Routable options     
-     * @property {object} [options.logger] - Logger options
-     * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics        
-     * @property {string} [options.env] - Environment, default to process.env.NODE_ENV
-     * @property {string} [options.workingPath] - App's working path, default to process.cwd()
-     * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath     
+     * @param {object} [options] - Routable options               
      * @property {string} [options.backendPath='server'] - Relative path of back-end server source files
      * @property {string} [options.clientPath='client'] - Relative path of front-end client source files     
      * @property {string} [options.publicPath='public'] - Relative path of front-end static files 
@@ -45,7 +40,11 @@ const Routable = T => class extends T {
          * @member {Koa}
          **/
         this.router = new Koa();
-        this.router.use((ctx, next) => { ctx.appModule = this; return next(); });
+
+        //inject the appModule instance in the first middleware
+        this.router.use((ctx, next) => { 
+            ctx.appModule = this; return next(); 
+        });
 
         this.on('configLoaded', () => {
             //load middlewares if exists in server or app path
@@ -118,7 +117,7 @@ const Routable = T => class extends T {
      * Use middlewares
      * @param {Router} router
      * @param {*} middlewares - Can be an array of middleware entries or a key-value list of registerred middlewares
-     * @returns {RoutableApp}
+     * @returns {Routable}
      */
     useMiddlewares(router, middlewares) {
         let middlewareFactory, middleware;
@@ -139,7 +138,7 @@ const Routable = T => class extends T {
                 if (type === 'string') {
                     // [ 'namedMiddleware' ]
                     middlewareFactory = this.getMiddlewareFactory(middlewareEntry);
-                    middleware = middlewareFactory(null, this);
+                    middleware = middlewareFactory(undefined, this);
                     middlewareFunctions.push({ name: middlewareEntry , middleware });
                 } else if (type === 'function') {
                     middlewareFunctions.push({ name: middlewareEntry.name || 'unamed middleware', middleware: middlewareEntry});
@@ -183,15 +182,34 @@ const Routable = T => class extends T {
             });
         } else {
             actions = _.castArray(actions);
+            let lastIndex = actions.length - 1;
 
-            _.each(actions, action => {
+            _.each(actions, (action, i) => {
                 let type = typeof action;
+
+                if (i === lastIndex) {
+                    // last middleware may be an action
+                    if (type === 'string' && action.indexOf('.') > 0) {
+                        action = {
+                            name: 'action',
+                            options: action
+                        };
+
+                        type = 'object';
+                    }    
+                }
+
                 if (type === 'string') {
                     // [ 'namedMiddleware' ]
                     middlewareFactory = this.getMiddlewareFactory(action);                    
                     handlers.push(middlewareFactory(null, this));
                 } else if (type === 'function') {
                     handlers.push(action);
+                } else if (Array.isArray(action)) {
+                    assert: action.length > 0 && action.length <= 2, 'Invalid middleware entry';
+
+                    middlewareFactory = this.getMiddlewareFactory(action[0]);                    
+                    handlers.push(middlewareFactory(action.length > 1 ? action[1] : undefined, this));                    
                 } else {
                     assert: _.isPlainObject(action) && 'name' in action, 'Invalid middleware entry';
 

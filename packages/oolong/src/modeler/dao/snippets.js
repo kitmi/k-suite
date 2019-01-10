@@ -2,6 +2,7 @@
 
 const { _, quote } = require('rk-utils');
 const { extractDotSeparateName } = require('../../lang/OolUtils');
+const JsLang = require('../util/ast');
 
 const _applyModifiersHeader = [   
     {
@@ -173,11 +174,7 @@ const _validateCheck = (fieldName, validatingCall) => {
                                             "name": "field"
                                         },
                                         "computed": false,
-                                        "value": {
-                                            "type": "Literal",
-                                            "value": fieldName,
-                                            "raw": quote(fieldName, "'")
-                                        },
+                                        "value": JsLang.astValue(fieldName),
                                         "kind": "init",
                                         "method": false,
                                         "shorthand": false

@@ -1,10 +1,8 @@
 const { _ } = require('rk-utils');
 
-//const EntityModel = require('@k-suite/oolong/lib/runtime/drivers/mysql/EntityModel');
-const EntityModel = require('../../../../lib/runtime/drivers/mysql/EntityModel');
-const { isNothing } = require('../../../../lib/utils/lang');
-//const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('@k-suite/oolong/lib/runtime');
-const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('../../../../lib/runtime');
+const EntityModel = require('@k-suite/oolong/lib/runtime/drivers/mysql/EntityModel');
+const { isNothing } = require('@k-suite/oolong/lib/utils/lang');
+const { Validators, Processors, Generators, Errors: { DataValidationError, DsOperationError } } = require('@k-suite/oolong/lib/runtime');
 const normalizeMobile = require('./processors/user-normalizeMobile.js');
 const hashPassword = require('./processors/user-hashPassword.js');
 
@@ -57,6 +55,46 @@ class User extends EntityModel {
             latest['mobile'] = normalizeMobile(latest['mobile']);
         }
         return context;
+    }
+    
+    /**
+     * validate user credential
+     * @param identity
+     * @param password
+     * @returns {*}
+     */
+    static async validateUserCredential_(identity, password) {
+        //Retrieving the meta data
+        const $meta = this.meta.interfaces.validateUserCredential;
+        //Sanitize argument "identity"
+        identity = Types.TEXT.sanitize(identity, $meta.params[0], this.db.i18n);
+        //Sanitize argument "password"
+        password = Types.TEXT.sanitize(password, $meta.params[1], this.db.i18n);
+        let op$0$condition;
+        //Condition 0 for find one user
+        const $op$0$cases_0 = Validators.isEmail(identity);
+        if ($op$0$cases_0) {
+            op$0$condition = { email: identity };
+        } else {
+            //Condition 1 for find one user
+            const $op$0$cases_1 = Validators.matches(identity, '/^(\\+?\\d{6,})$/');
+            if ($op$0$cases_1) {
+                op$0$condition = { mobile: identity };
+            } else
+                return { error: { message: 'invalid_identity' } };
+        }
+        let user = await this.findOne_(op$0$condition);
+        //Return on exception #0
+        if (_.isEmpty(user)) {
+            return { error: { message: 'user_not_found' } };
+        }
+        //Processing "password"
+        password = hashPassword(password, user['passwordSalt']);
+        //Return on exception #1
+        if (password !== user['password']) {
+            return { error: { message: 'invalid_password' } };
+        }
+        return user;
     }
 }
 
@@ -309,6 +347,29 @@ User.meta = {
         "mobile": [
             "latest.locale"
         ]
+    },
+    "interfaces": {
+        "validateUserCredential": {
+            "params": [
+                {
+                    "name": "identity",
+                    "type": "text",
+                    "maxLength": [
+                        200
+                    ]
+                },
+                {
+                    "type": "text",
+                    "maxLength": [
+                        200
+                    ],
+                    "name": "password",
+                    "subClass": [
+                        "password"
+                    ]
+                }
+            ]
+        }
     }
 };
 

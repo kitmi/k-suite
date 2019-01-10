@@ -8,10 +8,10 @@ const winstonFlight = require('winstonflight');
 const Logger = require('winston/lib/winston/logger');
 
 /**
- * Runable app mixin.
- * @mixin
+ * Runable app mixin. 
  * @param {object} T - Base class.     
- * @returns {object} A runable app class.
+ * @returns {Runable} A runable app class.
+ * @constructs Runable(T)
  */
 const Runable = T => class extends T {
     _onUncaughtException = err => {
@@ -28,21 +28,16 @@ const Runable = T => class extends T {
         }           
     };
 
-    /**     
+    /**                 
      * @param {string} name - The name of the application.     
      * @param {object} [options] - Application options     
-     * @property {object} [options.logger] - Logger options
-     * @property {bool} [options.verbose=false] - Flag to output trivial information for diagnostics        
-     * @property {string} [options.env] - Environment, default to process.env.NODE_ENV
-     * @property {string} [options.workingPath] - App's working path, default to process.cwd()
-     * @property {string} [options.configPath] - App's config path, default to "conf" under workingPath
-     * @property {string} [options.configName] - App's config basename, default to "app"
-     * @property {string} [options.disableEnvAwareConfig=false] - Don't use environment-aware config     
+     * @property {object} [options.logger] - Logger options    
+     * @constructs Runable
      */
     constructor(name, options) {
-        super(name, Object.assign({
+        super(name, {
             logger: {
-                "level": (options && options.verbose) ? "verbose" : "info",
+                "level": "info",
                 "transports": [
                     {
                         "type": "console",
@@ -57,16 +52,17 @@ const Runable = T => class extends T {
                             "filename": `${name && _.kebabCase(name) || 'app'}.log`
                         }
                     }
-                ]
-            }
-        }, options));        
-
-        this.parentModule = module.parent;
+                ],
+                ...(options && options.logger)
+            },
+            ..._.omit(options, ['logger'])
+        });        
     }
 
     /**
      * Start the app     
      * @returns {Promise}
+     * @memberof Runable
      */
     async start_() {        
         this._initialize();
@@ -77,6 +73,7 @@ const Runable = T => class extends T {
     /**
      * Stop the app
      * @returns {Promise}
+     * @memberof Runable
      */
     async stop_() {
         await super.stop_();

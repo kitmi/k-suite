@@ -6,6 +6,7 @@
  */
 
 const path = require('path');
+const { Literal } = require('..').enum;
 const { InvalidConfiguration } = require('../Errors');
 
 /**
@@ -32,7 +33,7 @@ module.exports = (options, app) => {
         options.template = 'defaultError.swig';
     }
 
-    options.template = path.resolve(app.backendPath, Mowa.Literal.VIEWS_PATH, options.template); 
+    options.template = path.resolve(app.backendPath, Literal.VIEWS_PATH, options.template); 
 
     if (!options.engine) {
         options.engine = 'swig';
