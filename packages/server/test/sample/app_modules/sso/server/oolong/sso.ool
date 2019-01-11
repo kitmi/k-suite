@@ -1,9 +1,0 @@
-import 'entities/**'
-
-schema 'sso'
-  entities
-    user
-    profile
-    gender
-    
-

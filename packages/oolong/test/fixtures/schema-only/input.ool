@@ -1,8 +1,0 @@
-import 'entities/**'
-import 'views/**'
-
-schema sample
-  entities
-    user
-  views
-    userProfile
