@@ -1,0 +1,20 @@
+[submodule "packages/app"]
+	path = packages/app
+	url = https://github.com/kitmi/k-suite-app.git
+	branch = master
+[submodule "packages/server"]
+	path = packages/server
+	url = https://github.com/kitmi/k-suite-server.git
+	branch = master
+[submodule "packages/algorithms"]
+	path = packages/algorithms
+	url = https://github.com/kitmi/k-suite-algorithms.git
+	branch = master
+[submodule "packages/rules-engine"]
+	path = packages/rules-engine
+	url = https://github.com/kitmi/k-suite-rules-engine.git
+	branch = master
+[submodule "packages/oolong"]
+	path = packages/oolong
+	url = https://github.com/kitmi/k-suite-oolong.git
+	branch = master
