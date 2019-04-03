@@ -25,7 +25,7 @@
   "homepage": "https://github.com/kitmi/k-suite#readme",
   "dependencies": {
     "winston": "^3.1.0",
-    "rk-utils": "^2.1.8",
+    "rk-utils": "^2.2.1",
     "fast-file-rotate": "github:kitmi/fast-file-rotate"
   },
   "devDependencies": {
